@@ -19,3 +19,7 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
+
+GET        /shortforms-self-assessment/sa1              controllers.IndexController.startSA1()
+GET        /shortforms-self-assessment/cwf1st           controllers.IndexController.startCWF1ST()
+GET        /shortforms-self-assessment/cease-trading    controllers.IndexController.startCeaseTrading()
