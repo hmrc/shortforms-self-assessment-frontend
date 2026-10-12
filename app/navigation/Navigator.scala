@@ -17,22 +17,40 @@
 package navigation
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc.Call
 import controllers.routes
-import pages._
-import models._
+import pages.*
+import models.*
+import pages.sa1.Sa1AddPreviousLastNamePage
 
 @Singleton
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
+    case Sa1AddPreviousLastNamePage =>
+      ua =>
+        ua.get(Sa1AddPreviousLastNamePage) match {
+          case Some(true) =>
+            // TODO DTR-8719: Redirect to Enter previous last name
+            controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(ua.id, NormalMode)
+
+          case Some(false) =>
+            // TODO DTR-8691: Redirect to Enter DOB page
+            controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(ua.id, NormalMode)
+
+          case _ => routes.IndexController.onPageLoad()
+        }
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
-  }
+      case Sa1AddPreviousLastNamePage =>
+        ua =>
+        // TODO DTR-8743: Redirect to Check your answers page
+          controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
+      case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>

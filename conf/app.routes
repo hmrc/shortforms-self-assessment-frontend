@@ -26,3 +26,8 @@ GET         /sa1/start                                   controllers.sa1.StartCo
 POST        /sa1/start                                   controllers.sa1.StartController.onSubmit()
 
 GET         /sa1/name/:journeyId                         controllers.sa1.NameController.onPageLoad(journeyId: String)
+
+GET         /sa1/previous-last-name/:journeyId           controllers.sa1.Sa1AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = NormalMode)
+POST        /sa1/previous-last-name/:journeyId           controllers.sa1.Sa1AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = NormalMode)
+GET         /sa1/previous-last-name/change/:journeyId    controllers.sa1.Sa1AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
+POST        /sa1/previous-last-name/change/:journeyId    controllers.sa1.Sa1AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)

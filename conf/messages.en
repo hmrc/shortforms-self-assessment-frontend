@@ -10,7 +10,8 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
-site.registerForSa.caption = Self Assessment
+site.sa.caption = Self Assessment
+site.registerForSa.caption = Register for Self Assessment
 
 date.day = Day
 date.month = Month
@@ -79,3 +80,9 @@ sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.
 
+
+sa1.sa1AddPreviousLastName.title = Do you have a previous last name?
+sa1.sa1AddPreviousLastName.heading = Do you have a previous last name?
+sa1.sa1AddPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
+sa1.sa1AddPreviousLastName.error.required = Select yes if you have a previous last name
+sa1.sa1AddPreviousLastName.change.hidden = Do you have a previous last name?
