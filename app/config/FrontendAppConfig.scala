@@ -24,6 +24,8 @@ import play.api.mvc.RequestHeader
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
+  private def loadConfig(key: String) = configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+
   val host: String    = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
