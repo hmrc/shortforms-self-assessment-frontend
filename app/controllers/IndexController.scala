@@ -17,12 +17,12 @@
 package controllers
 
 import controllers.actions.IdentifierAction
-import javax.inject.Inject
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.IndexView
-import views.html.StubPageView
+import views.html.{IndexView, StubPageView}
+
+import javax.inject.Inject
 
 class IndexController @Inject()(
                                  val controllerComponents: MessagesControllerComponents,
@@ -36,7 +36,7 @@ class IndexController @Inject()(
   }
 
   def startSA1(): Action[AnyContent] = identify { implicit request =>
-    Ok(stubPageView("Hello, SA1!"))
+    Redirect(controllers.sa1.routes.StartController.onPageLoad())
   }
 
   def startCWF1ST(): Action[AnyContent] = identify { implicit request =>

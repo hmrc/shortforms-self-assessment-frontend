@@ -42,8 +42,7 @@ class IndexControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when invoke by startSA1" in {
-
+    "must redirect to the SA1 start page when startSA1 is invoked" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
@@ -51,11 +50,10 @@ class IndexControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[StubPageView]
+        status(result) mustEqual SEE_OTHER
 
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view("Hello, SA1!")(request, messages(application)).toString
+        redirectLocation(result).value mustEqual
+          controllers.sa1.routes.StartController.onPageLoad().url
       }
     }
 

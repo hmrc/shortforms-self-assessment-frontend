@@ -17,15 +17,14 @@
 package repositories
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import models.{JourneyType, UserAnswers}
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
-import org.mongodb.scala.SingleObservableFuture
+import org.mongodb.scala.model.*
 import play.api.libs.json.Format
+import uk.gov.hmrc.mdc.Mdc
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-import uk.gov.hmrc.mdc.Mdc
 
 import java.time.{Clock, Instant}
 import java.util.concurrent.TimeUnit
@@ -41,60 +40,92 @@ class SessionRepository @Inject()(
   extends PlayMongoRepository[UserAnswers](
     collectionName = "user-answers",
     mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.format,
-    indexes        = Seq(
+    domainFormat = UserAnswers.format,
+    indexes = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
         IndexOptions()
           .name("lastUpdatedIdx")
           .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+      ),
+      IndexModel(
+        Indexes.ascending("userId"),
+        IndexOptions().name("userIdIdx")
       )
     )
   ) {
 
-  implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+  implicit val instantFormat: Format[Instant] =
+    MongoJavatimeFormats.instantFormat
 
-  private def byId(id: String): Bson = Filters.equal("_id", id)
+  private def byJourneyUserAndType(
+                                    journeyId: String,
+                                    userId: String,
+                                    journeyType: JourneyType
+                                  ): Bson =
+    Filters.and(
+      Filters.equal("_id", journeyId),
+      Filters.equal("userId", userId),
+      Filters.equal("journeyType", journeyType.toString)
+    )
 
-  def keepAlive(id: String): Future[Boolean] = {
+  def keepAlive(
+                 journeyId: String,
+                 userId: String,
+                 journeyType: JourneyType
+               ): Future[Boolean] =
     collection
       .updateOne(
-        filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock)),
+        filter = byJourneyUserAndType(journeyId, userId, journeyType),
+        update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture()
       .map(_ => true)
-  }
 
-  def get(id: String): Future[Option[UserAnswers]] = {
-    keepAlive(id).flatMap {
+  def get(journeyId: String,
+          userId: String,
+          journeyType: JourneyType): Future[Option[UserAnswers]] = {
+    keepAlive(journeyId, userId, journeyType).flatMap {
       _ =>
         Mdc.preservingMdc {
           collection
-            .find(byId(id))
+            .find(byJourneyUserAndType(journeyId, userId, journeyType))
             .headOption()
         }
     }
   }
 
   def set(answers: UserAnswers): Future[Boolean] = {
-
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
-
+    val filter =
+      byJourneyUserAndType(
+        updatedAnswers.id,
+        updatedAnswers.userId,
+        updatedAnswers.journeyType
+      )
     collection
       .replaceOne(
-        filter      = byId(updatedAnswers.id),
+        filter = filter,
         replacement = updatedAnswers,
-        options     = ReplaceOptions().upsert(true)
+        options = ReplaceOptions().upsert(true)
       )
       .toFuture()
       .map(_ => true)
   }
 
-  def clear(id: String): Future[Boolean] = {
+  def clear(
+             journeyId: String,
+             userId: String,
+             journeyType: JourneyType
+           ): Future[Boolean] =
     collection
-      .deleteOne(byId(id))
+      .deleteOne(byJourneyUserAndType(journeyId, userId, journeyType))
       .toFuture()
       .map(_ => true)
-  }
+
+  def clearByUserId(userId: String): Future[Boolean] =
+    collection
+      .deleteMany(Filters.equal("userId", userId))
+      .toFuture()
+      .map(_ => true)
 }

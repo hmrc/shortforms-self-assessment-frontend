@@ -17,23 +17,22 @@
 package controllers
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{IdentifierAction, SA1DataRequiredAction}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
+                                            requireData: SA1DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen requireData(journeyId)) {
     implicit request =>
 
       val list = SummaryListViewModel(

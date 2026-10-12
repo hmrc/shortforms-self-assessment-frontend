@@ -16,25 +16,58 @@
 
 package controllers.actions
 
-import javax.inject.Inject
 import controllers.routes
-import models.requests.{DataRequest, OptionalDataRequest}
-import play.api.mvc.Results.Redirect
+import javax.inject.{Inject, Singleton}
+import models.JourneyType
+import models.requests.{DataRequest, IdentifierRequest}
 import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.Results.Redirect
+import repositories.SessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionContext) extends DataRequiredAction {
+@Singleton
+class DataRequiredActionImpl @Inject()(
+                                        sessionRepository: SessionRepository
+                                      )(implicit ec: ExecutionContext)
+  extends DataRequiredAction {
 
-  override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+  override def apply(
+                      journeyId: String,
+                      journeyType: JourneyType
+                    ): ActionRefiner[IdentifierRequest, DataRequest] =
+    new ActionRefiner[IdentifierRequest, DataRequest] {
 
-    request.userAnswers match {
-      case None =>
-        Future.successful(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-      case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, data)))
+      override protected def executionContext: ExecutionContext = ec
+
+      override protected def refine[A](
+                                        request: IdentifierRequest[A]
+                                      ): Future[Either[Result, DataRequest[A]]] =
+        sessionRepository
+          .get(journeyId, request.userId, journeyType)
+          .map {
+            case Some(userAnswers) =>
+              Right(
+                DataRequest(
+                  request.request,
+                  request.userId,
+                  userAnswers
+                )
+              )
+
+            case None =>
+              Left(
+                Redirect(
+                  routes.JourneyRecoveryController.onPageLoad()
+                )
+              )
+          }
     }
-  }
 }
+trait DataRequiredAction {
 
-trait DataRequiredAction extends ActionRefiner[OptionalDataRequest, DataRequest]
+  def apply(
+             journeyId: String,
+             journeyType: JourneyType
+           ): ActionRefiner[IdentifierRequest, DataRequest]
+}
