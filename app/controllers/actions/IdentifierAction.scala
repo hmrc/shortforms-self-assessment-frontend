@@ -24,8 +24,8 @@ import play.api.mvc.*
 import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.UnauthorizedException
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,25 +35,28 @@ class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                config: FrontendAppConfig,
                                                val parser: BodyParsers.Default
-                                             )
-                                             (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions {
+                                             )(implicit val executionContext: ExecutionContext)
+  extends IdentifierAction
+    with AuthorisedFunctions
+    with FrontendHeaderCarrierProvider {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given Request[?] = request
 
     authorised().retrieve(Retrievals.internalId) {
       _.map {
         internalId => block(IdentifierRequest(request, internalId))
       }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
     } recover {
-      case _: NoActiveSession =>
-        val protocol = if request.secure then "https" else "http"
-        val continueURL = s"$protocol://${request.host}${request.uri}"
-        Redirect(config.loginUrl, Map("continue" -> Seq(continueURL)))
-
-      case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
+      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
+      case _: AuthorisationException => Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
+
+  private def getRequestURI(using req: Request[?]) =
+    if req.host startsWith "localhost" then
+      val protocol = if req.secure then "https" else "http"
+      s"$protocol://${req.host}${req.uri}"
+    else
+      req.uri
 }
