@@ -75,3 +75,7 @@ sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.
 
+sa1.enterPreviousLastName.title = Your previous last name
+sa1.enterPreviousLastName.heading = Your previous last name
+sa1.enterPreviousLastName.input.heading = What was your previous last name?
+sa1.enterPreviousLastName.date.input.heading = When did your last name change?

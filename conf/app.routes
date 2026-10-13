@@ -26,3 +26,6 @@ GET         /sa1/start                                   controllers.sa1.StartCo
 POST        /sa1/start                                   controllers.sa1.StartController.onSubmit()
 
 GET         /sa1/name/:journeyId                         controllers.sa1.NameController.onPageLoad(journeyId: String)
+
+GET         /sa1/enter-previous-last-name/:journeyId     controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String)
+POST        /sa1/enter-previous-last-name/:journeyId     controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String)
