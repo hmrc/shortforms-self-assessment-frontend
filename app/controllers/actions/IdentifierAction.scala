@@ -60,7 +60,9 @@ class AuthenticatedIdentifierAction @Inject()(
         val failureURL = RedirectUrl(routes.UnauthorisedController.onPageLoad().url)
         val url = config.identityValidationFrontEndEntry(completionURL, failureURL)
         SeeOther(url)
-      case _: AuthorisationException => Redirect(routes.UnauthorisedController.onPageLoad())
+
+    case _ =>
+        Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
 
