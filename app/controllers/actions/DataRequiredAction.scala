@@ -25,10 +25,16 @@ import play.api.mvc.Results.Redirect
 import repositories.SessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.mvc.Results.NotFound
+import views.html.ErrorTemplate
+import play.api.i18n.Messages
+import play.api.i18n.MessagesApi
 
 @Singleton
 class DataRequiredActionImpl @Inject()(
-                                        sessionRepository: SessionRepository
+                                        sessionRepository: SessionRepository,
+                                        errorTemplate: ErrorTemplate,
+                                        messagesApi: MessagesApi
                                       )(implicit ec: ExecutionContext)
   extends DataRequiredAction {
 
@@ -56,14 +62,17 @@ class DataRequiredActionImpl @Inject()(
               )
 
             case None =>
+              implicit val messages: Messages = messagesApi.preferred(request.request)
               Left(
-                Redirect(
-                  routes.JourneyRecoveryController.onPageLoad()
-                )
+                NotFound(
+                  errorTemplate("notFound.title",
+                    "notFound.heading",
+                    "notFound.message")(request.request, messages))
               )
           }
     }
 }
+
 trait DataRequiredAction {
 
   def apply(
