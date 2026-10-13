@@ -17,27 +17,47 @@
 package navigation
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.mvc.Call
 import controllers.routes
-import pages._
-import models._
+import pages.*
+import models.*
+import pages.sa1.Sa1NamePage
 
 @Singleton
 class Navigator @Inject()() {
 
-  private val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => routes.IndexController.onPageLoad()
+  private def normalRoutes(
+    page: Page,
+    userAnswers: UserAnswers,
+    journeyId: String
+  ): Call = {
+    page match {
+      case Sa1NamePage =>
+        // TODO DTR-8719: Redirect to SA1-002 "Do you have a previous last name?"
+        routes.CheckYourAnswersController.onPageLoad(journeyId)
+
+      case _ => routes.IndexController.onPageLoad()
+    }
   }
 
-  private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad()
+  private def checkRouteMap(
+    page: Page,
+    journeyId: String
+  ): Call = {
+    page match {
+      case Sa1NamePage =>
+        routes.CheckYourAnswersController.onPageLoad(journeyId)
+
+      case _ => routes.CheckYourAnswersController.onPageLoad(journeyId)
+    }
   }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, journeyId: String): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)
+      normalRoutes(page, userAnswers, journeyId)
+
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)
+      checkRouteMap(page, journeyId)
   }
 }
+

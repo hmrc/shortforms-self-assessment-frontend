@@ -47,3 +47,18 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+# SA1 Name Page Messages
+sa1.sa1Name.title = What is your name?
+sa1.sa1Name.heading = What is your name?
+sa1.sa1Name.firstName = First name
+sa1.sa1Name.lastName = Last name
+sa1.sa1Name.error.firstName.required = Enter your first name
+sa1.sa1Name.error.firstName.length = Your first name must be less than 100 characters
+sa1.sa1Name.error.firstName.invalidCharacters = Your first name can only contain letters and numbers
+sa1.sa1Name.error.lastName.required = Enter your last name
+sa1.sa1Name.error.lastName.length = Your last name must be less than 100 characters
+sa1.sa1Name.error.lastName.invalidCharacters = Your last name can only contain letters and numbers
+
+sa1.sa1Name.checkYourAnswersLabel = Your name
+sa1.sa1Name.change.hidden = Change your name

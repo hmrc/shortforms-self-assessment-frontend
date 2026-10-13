@@ -12,7 +12,7 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad()
+GET         /check-your-answers/:journeyId                 controllers.CheckYourAnswersController.onPageLoad(journeyId: String)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -23,3 +23,8 @@ GET         /unauthorised                                controllers.Unauthorise
 GET         /sa1                                         controllers.IndexController.startSA1()
 GET         /cwf1st                                      controllers.IndexController.startCWF1ST()
 GET         /cease-trading                               controllers.IndexController.startCeaseTrading()
+
+GET         /self-assessment/sa1/name/:journeyId             controllers.sa1.Sa1NameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /self-assessment/sa1/name/:journeyId             controllers.sa1.Sa1NameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /self-assessment/sa1/name/change/:journeyId      controllers.sa1.Sa1NameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /self-assessment/sa1/name/change/:journeyId      controllers.sa1.Sa1NameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
