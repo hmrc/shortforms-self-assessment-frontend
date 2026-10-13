@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("sa1.sa1Name.title"))) {
 
-    @formHelper(action = controllers.sa1.routes.Sa1AddPreviousLastNameController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.sa1.routes.Sa1NameController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

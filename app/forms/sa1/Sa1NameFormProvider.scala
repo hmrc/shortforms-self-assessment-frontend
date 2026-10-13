@@ -20,7 +20,7 @@ import forms.mappings.Mappings
 import models.UserName
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Valid, Invalid}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import javax.inject.Inject
 
@@ -40,10 +40,9 @@ class Sa1NameFormProvider @Inject() extends Mappings {
         "firstName" -> text("sa1.sa1Name.error.firstName.required")
           .verifying(maxLength(100, "sa1.sa1Name.error.firstName.length"))
           .verifying(validCharacters("firstName")),
-        "lastName" -> text("sa1.sa1Name.error.lastName.required")
+        "lastName"  -> text("sa1.sa1Name.error.lastName.required")
           .verifying(maxLength(100, "sa1.sa1Name.error.lastName.length"))
           .verifying(validCharacters("lastName"))
       )(UserName.apply)(u => Some((u.firstName, u.lastName)))
     )
 }
-

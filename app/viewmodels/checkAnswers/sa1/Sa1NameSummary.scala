@@ -26,18 +26,20 @@ import viewmodels.implicits.*
 object Sa1NameSummary {
 
   def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(Sa1NamePage).map {
-      answer =>
+    answers.get(Sa1NamePage).map { answer =>
 
-        val value = s"${answer.firstName} ${answer.lastName}"
+      val value = s"${answer.firstName} ${answer.lastName}"
 
-        SummaryListRowViewModel(
-          key     = "sa1.sa1Name.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(journeyId, CheckMode).url)
-              .withVisuallyHiddenText(messages("sa1.sa1Name.change.hidden"))
+      SummaryListRowViewModel(
+        key = "sa1.sa1Name.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId, CheckMode).url
           )
+            .withVisuallyHiddenText(messages("sa1.sa1Name.change.hidden"))
         )
+      )
     }
 }

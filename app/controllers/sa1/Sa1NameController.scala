@@ -31,17 +31,19 @@ import views.html.sa1.Sa1NameView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class Sa1NameController @Inject()(
-                                   override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
-                                   navigator: Navigator,
-                                   identify: IdentifierAction,
-                                   getData: DataRetrievalAction,
-                                   requireData: DataRequiredAction,
-                                   formProvider: Sa1NameFormProvider,
-                                   val controllerComponents: MessagesControllerComponents,
-                                   view: Sa1NameView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class Sa1NameController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: Sa1NameFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: Sa1NameView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   val form = formProvider()
 
@@ -49,25 +51,24 @@ class Sa1NameController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(Sa1NamePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode, journeyId))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, journeyId))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1NamePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(Sa1NamePage, mode, updatedAnswers, journeyId))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, journeyId))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1NamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(Sa1NamePage, mode, updatedAnswers, journeyId))
+        )
+    }
 }

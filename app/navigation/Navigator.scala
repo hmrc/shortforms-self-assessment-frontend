@@ -24,13 +24,13 @@ import models.*
 import pages.sa1.Sa1NamePage
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject() () {
 
   private def normalRoutes(
     page: Page,
     userAnswers: UserAnswers,
     journeyId: String
-  ): Call = {
+  ): Call =
     page match {
       case Sa1NamePage =>
         // TODO DTR-8719: Redirect to SA1-002 "Do you have a previous last name?"
@@ -38,19 +38,17 @@ class Navigator @Inject()() {
 
       case _ => routes.IndexController.onPageLoad()
     }
-  }
 
   private def checkRouteMap(
     page: Page,
     journeyId: String
-  ): Call = {
+  ): Call =
     page match {
       case Sa1NamePage =>
         routes.CheckYourAnswersController.onPageLoad(journeyId)
 
       case _ => routes.CheckYourAnswersController.onPageLoad(journeyId)
     }
-  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, journeyId: String): Call = mode match {
     case NormalMode =>
@@ -60,4 +58,3 @@ class Navigator @Inject()() {
       checkRouteMap(page, journeyId)
   }
 }
-
