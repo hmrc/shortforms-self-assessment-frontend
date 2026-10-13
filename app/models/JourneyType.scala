@@ -17,38 +17,26 @@
 package models
 
 import play.api.libs.json._
+import scala.util.Try
 
-sealed trait JourneyType {
-  def value: String
+enum JourneyType {
+  case SA1, CeaseTrading, CWF1ST
 }
 
 object JourneyType {
 
-  case object SA1 extends JourneyType {
-    override val value: String = "SA1"
-  }
-
-  case object CeaseTrading extends JourneyType {
-    override val value: String = "CeaseTrading"
-  }
-
-  case object CWF1ST extends JourneyType {
-    override val value: String = "CWF1ST"
-  }
-
-  val values: Seq[JourneyType] = Seq(SA1, CeaseTrading, CWF1ST)
-
-  def fromString(value: String): Option[JourneyType] =
-    values.find(_.value == value)
-
   given Format[JourneyType] = Format(
     Reads {
       case JsString(value) =>
-        fromString(value).map(JsSuccess(_))
+        Try(JourneyType.valueOf(value))
+          .map(JsSuccess(_))
           .getOrElse(JsError(s"Invalid JourneyType: $value"))
-      case _ => JsError("JourneyType must be a string")
+
+      case _ =>
+        JsError("JourneyType must be a string")
     },
-    Writes(journeyType => JsString(journeyType.value))
+    Writes(journeyType => JsString(journeyType.toString))
   )
 }
+
 

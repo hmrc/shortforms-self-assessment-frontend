@@ -30,7 +30,6 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class StartController @Inject()(
-                                 override val messagesApi: MessagesApi,
                                  identify: IdentifierAction,
                                  val controllerComponents: MessagesControllerComponents,
                                  startJourneyService: StartJourneyService,
