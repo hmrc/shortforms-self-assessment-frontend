@@ -38,6 +38,8 @@ class StartViewSpec extends SpecBase {
         val doc = Jsoup.parse(view()(request, msgs).body)
 
         doc.title() must include(msgs("sa1.start.title"))
+        doc.select("span.govuk-caption-l").text() mustBe
+          msgs("site.registerForSa.caption")
         doc.select("h1").size() mustBe 1
         doc.select("h1").text() mustBe msgs("sa1.start.title")
       }
