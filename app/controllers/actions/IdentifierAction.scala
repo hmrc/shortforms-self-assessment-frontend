@@ -24,6 +24,7 @@ import play.api.Logging
 import play.api.mvc.*
 import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.http.UnauthorizedException
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
@@ -44,10 +45,20 @@ class AuthenticatedIdentifierAction @Inject()(
     with AuthorisedFunctions
     with FrontendHeaderCarrierProvider with Logging {
 
+  private val allowedAgentEnrolments: Seq[String] = Seq("IR-SA-AGENT", "IR-CT-AGENT", "HMCE-VAT-AGNT", "HMRC-MGD-AGNT", "HMRC-AS-AGENT")
+  private val isIndividualWithCL250: Predicate = AffinityGroup.Individual and ConfidenceLevel.L250
+  private val isOrganisationWithCL250: Predicate = AffinityGroup.Organisation and ConfidenceLevel.L250
+  private val hasAgentEnrolment: Predicate =
+    allowedAgentEnrolments
+      .map(name => Enrolment(name, Seq.empty, "activated"))
+      .reduceLeft[Predicate](_ or _)
+  private val isEnrolledAgent: Predicate = AffinityGroup.Agent and hasAgentEnrolment
+
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
     given Request[?] = request
 
-    val predicates =  config.isIndividualWithCL250 or config.isOrganisationWithCL250 or config.isEnrolledAgent
+
+    val predicates =  isIndividualWithCL250 or isOrganisationWithCL250 or isEnrolledAgent
 
     authorised(predicates).retrieve(Retrievals.internalId) {
       _.map {
@@ -57,11 +68,19 @@ class AuthenticatedIdentifierAction @Inject()(
       case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
 
       case _: InsufficientConfidenceLevel =>
-        val completionURL = RedirectUrl(request.uri)
-        val failureURL = RedirectUrl(routes.UnauthorisedController.onPageLoad().url)
-        val url = config.identityValidationFrontEndEntry(completionURL, failureURL)
-        logger.info(s"[ivUplift service call] with successful URL: + ${completionURL} and failure ULR: ${failureURL}" )
-        SeeOther(url)
+        val queryParams = Map(
+          "origin"          -> Seq("shortforms"),
+          "confidenceLevel" -> Seq("250"),
+          "completionURL"   -> Seq(getRequestURI),
+          "failureURL"      -> Seq(routes.UnauthorisedController.onPageLoad().url),
+        )
+
+        val loggedCompletionUrl = queryParams.get("completionURL").flatMap(_.headOption).getOrElse("Unknown")
+        val loggedFailureUrl = queryParams.get("failureURL").flatMap(_.headOption).getOrElse("Unknown")
+
+        logger.info(s"[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level. "+
+          s"Redirecting to ivUplift service with successful URL: + ${loggedCompletionUrl} and failure ULR: ${loggedFailureUrl}L")
+        Redirect(config.identityVerificationFrontend, queryParams)
 
     case _ =>
         Redirect(routes.UnauthorisedController.onPageLoad())

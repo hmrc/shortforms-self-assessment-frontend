@@ -56,4 +56,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   lazy val highIncomeChildBenefitChargeUrl: String = configuration.get[String]("urls.highIncomeChildBenefitChargeUrl")
   lazy val applyNinoUrl: String = configuration.get[String]("urls.applyNinoUrl")
+  val identityVerificationFrontend: String = loadConfig("urls.iv-uplift-entry")
+
 }
