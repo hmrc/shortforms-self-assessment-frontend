@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
+import play.api.Logging
 import play.api.mvc.*
 import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
@@ -41,7 +42,7 @@ class AuthenticatedIdentifierAction @Inject()(
                                              )(implicit val executionContext: ExecutionContext)
   extends IdentifierAction
     with AuthorisedFunctions
-    with FrontendHeaderCarrierProvider {
+    with FrontendHeaderCarrierProvider with Logging {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
     given Request[?] = request
@@ -59,6 +60,7 @@ class AuthenticatedIdentifierAction @Inject()(
         val completionURL = RedirectUrl(request.uri)
         val failureURL = RedirectUrl(routes.UnauthorisedController.onPageLoad().url)
         val url = config.identityValidationFrontEndEntry(completionURL, failureURL)
+        logger.info(s"[ivUplift service call] with successful URL: + ${completionURL} and failure ULR: ${failureURL}" )
         SeeOther(url)
 
     case _ =>

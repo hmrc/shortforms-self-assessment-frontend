@@ -100,7 +100,7 @@ class AuthActionSpec extends SpecBase {
 
     "the user doesn't have sufficient confidence level" - {
 
-      "must redirect the user to the unauthorised page" in {
+      "must redirect the user to the iv uplift url" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -108,11 +108,11 @@ class AuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(InsufficientEnrolments()), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector( InsufficientConfidenceLevel()), appConfig, bodyParsers)
           val controller = new Harness(authAction)
-          val result = controller.onPageLoad()(FakeRequest(GET, routes.UnauthorisedController.onPageLoad().url))
+          val result = controller.onPageLoad()(FakeRequest(GET, routes.IndexController.onPageLoad().url))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          redirectLocation(result).value.contains("mdtp/uplift?origin=shortforms&confidenceLevel=250")
         }
       }
     }

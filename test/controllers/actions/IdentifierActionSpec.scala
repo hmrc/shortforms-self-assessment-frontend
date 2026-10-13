@@ -80,7 +80,6 @@ class IdentifierActionSpec extends AnyWordSpec with  Matchers with MockitoSugar 
     val internalId = "test-internal-id"
     val iVTargetUrl = "http:localhost:9948/iv-stub"
 
-    val mocIndividualPredicate : Predicate = mock[Predicate]
   }
 
   "AuthenticatedIdentifierAction" when {
