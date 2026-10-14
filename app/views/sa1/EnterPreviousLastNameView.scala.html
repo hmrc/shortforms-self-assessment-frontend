@@ -15,50 +15,52 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.PreviousName
 @import viewmodels.LabelSize
+@import models.{NormalMode, PreviousName}
 
 @this(
-layout: templates.Layout,
-formHelper: FormWithCSRF,
-govukDateInput: GovukDateInput,
-govukErrorSummary: GovukErrorSummary,
-govukButton: GovukButton,
-govukInput: GovukInput
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukDateInput: GovukDateInput,
+    govukErrorSummary: GovukErrorSummary,
+    govukButton: GovukButton,
+    govukInput: GovukInput
 )
 
 @(form: Form[PreviousName], journeyId: String)(implicit request: Request[?], messages: Messages)
 
+@dateErrorTarget = @{
+    Seq("day", "month", "year")
+    .find(component => form("lastNameChangeDate").error.exists(_.args.contains(messages(s"date.error.$component"))))
+    .getOrElse("day")
+}
+
 @layout(
-pageTitle = title(form, messages("sa1.enterPreviousLastName.title"))
+     pageTitle = title(form, "sa1.enterPreviousLastName.title")
 ) {
-@formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId)) {
-@if(form.errors.nonEmpty) {
-@govukErrorSummary(ErrorSummaryViewModel(form))
-}
+    @formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode)) {
+        @if(form.hasErrors) {
+        @govukErrorSummary(ErrorSummaryViewModel(form, Map("lastNameChangeDate" -> s"lastNameChangeDate.$dateErrorTarget")))
+        }
+        <h1 class = "govuk-heading-l">@messages("sa1.enterPreviousLastName.heading")</h1>
+        @govukInput(
+           InputViewModel(
+           field = form("previousLastName"),
+           label = LabelViewModel(messages("sa1.enterPreviousLastName.label")).asPageHeading(LabelSize.Medium)
+           )
+        )
 
-@govukInput(
-InputViewModel(
-field = form("value"),
-label = LabelViewModel(messages("sa1.enterPreviousLastName.input.heading")).asPageHeading(LabelSize.Medium)
-)
-)
+        @govukDateInput(
+           DateViewModel(
+              field = form("lastNameChangeDate"),
+              legend = Legend(
+              content = Text(messages("sa1.enterPreviousLastName.date.label")),
+                  classes = "govuk-fieldset__legend--m")
+              ).withHint(
+              Hint(content = Text(messages("sa1.enterPreviousLastName.date.hint")))
+           )
+        )
 
-
-@govukDateInput(DateInput(
-id = "dateNameChanged",
-namePrefix = Some("dateNameChanged"),
-hint = Some(Hint(
-content = Text("For example, 19 3 2022")
-)),
-fieldset = Some(Fieldset(
-legend = Some(Legend(
-content = Text(messages("sa1.enterPreviousLastName.date.input.heading")),
-classes = "govuk-fieldset__legend--m"
-))
-))
-))
-
-@govukButton(ButtonViewModel(messages("site.continue")))
-}
+        @govukButton(ButtonViewModel(messages("site.continue")))
+    }
 }

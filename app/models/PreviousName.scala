@@ -16,24 +16,17 @@
 
 package models
 
+import play.api.libs.json.{OFormat, Json}
+
 import java.time.LocalDate
 import scala.util.Try
 
 final case class PreviousName(
                                previousLastName: String,
-                               day: Int,
-                               month: Int,
-                               year: Int
-                             ) {
-  def dateNameChanged: LocalDate =
-    LocalDate.of(year, month, day)
-}
+                               lastNameChangeDate: LocalDate
+                             )
 
 object PreviousName {
-  def hasValidDate(previousName: PreviousName): Boolean =
-    Try(previousName.dateNameChanged).isSuccess &&
-      Try(previousName.dateNameChanged).toOption.exists(
-        date => !date.isAfter(LocalDate.now())
-      )
+  implicit val format: OFormat[PreviousName] = Json.format[PreviousName]
 }
 

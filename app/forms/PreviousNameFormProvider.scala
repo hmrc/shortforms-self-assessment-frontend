@@ -16,68 +16,45 @@
 
 package forms
 
-import models.PreviousName
+import forms.mappings.Mappings
+import models.{PreviousName}
 import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.i18n.Messages
 
-import java.time.{LocalDate, DateTimeException}
-import javax.inject.Inject
-import javax.inject.Singleton
+import java.time.{Clock, DateTimeException, LocalDate}
+import javax.inject.{Inject, Singleton}
 import scala.util.Try
 
 @Singleton
-class PreviousNameFormProvider @Inject()() {
-
-  private val validDate: Constraint[PreviousName] =
-    Constraint("constraints.previousName.date") { previousName =>
-      Try(LocalDate.of(
-        previousName.year,
-        previousName.month,
-        previousName.day
-      )).toOption match {
-        case Some(date) if !date.isAfter(LocalDate.now()) =>
-          Valid
-
-        case _ =>
-          Invalid("previousName.date.error.invalid")
-      }
-    }
-
-  def apply(): Form[PreviousName] =
-    Form(
-      mapping(
-        "previousLastName" -> nonEmptyText
-          .verifying(
-            "previousName.lastName.error.required",
-            _.trim.nonEmpty
-          )
-          .transform[String](_.trim, identity),
-
-        "dateNameChanged" -> mapping(
-          "day" -> number
-            .verifying("previousName.date.error.required", _ >= 1),
-          "month" -> number
-            .verifying("previousName.date.error.required", _ >= 1),
-          "year" -> number
-            .verifying("previousName.date.error.required", _ >= 1)
-        )((day, month, year) => (day, month, year))(
-          date => Some((date._1, date._2, date._3))
+class PreviousNameFormProvider @Inject()(clock: Clock) extends  Mappings {
+  
+  def apply ()(implicit messages: Messages): Form[PreviousName] =
+    Form(mapping(
+      "previousLastName" -> text("sa1.enterPreviousLastName.error.required")
+        .transform[String](_.trim, identity)
+        .verifying(maxLength(100, "sa1.enterPreviousLastName.error.length"))
+        .verifying(
+          "sa1.enterPreviousLastName.error.required",
+          _.matches("^[A-Za-z\\-' ]+$")
+        ),
+      "lastNameChangeDate" -> localDate(
+        invalidKey = "sa1.enterPreviousLastName.date.error.invalid",
+        allRequiredKey = "sa1.enterPreviousLastName.date.error.required",
+        twoRequiredKey = "sa1.enterPreviousLastName.date.error.requiredTwo",
+        requiredKey = "sa1.enterPreviousLastName.date.error.requiredOne",
+        numericOnly = true
+      ).verifying(
+        maxDate(
+          LocalDate.now(clock).minusDays(1),
+          "sa1.enterPreviousLastName.date.error.future",
+          Seq(
+            LocalDate.now(clock).minusDays(1)
+              .format(java.time.format.DateTimeFormatter.ofPattern("d MMMM yyyy"))
+          ): _*
         )
-      )(
-        (previousLastName, date) =>
-          PreviousName(
-            previousLastName = previousLastName,
-            day = date._1,
-            month = date._2,
-            year = date._3
-          )
-      )(
-        previousName =>
-          Some((
-            previousName.previousLastName,
-            (previousName.day, previousName.month, previousName.year)
-          ))
-      ).verifying(validDate)
-    )
+      )
+    )(PreviousName.apply)(answer => Some((answer.previousLastName, answer.lastNameChangeDate)))
+  )
 }

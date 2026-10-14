@@ -18,9 +18,12 @@ package controllers.sa1
 
 import controllers.actions.*
 import forms.PreviousNameFormProvider
-import models.PreviousName
+import models.{Mode, NormalMode}
+import navigation.Navigator
+import pages.sa1.PreviousLastNamePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.EnterPreviousLastNameView
 
@@ -30,28 +33,34 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnterPreviousLastNameController @Inject()(
                                         override val controllerComponents: MessagesControllerComponents,
                                         identify: IdentifierAction,
+                                        sa1DataRequiredAction: SA1DataRequiredAction,
                                         formProvider: PreviousNameFormProvider,
+                                        sessionRepository: SessionRepository,
+                                        navigator: Navigator,
                                         view: EnterPreviousLastNameView
                                       )(implicit ec: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport {
 
-  private val form = formProvider()
-
-  def onPageLoad(journeyId: String): Action[AnyContent] =
-    identify { implicit request =>
-      Ok(view(form, journeyId))
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+      val form = formProvider()
+      val preparedForm = request.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
+      Ok(view(preparedForm, journeyId))
     }
 
-  def onSubmit(journeyId: String): Action[AnyContent] =
-    identify.async { implicit request =>
-      form.bindFromRequest().fold(
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+      formProvider().bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, journeyId))),
-        previousName =>
-          Future.successful(
-            Redirect(controllers.sa1.routes.NameController.onPageLoad(journeyId))
-          )
+        answer =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
+            saved <- sessionRepository.set(updatedAnswers)
+          } yield {
+            Redirect(navigator.nextPage(PreviousLastNamePage, NormalMode, updatedAnswers, journeyId).url)
+          }
       )
     }
 }
