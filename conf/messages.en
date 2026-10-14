@@ -1,4 +1,4 @@
-service.name = shortforms-self-assessment-frontend
+service.name = Registering for Self Assessment
 
 site.back = Back
 site.remove = Remove
@@ -62,7 +62,7 @@ sa1.start.reasons.ukPropertyIncome = get income from land and property in the UK
 sa1.start.reasons.foreignIncome = get taxable foreign income
 sa1.start.reasons.trustIncome = get annual income from a trust or settlement
 sa1.start.reasons.incomeThresholds = have annual income that has exceeded annual thresholds
-sa1.start.reasons.untaxedIncome = have untaxed income which cannot be coded in PAYE
+sa1.start.reasons.untaxedIncome = have untaxed income that was not collected through your PAYE tax code
 sa1.start.reasons.capitalGainsTax = have Capital Gains Tax to pay
 sa1.start.directors.heading = Directors
 sa1.start.directors.content = If you are a director, you only need to register for Self Assessment if you have untaxed income. Directors with income taxed at source do not need to send a tax return.
@@ -75,7 +75,6 @@ sa1.start.requirements.heading = What you will need to register
 sa1.start.requirements.intro = To use this service, you will need:
 sa1.start.requirements.nationalInsuranceNumber = your National Insurance number, if you have one
 sa1.start.requirements.incomeOrBenefitDates = the dates when you started earning untaxed income or receiving child benefits
-sa1.start.requirements.noNationalInsuranceNumber = You do not need a National Insurance number to register for Self Assessment.
 sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.

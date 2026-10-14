@@ -69,7 +69,6 @@ sa1.start.requirements.heading = xxxxxxxxxxxxx
 sa1.start.requirements.intro = xxxxxxxxxxxxx
 sa1.start.requirements.nationalInsuranceNumber = xxxxxxxxxxxxx
 sa1.start.requirements.incomeOrBenefitDates = xxxxxxxxxxxxx
-sa1.start.requirements.noNationalInsuranceNumber = xxxxxxxxxxxxx
 sa1.start.requirements.applyForNationalInsuranceNumber = xxxxxxxxxxxxx
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = xxxxxxxxxxxxx
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = xxxxxxxxxxxxx
