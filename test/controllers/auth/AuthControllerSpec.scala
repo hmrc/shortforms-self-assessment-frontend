@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.auth
 
 import base.SpecBase
@@ -21,7 +37,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
     "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.clearByUserId(any[String])).thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(None)
@@ -40,17 +56,17 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl
-        verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
+        verify(mockSessionRepository, times(1)).clearByUserId(eqTo(testUserId))
       }
     }
   }
 
   "signOutNoSurvey" - {
 
-    "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
-
+    "must clear user answers and redirect to sign out, specifying SignedOut as the continue URL" in {
+      
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.clearByUserId(any[String])).thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(None)
@@ -69,7 +85,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl
-        verify(mockSessionRepository, times(1)).clear(eqTo(userAnswersId))
+        verify(mockSessionRepository, times(1)).clearByUserId(eqTo(testUserId))
       }
     }
   }

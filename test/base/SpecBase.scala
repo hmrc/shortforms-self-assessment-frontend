@@ -1,7 +1,23 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package base
 
-import controllers.actions._
-import models.UserAnswers
+import controllers.actions.*
+import models.{JourneyType, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -12,6 +28,8 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
+import scala.concurrent.ExecutionContext
+
 trait SpecBase
   extends AnyFreeSpec
     with Matchers
@@ -20,17 +38,21 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
-  val userAnswersId: String = "id"
+  implicit val ec: ExecutionContext = ExecutionContext.global
+  
+  val userAnswersId: String = "test-journey-id"
+  val testUserId: String = "test-user-id"
 
-  def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId)
+  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+                                    userAnswers: Option[UserAnswers] = None
+                                  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRequiredAction].toInstance(new FakeDataRequiredAction(userAnswers)),
+        bind[IdentifierAction].to[FakeIdentifierAction]
       )
 }
