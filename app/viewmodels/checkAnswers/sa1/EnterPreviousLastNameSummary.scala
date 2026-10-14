@@ -20,11 +20,14 @@ import models.{CheckMode, UserAnswers}
 import pages.sa1.PreviousLastNamePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.all.{ActionItemViewModel, SummaryListRowViewModel, ValueViewModel, stringToKey}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
+import java.time.format.DateTimeFormatter
+
 object EnterPreviousLastNameSummary {
+
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def rows(
             journeyId: String,
@@ -35,32 +38,19 @@ object EnterPreviousLastNameSummary {
         SummaryListRowViewModel(
           key = "sa1.enterPreviousLastName.checkYourAnswersLabel",
           value = ValueViewModel(answer.previousLastName),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.sa1.routes.EnterPreviousLastNameController
-                .onPageLoad(journeyId, CheckMode).url
-            ).withVisuallyHiddenText(
-              messages("sa1.sa1AddPreviousLastName.change.hidden")
-            )
-          )
+          actions = Seq(changeAction(journeyId, "sa1.sa1AddPreviousLastName.change.hidden"))
         ),
         SummaryListRowViewModel(
-          key = "sa1.enterPreviousLastName.change.hidden",
-          value = ValueViewModel(
-            answer.lastNameChangeDate.format(
-              java.time.format.DateTimeFormatter.ofPattern("d MMMM yyyy")
-            )
-          ),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, CheckMode).url
-            ).withVisuallyHiddenText(
-              messages("sa1.enterPreviousLastName.date.change.hidden")
-            )
-          )
+          key = "sa1.enterPreviousLastName.date.label",
+          value = ValueViewModel(answer.lastNameChangeDate.format(dateFormatter)),
+          actions = Seq(changeAction(journeyId, "sa1.enterPreviousLastName.date.change.hidden"))
         )
       )
     }
+
+  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages) =
+    ActionItemViewModel(
+      "site.change",
+      controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, CheckMode).url
+    ).withVisuallyHiddenText(messages(hiddenTextKey))
 }

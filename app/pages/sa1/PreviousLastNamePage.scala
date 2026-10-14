@@ -22,7 +22,7 @@ import play.api.libs.json.JsPath
 
 case object PreviousLastNamePage extends QuestionPage[PreviousName] {
 
-  override def path: JsPath = JsPath \ "previousName"
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "previousName"
 }

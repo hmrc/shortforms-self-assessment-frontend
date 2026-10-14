@@ -16,10 +16,9 @@
 
 package models
 
-import play.api.libs.json.{OFormat, Json}
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
-import scala.util.Try
 
 final case class PreviousName(
                                previousLastName: String,

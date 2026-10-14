@@ -15,7 +15,6 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewmodels.LabelSize
 @import models.{NormalMode, PreviousName}
 
 @this(
@@ -40,14 +39,15 @@
 ) {
     @formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode)) {
         @if(form.hasErrors) {
-        @govukErrorSummary(ErrorSummaryViewModel(form, Map("lastNameChangeDate" -> s"lastNameChangeDate.$dateErrorTarget")))
+           @govukErrorSummary(ErrorSummaryViewModel(form, Map("lastNameChangeDate" -> s"lastNameChangeDate.$dateErrorTarget")))
         }
         <h1 class = "govuk-heading-l">@messages("sa1.enterPreviousLastName.heading")</h1>
         @govukInput(
-           InputViewModel(
-           field = form("previousLastName"),
-           label = LabelViewModel(messages("sa1.enterPreviousLastName.label")).asPageHeading(LabelSize.Medium)
-           )
+            InputViewModel(
+                field = form("previousLastName"),
+                label = LabelViewModel(messages("sa1.enterPreviousLastName.label"))
+                    .withCssClass("govuk-label--m")
+            ).withAutocomplete("off")
         )
 
         @govukDateInput(
@@ -55,9 +55,10 @@
               field = form("lastNameChangeDate"),
               legend = Legend(
               content = Text(messages("sa1.enterPreviousLastName.date.label")),
-                  classes = "govuk-fieldset__legend--m")
+              classes = "govuk-fieldset__legend--m")
               ).withHint(
-              Hint(content = Text(messages("sa1.enterPreviousLastName.date.hint")))
+                    Hint(content = Text(messages("sa1.enterPreviousLastName.date.hint"))
+              )
            )
         )
 

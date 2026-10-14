@@ -17,44 +17,52 @@
 package forms
 
 import forms.mappings.Mappings
-import models.{PreviousName}
+import models.PreviousName
 import play.api.data.Form
 import play.api.data.Forms.*
-import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 
-import java.time.{Clock, DateTimeException, LocalDate}
-import javax.inject.{Inject, Singleton}
-import scala.util.Try
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.Singleton
 
 @Singleton
-class PreviousNameFormProvider @Inject()(clock: Clock) extends  Mappings {
-  
-  def apply ()(implicit messages: Messages): Form[PreviousName] =
-    Form(mapping(
-      "previousLastName" -> text("sa1.enterPreviousLastName.error.required")
-        .transform[String](_.trim, identity)
-        .verifying(maxLength(100, "sa1.enterPreviousLastName.error.length"))
-        .verifying(
-          "sa1.enterPreviousLastName.error.required",
-          _.matches("^[A-Za-z\\-' ]+$")
-        ),
-      "lastNameChangeDate" -> localDate(
-        invalidKey = "sa1.enterPreviousLastName.date.error.invalid",
-        allRequiredKey = "sa1.enterPreviousLastName.date.error.required",
-        twoRequiredKey = "sa1.enterPreviousLastName.date.error.requiredTwo",
-        requiredKey = "sa1.enterPreviousLastName.date.error.requiredOne",
-        numericOnly = true
-      ).verifying(
-        maxDate(
-          LocalDate.now(clock).minusDays(1),
-          "sa1.enterPreviousLastName.date.error.future",
-          Seq(
-            LocalDate.now(clock).minusDays(1)
-              .format(java.time.format.DateTimeFormatter.ofPattern("d MMMM yyyy"))
-          ): _*
+class PreviousNameFormProvider extends Mappings {
+
+  private val maxLength = 100
+  private val previousLastNameRegex = "^[A-Za-z\\-' ]+$"
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private val minimumDate = LocalDate.of(1753, 1, 3)
+
+  def apply()(implicit messages: Messages): Form[PreviousName] = {
+
+    Form(
+      mapping(
+        "previousLastName" -> text("sa1.enterPreviousLastName.error.required")
+          .transform[String](_.trim, identity)
+          .verifying(
+            firstError(
+              regexp(previousLastNameRegex, "sa1.enterPreviousLastName.error.invalid"),
+              maxLength(maxLength, "sa1.enterPreviousLastName.error.length")
+            )
+          ),
+        "lastNameChangeDate" -> localDate(
+          invalidKey = "sa1.enterPreviousLastName.date.error.invalid",
+          allRequiredKey = "sa1.enterPreviousLastName.date.error.required",
+          twoRequiredKey = "sa1.enterPreviousLastName.date.error.requiredTwo",
+          requiredKey = "sa1.enterPreviousLastName.date.error.requiredOne",
+          numericOnly = true
+        ).verifying(
+          minDate(
+            minimumDate,
+            "sa1.enterPreviousLastName.date.error.mustBeAfterMinimum",
+            minimumDate.format(dateFormatter)
+          ),
         )
+      )(PreviousName.apply)(answer =>
+        Some((answer.previousLastName, answer.lastNameChangeDate))
       )
-    )(PreviousName.apply)(answer => Some((answer.previousLastName, answer.lastNameChangeDate)))
-  )
+    )
+  }
 }
+

@@ -39,7 +39,7 @@ trait SpecBase
     with IntegrationPatience {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
-  
+
   val userAnswersId: String = "test-journey-id"
   val testUserId: String = "test-user-id"
 

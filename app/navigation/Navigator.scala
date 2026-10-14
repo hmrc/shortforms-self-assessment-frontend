@@ -34,7 +34,8 @@ class Navigator @Inject()() {
                           ): Call = {
     page match {
       // TODO Redirect to DOB page
-      case PreviousLastNamePage => controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId = journeyId, mode = CheckMode)
+      case PreviousLastNamePage =>
+        controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId = journeyId, mode = NormalMode)
       case _ => routes.IndexController.onPageLoad()
     }
   }

@@ -20,7 +20,7 @@ import controllers.actions.IdentifierAction
 import controllers.routes
 import models.JourneyType.SA1
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.StartJourneyService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

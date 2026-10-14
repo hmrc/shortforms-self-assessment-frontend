@@ -62,21 +62,24 @@ trait DateFluency {
           name    = s"${field.name}.day",
           value   = field("day").value,
           label   = Some(messages("date.day")),
-          classes = s"govuk-input--width-2 $dayErrorClass".trim
+          classes = s"govuk-input--width-2 $dayErrorClass".trim,
+          autocomplete = Some("off")
         ),
         InputItem(
           id      = s"${field.id}.month",
           name    = s"${field.name}.month",
           value   = field("month").value,
           label   = Some(messages("date.month")),
-          classes = s"govuk-input--width-2 $monthErrorClass".trim
+          classes = s"govuk-input--width-2 $monthErrorClass".trim,
+          autocomplete = Some("off")
         ),
         InputItem(
           id      = s"${field.id}.year",
           name    = s"${field.name}.year",
           value   = field("year").value,
           label   = Some(messages("date.year")),
-          classes = s"govuk-input--width-4 $yearErrorClass".trim
+          classes = s"govuk-input--width-4 $yearErrorClass".trim,
+          autocomplete = Some("off")
         )
       )
 
