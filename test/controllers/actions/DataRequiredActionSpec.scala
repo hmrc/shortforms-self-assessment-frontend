@@ -22,11 +22,13 @@ import models.UserAnswers
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.eq as eqTo
 import org.mockito.Mockito.{mock, verify, when}
+import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import views.html.ErrorTemplate
 
 import java.time.Instant
 import scala.concurrent.Future
@@ -47,6 +49,10 @@ class DataRequiredActionSpec extends SpecBase {
   private val identifierRequest =
     IdentifierRequest(FakeRequest(GET, "/"), userId)
 
+  private lazy val app = applicationBuilder().build()
+  private lazy val errorTemplate = app.injector.instanceOf[ErrorTemplate]
+  private lazy val messagesApi = app.injector.instanceOf[MessagesApi]
+
   "DataRequiredActionImpl" - {
 
     "must provide DataRequest when the journey exists for the user" in {
@@ -55,8 +61,9 @@ class DataRequiredActionSpec extends SpecBase {
       when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
         .thenReturn(Future.successful(Some(userAnswers)))
 
-      val action = new DataRequiredActionImpl(repository)(ec)
-        .apply(journeyId, SA1)
+      val action =
+        new DataRequiredActionImpl(repository, errorTemplate, messagesApi)(ec)
+          .apply(journeyId, SA1)
 
       val result = action.invokeBlock(
         identifierRequest,
@@ -69,26 +76,26 @@ class DataRequiredActionSpec extends SpecBase {
       verify(repository).get(journeyId, userId, SA1)
     }
 
-    "must redirect to Journey Recovery when the journey does not exist" in {
+    "must return Not Found when the journey does not exist" in {
       val repository = mock(classOf[SessionRepository])
 
       when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
         .thenReturn(Future.successful(None))
 
-      val action = new DataRequiredActionImpl(repository)(ec)
-        .apply(journeyId, SA1)
+      val action =
+        new DataRequiredActionImpl(repository, errorTemplate, messagesApi)(ec)
+          .apply(journeyId, SA1)
 
       val result = action.invokeBlock(
         identifierRequest,
         _ => Future.successful(Ok)
       )
 
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.routes.JourneyRecoveryController.onPageLoad().url
+      status(result) mustEqual NOT_FOUND
+
+      contentAsString(result) must include("Page not found")
 
       verify(repository).get(journeyId, userId, SA1)
     }
   }
 }
-

@@ -1,4 +1,4 @@
-service.name = shortforms-self-assessment-frontend
+service.name = Registering for Self Assessment
 
 site.back = Back
 site.remove = Remove
@@ -10,6 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.registerForSa.caption = Self Assessment
 
 date.day = Day
 date.month = Month
@@ -26,6 +27,10 @@ timeout.signOut = Sign out
 error.title.prefix = Error:
 error.prefix = Error
 error.summary.title = There is a problem
+
+notFound.title = Page not found
+notFound.heading = Page not found
+notFound.message = The page you are looking for could not be found.
 
 index.title = shortforms-self-assessment-frontend
 index.heading = shortforms-self-assessment-frontend
@@ -48,29 +53,28 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-sa1.start.title = Registering for Self Assessment
-sa1.start.heading = Registering for Self Assessment
+sa1.start.title = Register for Self Assessment
+sa1.start.heading = Register for Self Assessment
 sa1.start.intro = This service allows you to register for Self Assessment if you need to send a tax return, but are not self-employed. You may need to send a tax return if you:
 sa1.start.reasons.director = are a director with untaxed income
-sa1.start.reasons.childBenefitCharge = need to pay High Income Child Benefit Charge
+sa1.start.reasons.childBenefitCharge = need to pay High Income Child Benefit charge
 sa1.start.reasons.ukPropertyIncome = get income from land and property in the UK
 sa1.start.reasons.foreignIncome = get taxable foreign income
 sa1.start.reasons.trustIncome = get annual income from a trust or settlement
 sa1.start.reasons.incomeThresholds = have annual income that has exceeded annual thresholds
-sa1.start.reasons.untaxedIncome = have untaxed income which cannot be coded in PAYE
-sa1.start.reasons.capitalGainsTax = have Capital Gains tax to pay
+sa1.start.reasons.untaxedIncome = have untaxed income that was not collected through your PAYE tax code
+sa1.start.reasons.capitalGainsTax = have Capital Gains Tax to pay
 sa1.start.directors.heading = Directors
 sa1.start.directors.content = If you are a director, you only need to register for Self Assessment if you have untaxed income. Directors with income taxed at source do not need to send a tax return.
 sa1.start.childBenefitCharge.heading = High Income Child Benefit Charge
 sa1.start.childBenefitCharge.content = For tax years 2024 to 2025 and onwards, you no longer need to register for Self Assessment if the only reason is to pay the High Income Child Benefit Charge.
 sa1.start.childBenefitCharge.payeService = You can instead pay the charge using the
-sa1.start.childBenefitCharge.payeService.linkText = PAYE High Income Child Benefit Charge service (opens in new tab)
+sa1.start.childBenefitCharge.payeService.linkText = PAYE High Income Benefit Charge service (opens in new tab)
 sa1.start.childBenefitCharge.alternative = If you choose not to use the PAYE service, you are still required to register for Self Assessment and send a tax return to pay the charge.
 sa1.start.requirements.heading = What you will need to register
 sa1.start.requirements.intro = To use this service, you will need:
 sa1.start.requirements.nationalInsuranceNumber = your National Insurance number, if you have one
-sa1.start.requirements.incomeOrBenefitDates = the dates when you started earning untaxed income or receiving child benefits
-sa1.start.requirements.noNationalInsuranceNumber = You do not need a National Insurance number to register for Self Assessment.
+sa1.start.requirements.incomeOrBenefitDates = the dates of when you started earning untaxed income or received child benefits
 sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.
