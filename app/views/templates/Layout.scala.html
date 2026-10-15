@@ -15,6 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
+@import viewmodels.govuk.backlink.BackLinkViewModel
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardAlphaBanner
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
@@ -29,7 +30,7 @@
     hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, backLinkUrl: Option[String] = None, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
 
@@ -67,5 +68,5 @@
         phaseBanner = Some(alphaBanner(appConfig.feedbackUrl))
     ),
     isWelshTranslationAvailable = appConfig.languageTranslationEnabled,
-    backLink = if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None
+    backLink = backLinkUrl.map(url => BackLinkViewModel(url)).orElse(if (showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None)
 ))(content)

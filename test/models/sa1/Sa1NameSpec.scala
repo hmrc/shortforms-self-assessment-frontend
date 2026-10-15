@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(
-layout: templates.Layout
-)
+package models.sa1
 
-@()(implicit request: Request[_], messages: Messages)
+import base.SpecBase
+import play.api.libs.json.Json
 
-@layout(
-    pageTitle    = titleNoForm("name page"),
-    showBackLink = false
-) {
+class Sa1NameSpec extends SpecBase {
 
-    <h1 class="govuk-heading-xl">name page</h1>
+  "Sa1Name" - {
+
+    "must round-trip through JSON" in {
+      val name = Sa1Name("Jane", "Doe")
+
+      Json.toJson(name).as[Sa1Name] mustEqual name
+    }
+
+    "must serialise with firstName and lastName keys" in {
+      Json.toJson(Sa1Name("Jane", "Doe")) mustEqual
+        Json.obj("firstName" -> "Jane", "lastName" -> "Doe")
+    }
+  }
 }

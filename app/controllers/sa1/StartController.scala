@@ -47,7 +47,7 @@ class StartController @Inject()(
   def onSubmit(): Action[AnyContent] =
     identify.async { implicit request =>
       startJourneyService.startJourney(request.userId, SA1).map { journeyId =>
-        Redirect(controllers.sa1.routes.NameController.onPageLoad(journeyId).url)
+        Redirect(controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
       }.recover { case ex =>
         logger.error("Failed to start SA1 journey", ex)
         Redirect(routes.JourneyRecoveryController.onPageLoad())

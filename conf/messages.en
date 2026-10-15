@@ -79,3 +79,17 @@ sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.
 
+sa1.name.title = What is your name?
+sa1.name.heading = What is your name?
+sa1.name.caption = Registering for Self Assessment
+sa1.name.firstName = First name
+sa1.name.lastName = Last name
+sa1.name.firstName.error.required = Enter your first name
+sa1.name.firstName.error.length = Your first name must be less than 100 characters
+sa1.name.firstName.error.invalid = Your first name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
+sa1.name.lastName.error.required = Enter your last name
+sa1.name.lastName.error.length = Your last name must be less than 100 characters
+sa1.name.lastName.error.invalid = Your last name must only include letters a to z, numbers 0 to 9, apostrophes, hyphens or spaces
+sa1.name.checkYourAnswersLabel = Name
+sa1.name.change.hidden = name
+

@@ -23,6 +23,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
+import pages.sa1.Sa1NamePage
+import viewmodels.checkAnswers.sa1.Sa1NameSummary
 
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -35,8 +37,10 @@ class CheckYourAnswersController @Inject()(
   def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen requireData(journeyId)) {
     implicit request =>
 
+      val rows = request.userAnswers.get(Sa1NamePage).map(Sa1NameSummary.row(_, journeyId)).toSeq
+
       val list = SummaryListViewModel(
-        rows = Seq.empty
+        rows = rows
       )
 
       Ok(view(list))

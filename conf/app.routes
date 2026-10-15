@@ -25,4 +25,5 @@ GET         /cease-trading                               controllers.IndexContro
 GET         /sa1/start                                   controllers.sa1.StartController.onPageLoad()
 POST        /sa1/start                                   controllers.sa1.StartController.onSubmit()
 
-GET         /sa1/name/:journeyId                         controllers.sa1.NameController.onPageLoad(journeyId: String)
+GET         /sa1/name/:journeyId                         controllers.sa1.Sa1NameController.onPageLoad(journeyId: String)
+POST        /sa1/name/:journeyId                         controllers.sa1.Sa1NameController.onSubmit(journeyId: String)
