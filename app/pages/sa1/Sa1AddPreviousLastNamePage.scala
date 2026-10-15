@@ -21,7 +21,7 @@ import play.api.libs.json.JsPath
 
 case object Sa1AddPreviousLastNamePage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ "sa1Current" \ toString
+  override def path: JsPath = JsPath \ toString
 
   override def toString: String = "sa1AddPreviousLastName"
 }

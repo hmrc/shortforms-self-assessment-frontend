@@ -18,8 +18,7 @@
 
 @this()
 
-@(msg: String, size: CaptionSize = CaptionSize.Large, prefixKey: String = "site.section.prefix")(implicit messages: Messages)
+@(msg: String, size: CaptionSize = CaptionSize.Large)(implicit messages: Messages)
 <h2 class="@size">
-    <span class="govuk-visually-hidden">@messages(prefixKey)</span>
-    @msg
+    @messages(msg)
 </h2>
