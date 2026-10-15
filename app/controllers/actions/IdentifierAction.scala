@@ -20,12 +20,15 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
+import play.api.Logging
 import play.api.mvc.*
 import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.http.UnauthorizedException
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
+import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,25 +41,71 @@ class AuthenticatedIdentifierAction @Inject()(
                                              )(implicit val executionContext: ExecutionContext)
   extends IdentifierAction
     with AuthorisedFunctions
-    with FrontendHeaderCarrierProvider {
+    with FrontendHeaderCarrierProvider with Logging {
 
-  override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
-    given Request[?] = request
+  override def invokeBlock[A](implicit request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
-    authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
-    } recover {
-      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
-      case _: AuthorisationException => Redirect(routes.UnauthorisedController.onPageLoad())
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, session = request.session)
+    authorised().retrieve(
+      Retrievals.affinityGroup and
+        Retrievals.confidenceLevel and
+        Retrievals.allEnrolments and
+        Retrievals.internalId)  {
+
+      case Some(affinityGroup) ~ confidenceLevel ~ enrolments ~ Some(internalId)  =>
+
+        val hasValidAgentEnrolment = config.agentEnrolments.exists(
+          enrolmentName => enrolments.getEnrolment(enrolmentName)
+            .exists(_.isActivated))
+
+        (affinityGroup, hasValidAgentEnrolment, confidenceLevel.level) match {
+          case (AffinityGroup.Agent, true, _) =>
+            block(IdentifierRequest(request, internalId))
+
+          case (AffinityGroup.Individual, _, cl) if cl >= config.requiredConfidenceLevel =>
+            block(IdentifierRequest(request, internalId))
+
+          case (AffinityGroup.Organisation, _, cl) if cl >= config.requiredConfidenceLevel =>
+            block(IdentifierRequest(request, internalId))
+
+          case (AffinityGroup.Individual, _, _) | (AffinityGroup.Organisation, _, _) =>
+            logger.info(s"[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level below required confidential level")
+            throw InsufficientConfidenceLevel(s"Confidence level below ${config.requiredConfidenceLevel}")
+
+          case _ =>
+            throw UnsupportedAffinityGroup("Unsupported user type or group configuration")
+        }
+      case _ =>
+        throw new UnauthorizedException("Unable to retrieve internalId")
+
     }
-  }
+  } recover {
+    case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
 
-  private def getRequestURI(using req: Request[?]) =
-    if req.host startsWith "localhost" then
-      val protocol = if req.secure then "https" else "http"
-      s"$protocol://${req.host}${req.uri}"
-    else
-      req.uri
+    case _: InsufficientConfidenceLevel =>
+      val loggedCompletionUrl = getRequestURI
+      val loggedFailureUrl = routes.UnauthorisedController.onPageLoad().url
+      val queryParams = Map(
+        "origin" -> Seq("shortforms"),
+        "confidenceLevel" -> Seq("250"),
+        "completionURL" -> Seq(loggedCompletionUrl),
+        "failureURL" -> Seq(loggedFailureUrl),
+      )
+      logger.info(s"[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level. " +
+        s"Redirecting to ivUplift service with successful URL: + $loggedCompletionUrl and failure ULR: $loggedFailureUrl")
+
+      Redirect(config.identityVerificationFrontend, queryParams)
+
+    case _ =>
+      Redirect(routes.UnauthorisedController.onPageLoad())
+  }
 }
+
+private def getRequestURI(using req: Request[?]) =
+  if req.host startsWith "localhost" then
+    val protocol = if req.secure then "https" else "http"
+    s"$protocol://${req.host}${req.uri}"
+  else
+    req.uri
+
+
