@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class DataRequiredActionSpec extends SpecBase {
 
   private val journeyId = "test-journey-id"
-  private val userId = "test-user-id"
+  private val userId    = "test-user-id"
 
   private val userAnswers = UserAnswers(
     id = journeyId,
@@ -49,9 +49,9 @@ class DataRequiredActionSpec extends SpecBase {
   private val identifierRequest =
     IdentifierRequest(FakeRequest(GET, "/"), userId)
 
-  private lazy val app = applicationBuilder().build()
+  private lazy val app           = applicationBuilder().build()
   private lazy val errorTemplate = app.injector.instanceOf[ErrorTemplate]
-  private lazy val messagesApi = app.injector.instanceOf[MessagesApi]
+  private lazy val messagesApi   = app.injector.instanceOf[MessagesApi]
 
   "DataRequiredActionImpl" - {
 

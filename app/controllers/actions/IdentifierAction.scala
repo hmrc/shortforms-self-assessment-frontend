@@ -29,14 +29,16 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction
+    extends ActionBuilder[IdentifierRequest, AnyContent]
+    with ActionFunction[Request, IdentifierRequest]
 
-class AuthenticatedIdentifierAction @Inject()(
-                                               override val authConnector: AuthConnector,
-                                               config: FrontendAppConfig,
-                                               val parser: BodyParsers.Default
-                                             )(implicit val executionContext: ExecutionContext)
-  extends IdentifierAction
+class AuthenticatedIdentifierAction @Inject() (
+  override val authConnector: AuthConnector,
+  config: FrontendAppConfig,
+  val parser: BodyParsers.Default
+)(implicit val executionContext: ExecutionContext)
+    extends IdentifierAction
     with AuthorisedFunctions
     with FrontendHeaderCarrierProvider {
 
@@ -44,11 +46,11 @@ class AuthenticatedIdentifierAction @Inject()(
     given Request[?] = request
 
     authorised().retrieve(Retrievals.internalId) {
-      _.map {
-        internalId => block(IdentifierRequest(request, internalId))
+      _.map { internalId =>
+        block(IdentifierRequest(request, internalId))
       }.getOrElse(throw new UnauthorizedException("Unable to retrieve internal Id"))
     } recover {
-      case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
+      case _: NoActiveSession        => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
       case _: AuthorisationException => Redirect(routes.UnauthorisedController.onPageLoad())
     }
   }
@@ -57,6 +59,5 @@ class AuthenticatedIdentifierAction @Inject()(
     if req.host startsWith "localhost" then
       val protocol = if req.secure then "https" else "http"
       s"$protocol://${req.host}${req.uri}"
-    else
-      req.uri
+    else req.uri
 }

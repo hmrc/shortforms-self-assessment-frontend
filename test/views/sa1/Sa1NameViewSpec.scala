@@ -99,7 +99,9 @@ class Sa1NameViewSpec extends SpecBase {
       running(application) {
         val view = application.injector.instanceOf[Sa1NameView]
         val msgs = messages(application)
-        val form = application.injector.instanceOf[Sa1NameFormProvider].apply()
+        val form = application.injector
+          .instanceOf[Sa1NameFormProvider]
+          .apply()
           .bind(Map("firstName" -> "", "lastName" -> ""))
 
         val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)

@@ -30,38 +30,42 @@ import views.html.sa1.Sa1NameView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class Sa1NameController @Inject()(
-                                   override val messagesApi: MessagesApi,
-                                   sessionRepository: SessionRepository,
-                                   navigator: Navigator,
-                                   identify: IdentifierAction,
-                                   sa1DataRequiredAction: SA1DataRequiredAction,
-                                   formProvider: Sa1NameFormProvider,
-                                   val controllerComponents: MessagesControllerComponents,
-                                   view: Sa1NameView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class Sa1NameController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  sa1DataRequiredAction: SA1DataRequiredAction,
+  formProvider: Sa1NameFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: Sa1NameView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
-    val preparedForm = request.userAnswers.get(Sa1NamePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
-    }
+  def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) {
+    implicit request =>
+      val preparedForm = request.userAnswers.get(Sa1NamePage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
+      }
 
-    Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId))
   }
 
-  def onSubmit(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
-    form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, journeyId))),
-
-      value =>
-        for {
-          updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1NamePage, value))
-          _              <- sessionRepository.set(updatedAnswers)
-        } yield Redirect(navigator.nextPage(Sa1NamePage, NormalMode, updatedAnswers))
-    )
+  def onSubmit(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1NamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(Sa1NamePage, NormalMode, updatedAnswers))
+        )
   }
 }

@@ -26,13 +26,13 @@ import javax.inject.Inject
 class Sa1NameFormProvider @Inject() extends Mappings {
 
   private val nameMaxLength = 100
-  private val nameRegex = "^[A-Za-z0-9'\\- ]+$"
+  private val nameRegex     = "^[A-Za-z0-9'\\- ]+$"
 
   def apply(): Form[Sa1Name] =
     Form(
       mapping(
         "firstName" -> nameField("firstName"),
-        "lastName" -> nameField("lastName")
+        "lastName"  -> nameField("lastName")
       )((firstName, lastName) => Sa1Name(firstName, lastName))(name => Some((name.firstName, name.lastName)))
     )
 

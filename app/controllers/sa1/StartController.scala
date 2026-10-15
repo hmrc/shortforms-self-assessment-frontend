@@ -29,13 +29,13 @@ import views.html.sa1.StartView
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class StartController @Inject()(
-                                 identify: IdentifierAction,
-                                 val controllerComponents: MessagesControllerComponents,
-                                 startJourneyService: StartJourneyService,
-                                 view: StartView
-                               )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+class StartController @Inject() (
+  identify: IdentifierAction,
+  val controllerComponents: MessagesControllerComponents,
+  startJourneyService: StartJourneyService,
+  view: StartView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
@@ -46,11 +46,14 @@ class StartController @Inject()(
 
   def onSubmit(): Action[AnyContent] =
     identify.async { implicit request =>
-      startJourneyService.startJourney(request.userId, SA1).map { journeyId =>
-        Redirect(controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
-      }.recover { case ex =>
-        logger.error("Failed to start SA1 journey", ex)
-        Redirect(routes.JourneyRecoveryController.onPageLoad())
-      }
+      startJourneyService
+        .startJourney(request.userId, SA1)
+        .map { journeyId =>
+          Redirect(controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
+        }
+        .recover { case ex =>
+          logger.error("Failed to start SA1 journey", ex)
+          Redirect(routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 }

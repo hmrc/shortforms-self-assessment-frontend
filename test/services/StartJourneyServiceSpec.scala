@@ -29,9 +29,9 @@ import java.time.{Clock, Instant, ZoneOffset}
 import scala.concurrent.Future
 
 class StartJourneyServiceSpec extends SpecBase {
-  private val userId = testUserId
+  private val userId       = testUserId
   private val fixedInstant = Instant.parse("2026-10-12T10:00:00Z")
-  private val clock = Clock.fixed(fixedInstant, ZoneOffset.UTC)
+  private val clock        = Clock.fixed(fixedInstant, ZoneOffset.UTC)
 
   "StartJourneyService" - {
 
@@ -60,7 +60,7 @@ class StartJourneyServiceSpec extends SpecBase {
 
     "must propagate a repository failure" in {
       val sessionRepository = mock(classOf[SessionRepository])
-      val exception = new RuntimeException("MongoDB failure")
+      val exception         = new RuntimeException("MongoDB failure")
 
       when(sessionRepository.set(any[UserAnswers]))
         .thenReturn(Future.failed(exception))

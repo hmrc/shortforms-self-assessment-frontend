@@ -34,7 +34,7 @@ import scala.concurrent.Future
 class Sa1NameControllerSpec extends SpecBase {
 
   private val formProvider = new Sa1NameFormProvider()
-  private val validData = Map("firstName" -> "Jane", "lastName" -> "Doe")
+  private val validData    = Map("firstName" -> "Jane", "lastName" -> "Doe")
 
   "Sa1Name Controller" - {
 

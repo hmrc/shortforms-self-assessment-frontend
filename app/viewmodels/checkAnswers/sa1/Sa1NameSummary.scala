@@ -26,8 +26,8 @@ object Sa1NameSummary {
 
   def row(name: Sa1Name, journeyId: String)(implicit messages: Messages): SummaryListRow =
     SummaryListRowViewModel(
-      key     = "sa1.name.checkYourAnswersLabel",
-      value   = ValueViewModel(Text(s"${name.firstName} ${name.lastName}")),
+      key = "sa1.name.checkYourAnswersLabel",
+      value = ValueViewModel(Text(s"${name.firstName} ${name.lastName}")),
       actions = Seq(
         ActionItemViewModel("site.change", controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
           .withVisuallyHiddenText(messages("sa1.name.change.hidden"))

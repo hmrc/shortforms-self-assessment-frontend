@@ -26,13 +26,14 @@ import views.html.CheckYourAnswersView
 import pages.sa1.Sa1NamePage
 import viewmodels.checkAnswers.sa1.Sa1NameSummary
 
-class CheckYourAnswersController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
-                                            requireData: SA1DataRequiredAction,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: CheckYourAnswersView
-                                          ) extends FrontendBaseController with I18nSupport {
+class CheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  requireData: SA1DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view: CheckYourAnswersView
+) extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen requireData(journeyId)) {
     implicit request =>

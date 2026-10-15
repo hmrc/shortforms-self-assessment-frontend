@@ -42,7 +42,7 @@ class StartControllerSpec extends SpecBase {
             FakeRequest(GET, controllers.sa1.routes.StartController.onPageLoad().url)
 
           val result = route(application, request).value
-          val view = application.injector.instanceOf[StartView]
+          val view   = application.injector.instanceOf[StartView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view()(request, messages(application)).toString
@@ -102,4 +102,3 @@ class StartControllerSpec extends SpecBase {
     }
   }
 }
-

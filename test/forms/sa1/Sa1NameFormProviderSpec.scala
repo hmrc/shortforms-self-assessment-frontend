@@ -48,7 +48,7 @@ class Sa1NameFormProviderSpec extends FormSpec {
     }
 
     "must bind a name of exactly 100 characters" in {
-      val name = "a" * maxLength
+      val name   = "a" * maxLength
       val result = form.bind(Map("firstName" -> name, "lastName" -> name))
 
       result.value.value mustEqual Sa1Name(name, name)
