@@ -18,22 +18,20 @@ package controllers.sa1
 
 import base.SpecBase
 import forms.PreviousNameFormProvider
-import models.NormalMode
-import navigation.Navigator
+import models.{NormalMode, PreviousName, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.sa1.PreviousLastNamePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.sa1.EnterPreviousLastNameView
-import models.PreviousName
-import pages.sa1.PreviousLastNamePage
+
 import java.time.LocalDate
 import scala.concurrent.Future
-import org.mockito.ArgumentCaptor
-import models.UserAnswers
 
 class EnterPreviousLastNameControllerSpec extends SpecBase {
   private val journeyId = userAnswersId
@@ -111,18 +109,14 @@ class EnterPreviousLastNameControllerSpec extends SpecBase {
 
     "must save the submitted data and redirect when the form is valid" in {
       val mockSessionRepository = mock[SessionRepository]
-      val mockNavigator = mock[Navigator]
       val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockNavigator.nextPage(any(), any(), any(), any())).thenReturn(
-        routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[Navigator].toInstance(mockNavigator)
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -139,6 +133,7 @@ class EnterPreviousLastNameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
+         //TODO: Change it to DOB page once its ready
           controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url
 
         verify(mockSessionRepository).set(captor.capture())

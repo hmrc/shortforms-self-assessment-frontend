@@ -16,47 +16,28 @@
 
 package navigation
 
-import controllers.routes
-import models.*
-import pages.*
-import pages.sa1.PreviousLastNamePage
-import play.api.mvc.Call
-
 import javax.inject.{Inject, Singleton}
+
+import play.api.mvc.Call
+import controllers.routes
+import pages._
+import models._
 
 @Singleton
 class Navigator @Inject()() {
 
-  private def normalRoutes(
-                            page: Page,
-                            userAnswers: UserAnswers,
-                            journeyId: String
-                          ): Call = {
-    page match {
-      // TODO Redirect to DOB page
-      case PreviousLastNamePage =>
-        controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId = journeyId, mode = NormalMode)
-      case _ => routes.IndexController.onPageLoad()
-    }
+  private val normalRoutes: Page => UserAnswers => Call = {
+    case _ => _ => routes.IndexController.onPageLoad()
   }
 
-  private def checkRouteMap(
-                             page: Page,
-                             journeyId: String
-                           ): Call = {
-    page match {
-      case PreviousLastNamePage =>
-        // TODO Redirect to Check your answers page
-        controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId = journeyId, mode = CheckMode)
-      case _ => routes.IndexController.onPageLoad()
-    }
+  private val checkRouteMap: Page => UserAnswers => Call = {
+    case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, journeyId: String): Call = mode match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page, userAnswers, journeyId)
-
+      normalRoutes(page)(userAnswers)
     case CheckMode =>
-      checkRouteMap(page, journeyId)
+      checkRouteMap(page)(userAnswers)
   }
 }

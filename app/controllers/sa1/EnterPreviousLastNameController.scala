@@ -36,7 +36,6 @@ class EnterPreviousLastNameController @Inject()(
                                         sa1DataRequiredAction: SA1DataRequiredAction,
                                         formProvider: PreviousNameFormProvider,
                                         sessionRepository: SessionRepository,
-                                        navigator: Navigator,
                                         view: EnterPreviousLastNameView
                                       )(implicit ec: ExecutionContext)
   extends FrontendBaseController
@@ -59,7 +58,8 @@ class EnterPreviousLastNameController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
             saved <- sessionRepository.set(updatedAnswers)
           } yield {
-            Redirect(navigator.nextPage(PreviousLastNamePage, NormalMode, updatedAnswers, journeyId).url)
+            //TODO: Redirect it to DOB Page once ready
+            Redirect(controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, mode))
           }
       )
     }
