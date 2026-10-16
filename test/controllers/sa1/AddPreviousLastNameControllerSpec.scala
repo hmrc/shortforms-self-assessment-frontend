@@ -18,43 +18,43 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.routes
-import forms.sa1.Sa1AddPreviousLastNameFormProvider
+import forms.sa1.AddPreviousLastNameFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.sa1.Sa1AddPreviousLastNamePage
+import pages.sa1.AddPreviousLastNamePage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.sa1.Sa1AddPreviousLastNameView
+import views.html.sa1.AddPreviousLastNameView
 
 import scala.concurrent.Future
 
-class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
+class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new Sa1AddPreviousLastNameFormProvider()
+  val formProvider = new AddPreviousLastNameFormProvider()
   val form = formProvider()
 
-  lazy val sa1AddPreviousLastNameRoute = controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
+  lazy val addPreviousLastNameRoute = controllers.sa1.routes.AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
 
-  "Sa1AddPreviousLastName Controller" - {
+  "AddPreviousLastName Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, sa1AddPreviousLastNameRoute)
+        val request = FakeRequest(GET, addPreviousLastNameRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[Sa1AddPreviousLastNameView]
+        val view = application.injector.instanceOf[AddPreviousLastNameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, "test-journey-id", NormalMode)(request, messages(application)).toString
@@ -63,14 +63,14 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(Sa1AddPreviousLastNamePage, true).success.value
+      val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, sa1AddPreviousLastNameRoute)
+        val request = FakeRequest(GET, addPreviousLastNameRoute)
 
-        val view = application.injector.instanceOf[Sa1AddPreviousLastNameView]
+        val view = application.injector.instanceOf[AddPreviousLastNameView]
 
         val result = route(application, request).value
 
@@ -95,7 +95,7 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, sa1AddPreviousLastNameRoute)
+          FakeRequest(POST, addPreviousLastNameRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -121,7 +121,7 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, sa1AddPreviousLastNameRoute)
+          FakeRequest(POST, addPreviousLastNameRoute)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
@@ -137,12 +137,12 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, sa1AddPreviousLastNameRoute)
+          FakeRequest(POST, addPreviousLastNameRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[Sa1AddPreviousLastNameView]
+        val view = application.injector.instanceOf[AddPreviousLastNameView]
 
         val result = route(application, request).value
 
@@ -156,7 +156,7 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, sa1AddPreviousLastNameRoute)
+        val request = FakeRequest(GET, addPreviousLastNameRoute)
 
         val result = route(application, request).value
 
@@ -171,7 +171,7 @@ class Sa1AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, sa1AddPreviousLastNameRoute)
+          FakeRequest(POST, addPreviousLastNameRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

@@ -17,26 +17,26 @@
 package viewmodels.checkAnswers.sa1
 
 import models.{CheckMode, UserAnswers}
-import pages.sa1.Sa1AddPreviousLastNamePage
+import pages.sa1.AddPreviousLastNamePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object Sa1AddPreviousLastNameSummary  {
+object AddPreviousLastNameSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(Sa1AddPreviousLastNamePage).map {
+    answers.get(AddPreviousLastNamePage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "sa1.sa1AddPreviousLastName.checkYourAnswersLabel",
+          key     = "sa1.addPreviousLastName.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(answers.id, CheckMode).url)
-              .withVisuallyHiddenText(messages("sa1.sa1AddPreviousLastName.change.hidden"))
+            ActionItemViewModel("site.change", controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(answers.id, CheckMode).url)
+              .withVisuallyHiddenText(messages("sa1.addPreviousLastName.change.hidden"))
           )
         )
     }

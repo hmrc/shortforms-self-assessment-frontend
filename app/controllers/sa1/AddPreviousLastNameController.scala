@@ -17,28 +17,28 @@
 package controllers.sa1
 
 import controllers.actions.*
-import forms.sa1.Sa1AddPreviousLastNameFormProvider
+import forms.sa1.AddPreviousLastNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.sa1.Sa1AddPreviousLastNamePage
+import pages.sa1.AddPreviousLastNamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.sa1.Sa1AddPreviousLastNameView
+import views.html.sa1.AddPreviousLastNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class Sa1AddPreviousLastNameController @Inject()(
+class AddPreviousLastNameController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          sa1DataRequiredAction: SA1DataRequiredAction,
-                                         formProvider: Sa1AddPreviousLastNameFormProvider,
+                                         formProvider: AddPreviousLastNameFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: Sa1AddPreviousLastNameView
+                                         view: AddPreviousLastNameView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -46,7 +46,7 @@ class Sa1AddPreviousLastNameController @Inject()(
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) {
     implicit request =>
       
-      val preparedForm = request.userAnswers.get(Sa1AddPreviousLastNamePage) match {
+      val preparedForm = request.userAnswers.get(AddPreviousLastNamePage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -63,9 +63,9 @@ class Sa1AddPreviousLastNameController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1AddPreviousLastNamePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPreviousLastNamePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(Sa1AddPreviousLastNamePage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(AddPreviousLastNamePage, mode, updatedAnswers))
       )
   }
 }

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
-import pages.sa1.Sa1AddPreviousLastNamePage
+import pages.sa1.AddPreviousLastNamePage
 
 class NavigatorSpec extends SpecBase {
 
@@ -38,19 +38,19 @@ class NavigatorSpec extends SpecBase {
 
       // TODO DTR-8719: Redirect to Enter previous last name
       "go from add previous last name page to enter previous last name page" in {
-        val userAnswers = emptyUserAnswers.set(Sa1AddPreviousLastNamePage, true).success.value
-        navigator.nextPage(Sa1AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
+        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
       // TODO DTR-8691: Redirect to Enter DOB page
       "go from add previous last name page to date of birth page" in {
-        val userAnswers = emptyUserAnswers.set(Sa1AddPreviousLastNamePage, false).success.value
-        navigator.nextPage(Sa1AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
+        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
       "go from add previous last name page to Index" in {
         val userAnswers = emptyUserAnswers
-        navigator.nextPage(Sa1AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
       }
     }
 
@@ -64,7 +64,7 @@ class NavigatorSpec extends SpecBase {
 
       // TODO DTR-8743: Redirect to Check your answers page
       "must go from any sa1 page to checkYourAnswers" in {
-        navigator.nextPage(Sa1AddPreviousLastNamePage, CheckMode, emptyUserAnswers) mustBe controllers.sa1.routes.Sa1AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+        navigator.nextPage(AddPreviousLastNamePage, CheckMode, emptyUserAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
       }
     }
   }

@@ -17,15 +17,14 @@
 package forms.sa1
 
 import forms.behaviours.BooleanFieldBehaviours
-import forms.sa1.Sa1AddPreviousLastNameFormProvider
 import play.api.data.FormError
 
-class Sa1AddPreviousLastNameFormProviderSpec extends BooleanFieldBehaviours {
+class AddPreviousLastNameFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "sa1.sa1AddPreviousLastName.error.required"
+  val requiredKey = "sa1.addPreviousLastName.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new Sa1AddPreviousLastNameFormProvider()()
+  val form = new AddPreviousLastNameFormProvider()()
 
   ".value" - {
 

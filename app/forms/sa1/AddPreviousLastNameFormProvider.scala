@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages.sa1
+package forms.sa1
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object Sa1AddPreviousLastNamePage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class AddPreviousLastNameFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "sa1AddPreviousLastName"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("sa1.addPreviousLastName.error.required")
+    )
 }
