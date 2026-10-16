@@ -22,13 +22,12 @@ import config.FrontendAppConfig
 import controllers.routes
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import uk.gov.hmrc.auth.core._
+import play.api.test.Helpers.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthActionSpec extends SpecBase {
@@ -113,7 +112,7 @@ class AuthActionSpec extends SpecBase {
 
     "the user doesn't have sufficient confidence level" - {
 
-      "must redirect the user to the unauthorised page" in {
+      "must redirect the user to the iv uplift url" in {
 
         val application = applicationBuilder(userAnswers = None).build()
 
@@ -122,15 +121,14 @@ class AuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction = new AuthenticatedIdentifierAction(
-            new FakeFailingAuthConnector(new InsufficientConfidenceLevel),
+            new FakeFailingAuthConnector(InsufficientConfidenceLevel()),
             appConfig,
             bodyParsers
           )
           val controller = new Harness(authAction)
-          val result     = controller.onPageLoad()(FakeRequest())
-
+          val result     = controller.onPageLoad()(FakeRequest(GET, routes.IndexController.onPageLoad().url))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+          redirectLocation(result).value.contains("mdtp/uplift?origin=shortforms&confidenceLevel=250")
         }
       }
     }

@@ -16,8 +16,8 @@
 
 package base
 
-import controllers.actions._
-import models.UserAnswers
+import controllers.actions.*
+import models.{JourneyType, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -28,6 +28,8 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
+import scala.concurrent.ExecutionContext
+
 trait SpecBase
     extends AnyFreeSpec
     with Matchers
@@ -36,17 +38,21 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
-  val userAnswersId: String = "id"
+  implicit val ec: ExecutionContext = ExecutionContext.global
 
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  val userAnswersId: String = "test-journey-id"
+  val testUserId: String    = "test-user-id"
+
+  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
-        bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRequiredAction].toInstance(new FakeDataRequiredAction(userAnswers)),
+        bind[IdentifierAction].to[FakeIdentifierAction]
       )
 }

@@ -8,11 +8,9 @@ GET         /assets/*file                                controllers.Assets.vers
 
 GET         /language/:lang                              controllers.LanguageSwitchController.switchToLanguage(lang: String)
 
-GET         /refresh-session                             controllers.KeepAliveController.keepAlive()
-
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers/:journeyId                 controllers.CheckYourAnswersController.onPageLoad(journeyId: String)
+GET         /check-your-answers/:journeyId               controllers.CheckYourAnswersController.onPageLoad(journeyId: String)
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
@@ -23,6 +21,9 @@ GET         /unauthorised                                controllers.Unauthorise
 GET         /sa1                                         controllers.IndexController.startSA1()
 GET         /cwf1st                                      controllers.IndexController.startCWF1ST()
 GET         /cease-trading                               controllers.IndexController.startCeaseTrading()
+
+GET         /self-assessment/sa1/start                                   controllers.sa1.StartController.onPageLoad()
+POST        /self-assessment/sa1/start                                   controllers.sa1.StartController.onSubmit()
 
 GET         /self-assessment/sa1/name/:journeyId             controllers.sa1.Sa1NameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /self-assessment/sa1/name/:journeyId             controllers.sa1.Sa1NameController.onSubmit(journeyId: String, mode: Mode = NormalMode)

@@ -1,6 +1,23 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package repositories
 
 import config.FrontendAppConfig
+import models.JourneyType.SA1
 import models.UserAnswers
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
@@ -11,13 +28,13 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.MDC
-import uk.gov.hmrc.mdc.MdcExecutionContext
 import play.api.libs.json.Json
+import uk.gov.hmrc.mdc.MdcExecutionContext
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
-import java.time.{Clock, Instant, ZoneId}
 import java.time.temporal.ChronoUnit
-import scala.concurrent.{ExecutionContext, Future, ExecutionContextExecutorService}
+import java.time.{Clock, Instant, ZoneId}
+import scala.concurrent.{ExecutionContext, Future}
 
 class SessionRepositorySpec
   extends AnyFreeSpec
@@ -31,7 +48,16 @@ class SessionRepositorySpec
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
 
-  private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userId = "test-user-id"
+  private val anotherUserId = "another-user-id"
+
+  private val userAnswers = UserAnswers(
+    id = "test-journey-id",
+    userId = userId,
+    journeyType = SA1,
+    data = Json.obj("foo" -> "bar"),
+    lastUpdated = Instant.ofEpochSecond(1)
+  )
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1L
@@ -50,7 +76,7 @@ class SessionRepositorySpec
 
       val expectedResult = userAnswers copy (lastUpdated = instant)
 
-      val setResult     = repository.set(userAnswers).futureValue
+      repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
       updatedRecord mustEqual expectedResult
@@ -59,78 +85,163 @@ class SessionRepositorySpec
     mustPreserveMdc(repository.set(userAnswers))
   }
 
-  ".get" - {
+  ".get(journeyId, userId, journeyType)" - {
 
-    "when there is a record for this id" - {
-
-      "must update the lastUpdated time and get the record" in {
-
-        insert(userAnswers).futureValue
-
-        val result         = repository.get(userAnswers.id).futureValue
-        val expectedResult = userAnswers copy (lastUpdated = instant)
-
-        result.value mustEqual expectedResult
-      }
-    }
-
-    "when there is no record for this id" - {
-
-      "must return None" in {
-
-        repository.get("id that does not exist").futureValue must not be defined
-      }
-    }
-
-    mustPreserveMdc(repository.get(userAnswers.id))
-  }
-
-  ".clear" - {
-
-    "must remove a record" in {
-
+    "must update lastUpdated and return the matching record" in {
       insert(userAnswers).futureValue
 
-      val result = repository.clear(userAnswers.id).futureValue
+      val result =
+        repository.get(userAnswers.id, userId, SA1).futureValue
 
-      repository.get(userAnswers.id).futureValue must not be defined
+      result.value mustEqual userAnswers.copy(lastUpdated = instant)
     }
 
-    "must return true when there is no record to remove" in {
-      val result = repository.clear("id that does not exist").futureValue
-
-      result mustEqual true
+    "must return None when the record does not exist" in {
+      repository
+        .get("missing-journey-id", userId, SA1)
+        .futureValue must not be defined
     }
 
-    mustPreserveMdc(repository.clear(userAnswers.id))
+    "must return None when the journey belongs to another user" in {
+      insert(userAnswers).futureValue
+
+      repository
+        .get(userAnswers.id, anotherUserId, SA1)
+        .futureValue must not be defined
+    }
+
+    "must return None when the journey type does not match" in {
+      insert(userAnswers).futureValue
+
+      repository
+        .get(userAnswers.id, userId, models.JourneyType.CWF1ST)
+        .futureValue must not be defined
+    }
+
+    mustPreserveMdc(repository.get(userAnswers.id, userId, SA1))
   }
 
-  ".keepAlive" - {
+  ".clearByUserId" - {
 
-    "when there is a record for this id" - {
+    "must remove all journeys belonging to the user" in {
+      val secondAnswers = userAnswers.copy(
+        id = "second-journey-id",
+        data = Json.obj("another" -> "answer")
+      )
 
-      "must update its lastUpdated to `now` and return true" in {
+      val otherUsersAnswers = userAnswers.copy(
+        id = "other-users-journey-id",
+        userId = anotherUserId
+      )
 
-        insert(userAnswers).futureValue
+      insert(userAnswers).futureValue
+      insert(secondAnswers).futureValue
+      insert(otherUsersAnswers).futureValue
 
-        val result = repository.keepAlive(userAnswers.id).futureValue
+      repository.clearByUserId(userId).futureValue mustEqual true
 
-        val expectedUpdatedAnswers = userAnswers copy (lastUpdated = instant)
+      repository
+        .get(userAnswers.id, userId, SA1)
+        .futureValue must not be defined
 
-        val updatedAnswers = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
-        updatedAnswers mustEqual expectedUpdatedAnswers
-      }
+      repository
+        .get(secondAnswers.id, userId, SA1)
+        .futureValue must not be defined
+
+      repository
+        .get(otherUsersAnswers.id, anotherUserId, SA1)
+        .futureValue mustBe defined
     }
 
-    "when there is no record for this id" - {
-
-      "must return true" in {
-
-        repository.keepAlive("id that does not exist").futureValue mustEqual true
-      }
+    "must return true when no records are deleted" in {
+      repository.clearByUserId("missing-user-id").futureValue mustEqual true
     }
 
-    mustPreserveMdc(repository.keepAlive(userAnswers.id))
+    mustPreserveMdc(repository.clearByUserId(userId))
+  }
+
+  ".clear(journeyId, userId, journeyType)" - {
+
+    "must remove the journey belonging to the specified user" in {
+      insert(userAnswers).futureValue
+
+      val result =
+        repository.clear(userAnswers.id, userId, SA1).futureValue
+
+      result mustEqual true
+
+      repository
+        .get(userAnswers.id, userId, SA1)
+        .futureValue must not be defined
+    }
+
+    "must not remove a journey belonging to another user" in {
+      insert(userAnswers).futureValue
+
+      val result =
+        repository.clear(userAnswers.id, anotherUserId, SA1).futureValue
+
+      result mustEqual true
+
+      repository
+        .get(userAnswers.id, userId, SA1)
+        .futureValue mustBe defined
+    }
+
+    "must not remove a journey when the journey type does not match" in {
+      insert(userAnswers).futureValue
+
+      repository
+        .clear(userAnswers.id, userId, models.JourneyType.CWF1ST)
+        .futureValue mustEqual true
+
+      repository
+        .get(userAnswers.id, userId, SA1)
+        .futureValue mustBe defined
+    }
+
+    mustPreserveMdc(repository.clear(userAnswers.id, userId, SA1))
+  }
+
+  ".keepAlive(journeyId, userId, journeyType)" - {
+
+    "must update lastUpdated and return true when the record exists" in {
+      insert(userAnswers).futureValue
+
+      val result =
+        repository.keepAlive(userAnswers.id, userId, SA1).futureValue
+
+      result mustEqual true
+
+      val updatedAnswers =
+        find(Filters.equal("_id", userAnswers.id))
+          .futureValue
+          .headOption
+          .value
+
+      updatedAnswers mustEqual userAnswers.copy(lastUpdated = instant)
+    }
+
+    "must return true when the record does not exist" in {
+      repository
+        .keepAlive("missing-journey-id", userId, SA1)
+        .futureValue mustEqual true
+    }
+
+    "must not update a journey belonging to another user" in {
+      insert(userAnswers).futureValue
+
+      repository
+        .keepAlive(userAnswers.id, anotherUserId, SA1)
+        .futureValue mustEqual true
+
+      find(Filters.equal("_id", userAnswers.id))
+        .futureValue
+        .headOption
+        .value mustEqual userAnswers
+    }
+
+    mustPreserveMdc(repository.keepAlive(userAnswers.id, userId, SA1))
   }
 
   private def mustPreserveMdc[A](f: => Future[A])(implicit pos: Position): Unit =

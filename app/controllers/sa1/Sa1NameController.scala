@@ -36,8 +36,7 @@ class Sa1NameController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
+  sa1DataRequiredAction: SA1DataRequiredAction,
   formProvider: Sa1NameFormProvider,
   val controllerComponents: MessagesControllerComponents,
   view: Sa1NameView
@@ -47,8 +46,8 @@ class Sa1NameController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
 
       val preparedForm = request.userAnswers.get(Sa1NamePage) match {
         case None        => form
@@ -56,10 +55,10 @@ class Sa1NameController @Inject() (
       }
 
       Ok(view(preparedForm, mode, journeyId))
-  }
+    }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
