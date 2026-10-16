@@ -45,7 +45,7 @@ class NameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery when no existing data is found" in {
+    "must return NOT_FOUND when no existing data is found" in {
       val application =
         applicationBuilder(userAnswers = None).build()
 
@@ -57,9 +57,7 @@ class NameControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
+        status(result) mustEqual NOT_FOUND
       }
     }
   }
