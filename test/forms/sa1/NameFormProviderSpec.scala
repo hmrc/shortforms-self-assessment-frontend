@@ -17,41 +17,41 @@
 package forms.sa1
 
 import forms.FormSpec
-import models.sa1.Sa1Name
+import models.sa1.Name
 import play.api.data.FormError
 
-class Sa1NameFormProviderSpec extends FormSpec {
+class NameFormProviderSpec extends FormSpec {
 
-  private val form = new Sa1NameFormProvider()()
+  private val form = new NameFormProvider()()
 
   private val maxLength = 100
 
-  "Sa1NameFormProvider" - {
+  "NameFormProvider" - {
 
     "must bind valid first and last names" in {
       val result = form.bind(Map("firstName" -> "Jane", "lastName" -> "Doe"))
 
-      result.value.value mustEqual Sa1Name("Jane", "Doe")
+      result.value.value mustEqual Name("Jane", "Doe")
       result.errors mustBe empty
     }
 
     "must trim surrounding whitespace from both names" in {
       val result = form.bind(Map("firstName" -> "  Jane ", "lastName" -> " Doe  "))
 
-      result.value.value mustEqual Sa1Name("Jane", "Doe")
+      result.value.value mustEqual Name("Jane", "Doe")
     }
 
     "must accept letters, apostrophes, hyphens and spaces" in {
       val result = form.bind(Map("firstName" -> "Mary-Jane", "lastName" -> "O'Neil Smith"))
 
-      result.value.value mustEqual Sa1Name("Mary-Jane", "O'Neil Smith")
+      result.value.value mustEqual Name("Mary-Jane", "O'Neil Smith")
     }
 
     "must bind a name of exactly 100 characters" in {
       val name   = "a" * maxLength
       val result = form.bind(Map("firstName" -> name, "lastName" -> name))
 
-      result.value.value mustEqual Sa1Name(name, name)
+      result.value.value mustEqual Name(name, name)
     }
 
     "must not bind when the first name is missing" in {

@@ -17,55 +17,55 @@
 package controllers.sa1
 
 import controllers.actions.{IdentifierAction, SA1DataRequiredAction}
-import forms.sa1.Sa1NameFormProvider
-import models.NormalMode
-import navigation.Navigator
-import pages.sa1.Sa1NamePage
+import forms.sa1.NameFormProvider
+import models.{Mode, NormalMode}
+import pages.sa1.NamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.sa1.Sa1NameView
+import views.html.sa1.NameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class Sa1NameController @Inject() (
+class NameController @Inject() (
   override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
   identify: IdentifierAction,
   sa1DataRequiredAction: SA1DataRequiredAction,
-  formProvider: Sa1NameFormProvider,
+  formProvider: NameFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: Sa1NameView
+  view: NameView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(Sa1NamePage) match {
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+      val preparedForm = request.userAnswers.get(NamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, journeyId))
-  }
+      Ok(view(preparedForm, journeyId, mode))
+    }
 
-  def onSubmit(journeyId: String): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)).async {
-    implicit request =>
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(Sa1NamePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(Sa1NamePage, NormalMode, updatedAnswers))
+            } yield Redirect(
+              routes.NameController.onPageLoad(journeyId, NormalMode)
+            ) // TODO redirect to next page when implemented
         )
-  }
+    }
 }

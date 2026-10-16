@@ -17,28 +17,29 @@
 package views.sa1
 
 import base.SpecBase
-import forms.sa1.Sa1NameFormProvider
-import models.sa1.Sa1Name
+import forms.sa1.NameFormProvider
+import models.{CheckMode, NormalMode}
+import models.sa1.Name
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
-import views.html.sa1.Sa1NameView
+import views.html.sa1.NameView
 
-class Sa1NameViewSpec extends SpecBase {
+class NameViewSpec extends SpecBase {
 
   private val journeyId = "test-journey-id"
 
-  "Sa1Name view" - {
+  "NameView" - {
 
     "must render the title, caption and heading" in {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
         val msgs = messages(application)
-        val form = application.injector.instanceOf[Sa1NameFormProvider].apply()
+        val form = application.injector.instanceOf[NameFormProvider].apply()
 
-        val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.title() must include(msgs("sa1.name.title"))
         doc.select("span.govuk-caption-l").text() mustBe msgs("sa1.name.caption")
@@ -50,11 +51,11 @@ class Sa1NameViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
         val msgs = messages(application)
-        val form = application.injector.instanceOf[Sa1NameFormProvider].apply()
+        val form = application.injector.instanceOf[NameFormProvider].apply()
 
-        val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("input#firstName").size() mustBe 1
         doc.select("input#lastName").size() mustBe 1
@@ -67,14 +68,44 @@ class Sa1NameViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
         val msgs = messages(application)
-        val form = application.injector.instanceOf[Sa1NameFormProvider].apply().fill(Sa1Name("Jane", "Doe"))
+        val form = application.injector.instanceOf[NameFormProvider].apply().fill(Name("Jane", "Doe"))
 
-        val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("input#firstName").attr("value") mustBe "Jane"
         doc.select("input#lastName").attr("value") mustBe "Doe"
+      }
+    }
+
+    "must post to the normal route in normal mode" in {
+      val application = applicationBuilder().build()
+
+      running(application) {
+        val view = application.injector.instanceOf[NameView]
+        val msgs = messages(application)
+        val form = application.injector.instanceOf[NameFormProvider].apply()
+
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
+
+        doc.select("form").attr("action") mustBe
+          controllers.sa1.routes.NameController.onSubmit(journeyId, NormalMode).url
+      }
+    }
+
+    "must post to the change route in check mode" in {
+      val application = applicationBuilder().build()
+
+      running(application) {
+        val view = application.injector.instanceOf[NameView]
+        val msgs = messages(application)
+        val form = application.injector.instanceOf[NameFormProvider].apply()
+
+        val doc = Jsoup.parse(view(form, journeyId, CheckMode)(FakeRequest(), msgs).body)
+
+        doc.select("form").attr("action") mustBe
+          controllers.sa1.routes.NameController.onSubmit(journeyId, CheckMode).url
       }
     }
 
@@ -82,11 +113,11 @@ class Sa1NameViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
         val msgs = messages(application)
-        val form = application.injector.instanceOf[Sa1NameFormProvider].apply()
+        val form = application.injector.instanceOf[NameFormProvider].apply()
 
-        val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("a.govuk-back-link").attr("href") mustBe
           controllers.sa1.routes.StartController.onPageLoad().url
@@ -97,14 +128,14 @@ class Sa1NameViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
         val msgs = messages(application)
         val form = application.injector
-          .instanceOf[Sa1NameFormProvider]
+          .instanceOf[NameFormProvider]
           .apply()
           .bind(Map("firstName" -> "", "lastName" -> ""))
 
-        val doc = Jsoup.parse(view(form, journeyId)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select(".govuk-error-summary").size() mustBe 1
         doc.select(".govuk-error-message").text() must include(msgs("sa1.name.firstName.error.required"))

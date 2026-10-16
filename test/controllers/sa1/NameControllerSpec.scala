@@ -17,26 +17,26 @@
 package controllers.sa1
 
 import base.SpecBase
-import forms.sa1.Sa1NameFormProvider
-import models.UserAnswers
-import models.sa1.Sa1Name
+import forms.sa1.NameFormProvider
+import models.{CheckMode, NormalMode, UserAnswers}
+import models.sa1.Name
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
-import pages.sa1.Sa1NamePage
+import pages.sa1.NamePage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.sa1.Sa1NameView
+import views.html.sa1.NameView
 
 import scala.concurrent.Future
 
-class Sa1NameControllerSpec extends SpecBase {
+class NameControllerSpec extends SpecBase {
 
-  private val formProvider = new Sa1NameFormProvider()
+  private val formProvider = new NameFormProvider()
   private val validData    = Map("firstName" -> "Jane", "lastName" -> "Doe")
 
-  "Sa1Name Controller" - {
+  "NameController" - {
 
     "must return OK and the correct view for a GET" in {
       val application =
@@ -45,21 +45,21 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          routes.Sa1NameController.onPageLoad(userAnswersId).url
+          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
         )
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[Sa1NameView]
+        val view = application.injector.instanceOf[NameView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider(), userAnswersId)(request, messages(application)).toString
+          view(formProvider(), userAnswersId, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view with the saved name on a GET when the question has been answered" in {
-      val answers = emptyUserAnswers.set(Sa1NamePage, Sa1Name("Jane", "Doe")).success.value
+      val answers = emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(answers)).build()
@@ -67,7 +67,7 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          routes.Sa1NameController.onPageLoad(userAnswersId).url
+          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
         )
 
         val result = route(application, request).value
@@ -78,6 +78,27 @@ class Sa1NameControllerSpec extends SpecBase {
       }
     }
 
+    "must return OK and render the change form action for a GET in check mode" in {
+      val answers = emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(answers)).build()
+
+      running(application) {
+        val request = FakeRequest(
+          GET,
+          routes.NameController.onPageLoad(userAnswersId, CheckMode).url
+        )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          routes.NameController.onSubmit(userAnswersId, CheckMode).url
+        )
+      }
+    }
+
     "must redirect to Journey Recovery for a GET when no existing data is found" in {
       val application =
         applicationBuilder(userAnswers = None).build()
@@ -85,7 +106,7 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          routes.Sa1NameController.onPageLoad(userAnswersId).url
+          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
         )
 
         val result = route(application, request).value
@@ -108,7 +129,7 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          routes.Sa1NameController.onSubmit(userAnswersId).url
+          routes.NameController.onSubmit(userAnswersId, NormalMode).url
         ).withFormUrlEncodedBody(validData.toSeq*)
 
         val result = route(application, request).value
@@ -120,6 +141,30 @@ class Sa1NameControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to Check your answers when valid data is submitted in check mode" in {
+      val mockSessionRepository = mock(classOf[SessionRepository])
+      when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request = FakeRequest(
+          POST,
+          routes.NameController.onSubmit(userAnswersId, CheckMode).url
+        ).withFormUrlEncodedBody(validData.toSeq*)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.routes.CheckYourAnswersController.onPageLoad(userAnswersId).url
+        verify(mockSessionRepository).set(any[UserAnswers])
+      }
+    }
+
     "must return a Bad Request and show errors when invalid data is submitted" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -127,7 +172,7 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          routes.Sa1NameController.onSubmit(userAnswersId).url
+          routes.NameController.onSubmit(userAnswersId, NormalMode).url
         ).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "Doe")
 
         val result = route(application, request).value
@@ -144,7 +189,7 @@ class Sa1NameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          routes.Sa1NameController.onSubmit(userAnswersId).url
+          routes.NameController.onSubmit(userAnswersId, NormalMode).url
         ).withFormUrlEncodedBody(validData.toSeq*)
 
         val result = route(application, request).value

@@ -15,7 +15,8 @@
  *@
 
 @import viewmodels.InputWidth._
-@import models.sa1.Sa1Name
+@import models.sa1.Name
+@import models.Mode
 
 @this(
     layout: templates.Layout,
@@ -25,14 +26,14 @@
     govukButton: GovukButton
 )
 
-@(form: Form[Sa1Name], journeyId: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[Name], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
     pageTitle   = title(form, "sa1.name.title"),
     backLinkUrl = Some(controllers.sa1.routes.StartController.onPageLoad().url)
 ) {
 
-    @formHelper(action = controllers.sa1.routes.Sa1NameController.onSubmit(journeyId)) {
+    @formHelper(action = controllers.sa1.routes.NameController.onSubmit(journeyId, mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package models.sa1
+package pages.sa1
 
-import base.SpecBase
-import play.api.libs.json.Json
+import models.sa1.Name
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class Sa1NameSpec extends SpecBase {
+case object NamePage extends QuestionPage[Name] {
 
-  "Sa1Name" - {
+  override def path: JsPath = JsPath \ toString
 
-    "must round-trip through JSON" in {
-      val name = Sa1Name("Jane", "Doe")
-
-      Json.toJson(name).as[Sa1Name] mustEqual name
-    }
-
-    "must serialise with firstName and lastName keys" in {
-      Json.toJson(Sa1Name("Jane", "Doe")) mustEqual
-        Json.obj("firstName" -> "Jane", "lastName" -> "Doe")
-    }
-  }
+  override def toString: String = "name"
 }

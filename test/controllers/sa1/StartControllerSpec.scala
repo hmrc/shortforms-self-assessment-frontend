@@ -72,7 +72,7 @@ class StartControllerSpec extends SpecBase {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.sa1.routes.Sa1NameController.onPageLoad(userAnswersId).url
+            controllers.sa1.routes.NameController.onPageLoad(userAnswersId, models.NormalMode).url
         }
       }
 

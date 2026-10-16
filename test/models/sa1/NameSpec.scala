@@ -16,11 +16,22 @@
 
 package models.sa1
 
-import play.api.libs.json.{Json, OFormat}
+import base.SpecBase
+import play.api.libs.json.Json
 
-final case class Sa1Name(firstName: String, lastName: String)
+class NameSpec extends SpecBase {
 
-object Sa1Name {
+  "Name" - {
 
-  implicit val format: OFormat[Sa1Name] = Json.format[Sa1Name]
+    "must round-trip through JSON" in {
+      val name = Name("Jane", "Doe")
+
+      Json.toJson(name).as[Name] mustEqual name
+    }
+
+    "must serialise with firstName and lastName keys" in {
+      Json.toJson(Name("Jane", "Doe")) mustEqual
+        Json.obj("firstName" -> "Jane", "lastName" -> "Doe")
+    }
+  }
 }

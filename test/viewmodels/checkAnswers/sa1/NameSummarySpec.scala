@@ -17,31 +17,32 @@
 package viewmodels.checkAnswers.sa1
 
 import base.SpecBase
-import models.sa1.Sa1Name
+import models.CheckMode
+import models.sa1.Name
 import play.api.test.Helpers.running
 
-class Sa1NameSummarySpec extends SpecBase {
+class NameSummarySpec extends SpecBase {
 
-  "Sa1NameSummary.row" - {
+  "NameSummary.row" - {
 
     "must show the full name as the value" in {
       val application = applicationBuilder().build()
 
       running(application) {
-        val row = Sa1NameSummary.row(Sa1Name("Jane", "Doe"), userAnswersId)(messages(application))
+        val row = NameSummary.row(Name("Jane", "Doe"), userAnswersId, CheckMode)(messages(application))
 
         row.value.content.asHtml.toString must include("Jane Doe")
       }
     }
 
-    "must link to the name page for the journey" in {
+    "must link to the name page in check mode for the journey" in {
       val application = applicationBuilder().build()
 
       running(application) {
-        val row = Sa1NameSummary.row(Sa1Name("Jane", "Doe"), userAnswersId)(messages(application))
+        val row = NameSummary.row(Name("Jane", "Doe"), userAnswersId, CheckMode)(messages(application))
 
         row.actions.value.items.head.href mustEqual
-          controllers.sa1.routes.Sa1NameController.onPageLoad(userAnswersId).url
+          controllers.sa1.routes.NameController.onPageLoad(userAnswersId, CheckMode).url
       }
     }
 
@@ -49,7 +50,7 @@ class Sa1NameSummarySpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val row = Sa1NameSummary.row(Sa1Name("<b>Jane</b>", "Doe"), userAnswersId)(messages(application))
+        val row = NameSummary.row(Name("<b>Jane</b>", "Doe"), userAnswersId, CheckMode)(messages(application))
 
         row.value.content.asHtml.toString must include("&lt;b&gt;Jane&lt;/b&gt;")
       }

@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.actions.IdentifierAction
 import controllers.routes
 import models.JourneyType.SA1
+import models.NormalMode
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -49,7 +50,7 @@ class StartController @Inject() (
       startJourneyService
         .startJourney(request.userId, SA1)
         .map { journeyId =>
-          Redirect(controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
+          Redirect(controllers.sa1.routes.NameController.onPageLoad(journeyId, NormalMode).url)
         }
         .recover { case ex =>
           logger.error("Failed to start SA1 journey", ex)

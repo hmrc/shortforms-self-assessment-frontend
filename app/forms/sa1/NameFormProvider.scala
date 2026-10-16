@@ -17,23 +17,23 @@
 package forms.sa1
 
 import forms.mappings.Mappings
-import models.sa1.Sa1Name
+import models.sa1.Name
 import play.api.data.{Form, Mapping}
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
 
-class Sa1NameFormProvider @Inject() extends Mappings {
+class NameFormProvider @Inject() extends Mappings {
 
   private val nameMaxLength = 100
-  private val nameRegex     = "^[A-Za-z0-9'\\- ]+$"
+  private val nameRegex     = "^[A-Za-z-' ]+$"
 
-  def apply(): Form[Sa1Name] =
+  def apply(): Form[Name] =
     Form(
       mapping(
         "firstName" -> nameField("firstName"),
         "lastName"  -> nameField("lastName")
-      )((firstName, lastName) => Sa1Name(firstName, lastName))(name => Some((name.firstName, name.lastName)))
+      )((firstName, lastName) => Name(firstName, lastName))(name => Some((name.firstName, name.lastName)))
     )
 
   private def nameField(field: String): Mapping[String] =

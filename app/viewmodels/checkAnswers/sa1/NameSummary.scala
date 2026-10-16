@@ -16,20 +16,21 @@
 
 package viewmodels.checkAnswers.sa1
 
-import models.sa1.Sa1Name
+import models.Mode
+import models.sa1.Name
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.all.*
 
-object Sa1NameSummary {
+object NameSummary {
 
-  def row(name: Sa1Name, journeyId: String)(implicit messages: Messages): SummaryListRow =
+  def row(name: Name, journeyId: String, mode: Mode)(implicit messages: Messages): SummaryListRow =
     SummaryListRowViewModel(
       key = "sa1.name.checkYourAnswersLabel",
       value = ValueViewModel(Text(s"${name.firstName} ${name.lastName}")),
       actions = Seq(
-        ActionItemViewModel("site.change", controllers.sa1.routes.Sa1NameController.onPageLoad(journeyId).url)
+        ActionItemViewModel("site.change", controllers.sa1.routes.NameController.onPageLoad(journeyId, mode).url)
           .withVisuallyHiddenText(messages("sa1.name.change.hidden"))
       )
     )
