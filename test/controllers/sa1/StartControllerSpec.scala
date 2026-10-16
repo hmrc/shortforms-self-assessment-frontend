@@ -42,7 +42,7 @@ class StartControllerSpec extends SpecBase {
             FakeRequest(GET, controllers.sa1.routes.StartController.onPageLoad().url)
 
           val result = route(application, request).value
-          val view = application.injector.instanceOf[StartView]
+          val view   = application.injector.instanceOf[StartView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view()(request, messages(application)).toString
@@ -72,7 +72,7 @@ class StartControllerSpec extends SpecBase {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.sa1.routes.NameController.onPageLoad(userAnswersId).url
+            controllers.sa1.routes.NameController.onPageLoad(userAnswersId, models.NormalMode).url
         }
       }
 
@@ -102,4 +102,3 @@ class StartControllerSpec extends SpecBase {
     }
   }
 }
-

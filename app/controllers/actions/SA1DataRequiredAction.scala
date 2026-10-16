@@ -22,13 +22,12 @@ import models.requests.{DataRequest, IdentifierRequest}
 import play.api.mvc.ActionRefiner
 
 @Singleton
-class SA1DataRequiredAction @Inject()(
-                                       dataRequiredAction: DataRequiredAction
-                                     ) {
+class SA1DataRequiredAction @Inject() (
+  dataRequiredAction: DataRequiredAction
+) {
 
   def apply(
-             journeyId: String
-           ): ActionRefiner[IdentifierRequest, DataRequest] =
+    journeyId: String
+  ): ActionRefiner[IdentifierRequest, DataRequest] =
     dataRequiredAction(journeyId, JourneyType.SA1)
 }
-

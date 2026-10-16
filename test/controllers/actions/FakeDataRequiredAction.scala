@@ -25,26 +25,27 @@ import play.api.mvc.Results.Redirect
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeDataRequiredAction(
-                              userAnswers: Option[UserAnswers]
-                            )(implicit ec: ExecutionContext) extends DataRequiredAction {
+  userAnswers: Option[UserAnswers]
+)(implicit ec: ExecutionContext)
+    extends DataRequiredAction {
 
   override def apply(
-                      journeyId: String,
-                      journeyType: JourneyType
-                    ): ActionRefiner[IdentifierRequest, DataRequest] =
+    journeyId: String,
+    journeyType: JourneyType
+  ): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
       override protected def executionContext: ExecutionContext = ec
 
       override protected def refine[A](
-                                        request: IdentifierRequest[A]
-                                      ): Future[Either[Result, DataRequest[A]]] =
+        request: IdentifierRequest[A]
+      ): Future[Either[Result, DataRequest[A]]] =
         Future.successful {
           userAnswers match {
             case Some(answers)
-              if answers.id == journeyId &&
-                answers.userId == request.userId &&
-                answers.journeyType == journeyType =>
+                if answers.id == journeyId &&
+                  answers.userId == request.userId &&
+                  answers.journeyType == journeyType =>
               Right(
                 DataRequest(
                   request.request,

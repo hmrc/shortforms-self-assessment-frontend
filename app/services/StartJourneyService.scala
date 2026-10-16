@@ -26,15 +26,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StartJourneyService @Inject()(
-                                     sessionRepository: SessionRepository,
-                                     clock: Clock
-                                   )(implicit ec: ExecutionContext) {
+class StartJourneyService @Inject() (
+  sessionRepository: SessionRepository,
+  clock: Clock
+)(implicit ec: ExecutionContext) {
 
   def startJourney(
-                    userId: String,
-                    journeyType: JourneyType
-                  ): Future[String] = {
+    userId: String,
+    journeyType: JourneyType
+  ): Future[String] = {
 
     val journeyId = UUID.randomUUID().toString
 

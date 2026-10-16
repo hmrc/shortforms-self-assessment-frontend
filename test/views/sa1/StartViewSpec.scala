@@ -31,9 +31,9 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
         val doc = Jsoup.parse(view()(request, msgs).body)
 
@@ -49,13 +49,14 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
         val doc = Jsoup.parse(view()(request, msgs).body)
 
-        doc.select("p.govuk-body")
+        doc
+          .select("p.govuk-body")
           .eachText()
           .toArray
           .toSeq must contain(msgs("sa1.start.intro"))
@@ -66,11 +67,11 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
-        val doc = Jsoup.parse(view()(request, msgs).body)
+        val doc      = Jsoup.parse(view()(request, msgs).body)
         val headings = doc.select("h2").eachText().toArray.toSeq
 
         headings must contain(msgs("sa1.start.directors.heading"))
@@ -83,9 +84,9 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
         val doc = Jsoup.parse(view()(request, msgs).body)
 
@@ -112,9 +113,9 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
         val doc = Jsoup.parse(view()(request, msgs).body)
 
@@ -135,10 +136,10 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view      = application.injector.instanceOf[StartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request = FakeRequest()
-        val msgs = messages(application)
+        val request   = FakeRequest()
+        val msgs      = messages(application)
 
         val doc = Jsoup.parse(view()(request, msgs).body)
 
@@ -170,11 +171,11 @@ class StartViewSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val view = application.injector.instanceOf[StartView]
+        val view    = application.injector.instanceOf[StartView]
         val request = FakeRequest()
-        val msgs = messages(application)
+        val msgs    = messages(application)
 
-        val doc = Jsoup.parse(view()(request, msgs).body)
+        val doc  = Jsoup.parse(view()(request, msgs).body)
         val form = doc.select("form")
 
         form.size() mustBe 1
@@ -186,4 +187,3 @@ class StartViewSpec extends SpecBase {
     }
   }
 }
-
