@@ -29,3 +29,8 @@ GET         /sa1/name/:journeyId                         controllers.sa1.NameCon
 POST        /sa1/name/:journeyId                         controllers.sa1.NameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/name/change/:journeyId                  controllers.sa1.NameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/name/change/:journeyId                  controllers.sa1.NameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/previous-last-name/:journeyId           controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = NormalMode)
+POST        /sa1/previous-last-name/:journeyId           controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = NormalMode)
+GET         /sa1/previous-last-name/change/:journeyId    controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
+POST        /sa1/previous-last-name/change/:journeyId    controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)
