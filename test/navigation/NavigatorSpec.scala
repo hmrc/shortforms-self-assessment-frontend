@@ -37,18 +37,18 @@ class NavigatorSpec extends SpecBase {
       }
 
       // TODO DTR-8719: Redirect to Enter previous last name
-      "go from add previous last name page to enter previous last name page" in {
+      "must go from add previous last name page to enter previous last name page when answer is 'yes'" in {
         val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
         navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
       // TODO DTR-8691: Redirect to Enter DOB page
-      "go from add previous last name page to date of birth page" in {
+      "must go from add previous last name page to date of birth page when answer is 'no'" in {
         val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
         navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
-      "go from add previous last name page to Index" in {
+      "must go from add previous last name page to Index when answer is empty" in {
         val userAnswers = emptyUserAnswers
         navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
       }

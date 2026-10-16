@@ -21,7 +21,7 @@ import forms.sa1.AddPreviousLastNameFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.sa1.AddPreviousLastNamePage
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -31,7 +31,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddPreviousLastNameController @Inject()(
-                                         override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
