@@ -31,7 +31,7 @@ class NameViewSpec extends SpecBase {
 
   "NameView" - {
 
-    "must render the title, caption and heading" in {
+    "must render the title, heading" in {
       val application = applicationBuilder().build()
 
       running(application) {
@@ -42,7 +42,6 @@ class NameViewSpec extends SpecBase {
         val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.title() must include(msgs("sa1.name.title"))
-        doc.select("span.govuk-caption-l").text() mustBe msgs("sa1.name.caption")
         doc.select("h1").text() mustBe msgs("sa1.name.heading")
       }
     }
