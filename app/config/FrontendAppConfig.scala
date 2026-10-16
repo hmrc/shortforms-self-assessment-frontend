@@ -24,6 +24,8 @@ import play.api.mvc.RequestHeader
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
+  private def loadConfig(key: String) = configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
+
   val host: String    = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
@@ -53,5 +55,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val cacheTtl: Long = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
   lazy val highIncomeChildBenefitChargeUrl: String = configuration.get[String]("urls.highIncomeChildBenefitChargeUrl")
-  lazy val applyNinoUrl: String                    = configuration.get[String]("urls.applyNinoUrl")
+  lazy val applyNinoUrl: String = configuration.get[String]("urls.applyNinoUrl")
+  val identityVerificationFrontend: String = loadConfig("urls.iv-uplift-entry")
+  val agentEnrolments: Seq[String] =  configuration.get[Seq[String]]("agent-restricted.enrolments")
+  val requiredConfidenceLevel: Int = configuration.get[Int]("requiredConfidenceLevel")
+
 }
