@@ -136,7 +136,7 @@ class NameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.routes.IndexController.onPageLoad().url
+          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
         verify(mockSessionRepository).set(any[UserAnswers])
       }
     }
@@ -160,7 +160,7 @@ class NameControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.routes.CheckYourAnswersController.onPageLoad(userAnswersId).url
+          controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
         verify(mockSessionRepository).set(any[UserAnswers])
       }
     }
