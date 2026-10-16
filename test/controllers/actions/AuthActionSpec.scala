@@ -120,9 +120,13 @@ class AuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new AuthenticatedIdentifierAction(new FakeFailingAuthConnector( InsufficientConfidenceLevel()), appConfig, bodyParsers)
+          val authAction = new AuthenticatedIdentifierAction(
+            new FakeFailingAuthConnector(InsufficientConfidenceLevel()),
+            appConfig,
+            bodyParsers
+          )
           val controller = new Harness(authAction)
-          val result = controller.onPageLoad()(FakeRequest(GET, routes.IndexController.onPageLoad().url))
+          val result     = controller.onPageLoad()(FakeRequest(GET, routes.IndexController.onPageLoad().url))
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value.contains("mdtp/uplift?origin=shortforms&confidenceLevel=250")
         }
