@@ -42,7 +42,7 @@ class StartViewSpec
 
       doc.title() must include(msgs("sa1.start.title"))
       doc.select("span.govuk-caption-l").text() mustBe
-        msgs("site.registerForSa.caption")
+        msgs("site.sa.caption")
       doc.select("h1").size() mustBe 1
       doc.select("h1").text() mustBe msgs("sa1.start.title")
     }
