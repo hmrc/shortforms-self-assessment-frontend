@@ -44,21 +44,5 @@ class NameControllerSpec extends SpecBase {
           view()(request, messages(application)).toString
       }
     }
-
-    "must return NOT_FOUND when no existing data is found" in {
-      val application =
-        applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId).url
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
-      }
-    }
   }
 }

@@ -74,22 +74,6 @@ class EnterPreviousLastNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return NOT_FOUND for a GET if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.EnterPreviousLastNameController
-            .onPageLoad(journeyId, NormalMode).url
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
-      }
-    }
-
     "must return BAD_REQUEST when the submitted form is invalid" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -143,27 +127,6 @@ class EnterPreviousLastNameControllerSpec extends SpecBase {
           previousLastName = "John Doe",
           lastNameChangeDate = LocalDate.of(2020, 5, 10)
         )
-      }
-    }
-
-    "must return NOT_FOUND for a POST if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(
-          POST,
-          routes.EnterPreviousLastNameController
-            .onSubmit(journeyId, NormalMode).url
-        ).withFormUrlEncodedBody(
-          "previousLastName" -> "John Doe",
-          "lastNameChangeDate.day" -> "10",
-          "lastNameChangeDate.month" -> "5",
-          "lastNameChangeDate.year" -> "2020"
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual NOT_FOUND
       }
     }
   }

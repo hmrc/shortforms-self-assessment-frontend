@@ -18,8 +18,7 @@ package controllers.sa1
 
 import controllers.actions.*
 import forms.PreviousNameFormProvider
-import models.{Mode, NormalMode}
-import navigation.Navigator
+import models.Mode
 import pages.sa1.PreviousLastNamePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

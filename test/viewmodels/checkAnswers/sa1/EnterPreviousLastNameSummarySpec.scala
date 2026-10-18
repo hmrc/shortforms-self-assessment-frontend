@@ -19,13 +19,12 @@ package viewmodels.checkAnswers.sa1
 import base.SpecBase
 import models.{CheckMode, PreviousName}
 import pages.sa1.PreviousLastNamePage
-
 import java.time.LocalDate
+import play.api.test.Helpers.stubMessages
 
 class EnterPreviousLastNameSummarySpec extends SpecBase {
 
-  private val application = applicationBuilder().build()
-  private val msgs = messages(application)
+  private val msgs = stubMessages()
 
   "EnterPreviousLastNameSummary" - {
 
