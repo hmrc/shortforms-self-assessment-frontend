@@ -21,24 +21,18 @@ import forms.sa1.NameFormProvider
 import models.{CheckMode, NormalMode}
 import models.sa1.Name
 import org.jsoup.Jsoup
+import play.api.Application
+import play.api.data.Form
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 import views.html.sa1.NameView
 
 class NameViewSpec extends SpecBase {
 
-  private val journeyId = "test-journey-id"
-
   "NameView" - {
 
-    "must render the title, heading" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply()
-
+    "must render the title, heading" in new Setup {
+      running(app) {
         val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.title() must include(msgs("sa1.name.title"))
@@ -46,14 +40,8 @@ class NameViewSpec extends SpecBase {
       }
     }
 
-    "must render first and last name inputs" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply()
-
+    "must render first and last name inputs" in new Setup {
+      running(app) {
         val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("input#firstName").size() mustBe 1
@@ -63,29 +51,19 @@ class NameViewSpec extends SpecBase {
       }
     }
 
-    "must pre-fill the inputs from the supplied form" in {
-      val application = applicationBuilder().build()
+    "must pre-fill the inputs from the supplied form" in new Setup {
+      running(app) {
+        val filledForm = form.fill(Name("Jane", "Doe"))
 
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply().fill(Name("Jane", "Doe"))
-
-        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(filledForm, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("input#firstName").attr("value") mustBe "Jane"
         doc.select("input#lastName").attr("value") mustBe "Doe"
       }
     }
 
-    "must post to the normal route in normal mode" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply()
-
+    "must post to the normal route in normal mode" in new Setup {
+      running(app) {
         val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("form").attr("action") mustBe
@@ -93,14 +71,8 @@ class NameViewSpec extends SpecBase {
       }
     }
 
-    "must post to the change route in check mode" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply()
-
+    "must post to the change route in check mode" in new Setup {
+      running(app) {
         val doc = Jsoup.parse(view(form, journeyId, CheckMode)(FakeRequest(), msgs).body)
 
         doc.select("form").attr("action") mustBe
@@ -108,14 +80,8 @@ class NameViewSpec extends SpecBase {
       }
     }
 
-    "must link back to the SA1 start page" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector.instanceOf[NameFormProvider].apply()
-
+    "must link back to the SA1 start page" in new Setup {
+      running(app) {
         val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select("a.govuk-back-link").attr("href") mustBe
@@ -123,23 +89,25 @@ class NameViewSpec extends SpecBase {
       }
     }
 
-    "must show an error summary and error messages when the form has errors" in {
-      val application = applicationBuilder().build()
+    "must show an error summary and error messages when the form has errors" in new Setup {
+      running(app) {
+        val invalidForm = form.bind(Map("firstName" -> "", "lastName" -> ""))
 
-      running(application) {
-        val view = application.injector.instanceOf[NameView]
-        val msgs = messages(application)
-        val form = application.injector
-          .instanceOf[NameFormProvider]
-          .apply()
-          .bind(Map("firstName" -> "", "lastName" -> ""))
-
-        val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
+        val doc = Jsoup.parse(view(invalidForm, journeyId, NormalMode)(FakeRequest(), msgs).body)
 
         doc.select(".govuk-error-summary").size() mustBe 1
         doc.select(".govuk-error-message").text() must include(msgs("sa1.name.firstName.error.required"))
         doc.select(".govuk-error-message").text() must include(msgs("sa1.name.lastName.error.required"))
       }
     }
+  }
+
+  trait Setup {
+    val journeyId = "test-journey-id"
+
+    lazy val app: Application = applicationBuilder().build()
+    lazy val msgs             = messages(app)
+    lazy val view: NameView   = app.injector.instanceOf[NameView]
+    lazy val form: Form[Name] = app.injector.instanceOf[NameFormProvider].apply()
   }
 }

@@ -24,7 +24,7 @@ import models.*
 import pages.sa1.AddPreviousLastNamePage
 
 @Singleton
-class Navigator @Inject()() {
+class Navigator @Inject() () {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case AddPreviousLastNamePage =>
@@ -45,17 +45,17 @@ class Navigator @Inject()() {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-      case AddPreviousLastNamePage =>
-        ua =>
+    case AddPreviousLastNamePage =>
+      ua =>
         // TODO DTR-8743: Redirect to Check your answers page
-          controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
-      case _ => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
-    }
+        controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
+    case _                       => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+  }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
       normalRoutes(page)(userAnswers)
-    case CheckMode =>
+    case CheckMode  =>
       checkRouteMap(page)(userAnswers)
   }
 }

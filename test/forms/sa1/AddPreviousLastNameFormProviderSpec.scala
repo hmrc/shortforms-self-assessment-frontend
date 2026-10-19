@@ -22,7 +22,7 @@ import play.api.data.FormError
 class AddPreviousLastNameFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "sa1.addPreviousLastName.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new AddPreviousLastNameFormProvider()()
 

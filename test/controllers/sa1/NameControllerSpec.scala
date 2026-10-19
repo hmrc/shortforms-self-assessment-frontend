@@ -16,188 +16,149 @@
 
 package controllers.sa1
 
-import base.SpecBase
+import base.UnitSpec
+import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.NameFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
 import models.sa1.Name
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify, when}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.testkit.NoMaterializer
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{mock, never, verify, when}
 import pages.sa1.NamePage
-import play.api.inject.bind
+import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.NameView
 
 import scala.concurrent.Future
 
-class NameControllerSpec extends SpecBase {
+class NameControllerSpec extends UnitSpec {
 
-  private val formProvider = new NameFormProvider()
-  private val validData    = Map("firstName" -> "Jane", "lastName" -> "Doe")
+  implicit val mat: Materializer = NoMaterializer
 
   "NameController" - {
 
-    "must return OK and the correct view for a GET" in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must return OK and render the view with an empty form for a GET" in new Setup {
+      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
 
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
-        )
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[NameView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(formProvider(), userAnswersId, NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual stubContent
+      capturedForm().value mustBe None
     }
 
-    "must populate the view with the saved name on a GET when the question has been answered" in {
-      val answers = emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+    "must populate the view with the saved name on a GET when the question has been answered" in new SetupWithSavedName {
+      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
 
-      val application =
-        applicationBuilder(userAnswers = Some(answers)).build()
-
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include("value=\"Jane\"")
-        contentAsString(result) must include("value=\"Doe\"")
-      }
+      status(result) mustEqual OK
+      capturedForm().value mustBe Some(Name("Jane", "Doe"))
     }
 
-    "must return OK and render the change form action for a GET in check mode" in {
-      val answers = emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+    "must render the view in check mode for a GET in check mode" in new SetupWithSavedName {
+      val result = controller.onPageLoad(userAnswersId, CheckMode)(FakeRequest(GET, "/"))
 
-      val application =
-        applicationBuilder(userAnswers = Some(answers)).build()
-
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId, CheckMode).url
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          routes.NameController.onSubmit(userAnswersId, CheckMode).url
-        )
-      }
+      status(result) mustEqual OK
+      verify(stubView).apply(any[Form[Name]], eqTo(userAnswersId), eqTo[Mode](CheckMode))(
+        any[Request[?]],
+        any[Messages]
+      )
     }
 
-    "must redirect to Journey Recovery for a GET when no existing data is found" in {
-      val application =
-        applicationBuilder(userAnswers = None).build()
+    "must redirect to Journey Recovery for a GET when no existing data is found" in new SetupWithoutUserAnswers {
+      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
 
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
-    "must save the name and redirect to the next page when valid data is submitted" in {
-      val mockSessionRepository = mock(classOf[SessionRepository])
-      when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    "must save the name and redirect to the next page when valid data is submitted" in new Setup {
+      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
+      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
 
-      running(application) {
-        val request = FakeRequest(
-          POST,
-          routes.NameController.onSubmit(userAnswersId, NormalMode).url
-        ).withFormUrlEncodedBody(validData.toSeq*)
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual
+        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          routes.NameController.onPageLoad(userAnswersId, NormalMode).url
-        verify(mockSessionRepository).set(any[UserAnswers])
-      }
+      val savedAnswers: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(mockSessionRepository).set(savedAnswers.capture())
+      savedAnswers.getValue.get(NamePage) mustBe Some(Name("Jane", "Doe"))
     }
 
-    "must redirect to Check your answers when valid data is submitted in check mode" in {
-      val mockSessionRepository = mock(classOf[SessionRepository])
-      when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    "must save the name and redirect when valid data is submitted in check mode" in new Setup {
+      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
+      val result = controller.onSubmit(userAnswersId, CheckMode)(request)
 
-      running(application) {
-        val request = FakeRequest(
-          POST,
-          routes.NameController.onSubmit(userAnswersId, CheckMode).url
-        ).withFormUrlEncodedBody(validData.toSeq*)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
-        verify(mockSessionRepository).set(any[UserAnswers])
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual
+        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
+      verify(mockSessionRepository).set(any[UserAnswers])
     }
 
-    "must return a Bad Request and show errors when invalid data is submitted" in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must return a Bad Request and show errors when invalid data is submitted" in new Setup {
+      val request = FakeRequest(POST, "/").withFormUrlEncodedBody("firstName" -> "", "lastName" -> "Doe")
 
-      running(application) {
-        val request = FakeRequest(
-          POST,
-          routes.NameController.onSubmit(userAnswersId, NormalMode).url
-        ).withFormUrlEncodedBody("firstName" -> "", "lastName" -> "Doe")
+      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
 
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(messages(application)("sa1.name.firstName.error.required"))
-      }
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual stubContent
+      capturedForm().errors.map(_.message) mustEqual Seq("sa1.name.firstName.error.required")
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
 
-    "must redirect to Journey Recovery for a POST when no existing data is found" in {
-      val application =
-        applicationBuilder(userAnswers = None).build()
+    "must redirect to Journey Recovery for a POST when no existing data is found" in new SetupWithoutUserAnswers {
+      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
 
-      running(application) {
-        val request = FakeRequest(
-          POST,
-          routes.NameController.onSubmit(userAnswersId, NormalMode).url
-        ).withFormUrlEncodedBody(validData.toSeq*)
+      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
+  }
+
+  trait Setup {
+    def userAnswers: Option[UserAnswers] = Some(emptyUserAnswers)
+
+    val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
+    when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+
+    val stubContent: String = "Name view"
+    val stubView: NameView  = mock(classOf[NameView])
+    when(stubView.apply(any[Form[Name]], any[String], any[Mode])(any[Request[?]], any[Messages]))
+      .thenReturn(Html(stubContent))
+
+    val controller = new NameController(
+      stubMessagesApi(),
+      mockSessionRepository,
+      new FakeIdentifierAction(stubPlayBodyParsers(mat)),
+      new SA1DataRequiredAction(new FakeDataRequiredAction(userAnswers)),
+      new NameFormProvider(),
+      stubMessagesControllerComponents(),
+      stubView
+    )
+
+    val validData: Map[String, String] = Map("firstName" -> "Jane", "lastName" -> "Doe")
+
+    def capturedForm(): Form[Name] = {
+      val formCaptor: ArgumentCaptor[Form[Name]] = ArgumentCaptor.forClass(classOf[Form[Name]])
+      verify(stubView).apply(formCaptor.capture(), any[String], any[Mode])(any[Request[?]], any[Messages])
+      formCaptor.getValue
+    }
+  }
+
+  trait SetupWithSavedName extends Setup {
+    override def userAnswers: Option[UserAnswers] =
+      Some(emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value)
+  }
+
+  trait SetupWithoutUserAnswers extends Setup {
+    override def userAnswers: Option[UserAnswers] = None
   }
 }

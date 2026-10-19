@@ -17,33 +17,14 @@
 package base
 
 import controllers.actions.*
-import models.{JourneyType, UserAnswers}
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.{OptionValues, TryValues}
+import models.UserAnswers
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
-import scala.concurrent.ExecutionContext
-
-trait SpecBase
-    extends AnyFreeSpec
-    with Matchers
-    with TryValues
-    with OptionValues
-    with ScalaFutures
-    with IntegrationPatience {
-
-  implicit val ec: ExecutionContext = ExecutionContext.global
-
-  val userAnswersId: String = "test-journey-id"
-  val testUserId: String    = "test-user-id"
-
-  def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
+trait SpecBase extends UnitSpec {
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 

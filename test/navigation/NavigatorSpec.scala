@@ -39,13 +39,23 @@ class NavigatorSpec extends SpecBase {
       // TODO DTR-8719: Redirect to Enter previous last name
       "must go from add previous last name page to enter previous last name page when answer is 'yes'" in {
         val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
-        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        navigator.nextPage(
+          AddPreviousLastNamePage,
+          NormalMode,
+          userAnswers
+        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+          .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
       // TODO DTR-8691: Redirect to Enter DOB page
       "must go from add previous last name page to date of birth page when answer is 'no'" in {
         val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
-        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        navigator.nextPage(
+          AddPreviousLastNamePage,
+          NormalMode,
+          userAnswers
+        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+          .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
       }
 
       "must go from add previous last name page to Index when answer is empty" in {
@@ -59,12 +69,18 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe routes.CheckYourAnswersController.onPageLoad(journeyId = userAnswersId)
+        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe routes.CheckYourAnswersController
+          .onPageLoad(journeyId = userAnswersId)
       }
 
       // TODO DTR-8743: Redirect to Check your answers page
       "must go from any sa1 page to checkYourAnswers" in {
-        navigator.nextPage(AddPreviousLastNamePage, CheckMode, emptyUserAnswers) mustBe controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+        navigator.nextPage(
+          AddPreviousLastNamePage,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+          .onPageLoad(journeyId = userAnswersId, mode = CheckMode)
       }
     }
   }

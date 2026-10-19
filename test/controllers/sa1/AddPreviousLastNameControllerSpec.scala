@@ -39,9 +39,10 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new AddPreviousLastNameFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
-  lazy val addPreviousLastNameRoute = controllers.sa1.routes.AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
+  lazy val addPreviousLastNameRoute =
+    controllers.sa1.routes.AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
 
   "AddPreviousLastName Controller" - {
 
@@ -57,7 +58,10 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AddPreviousLastNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, "test-journey-id", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, "test-journey-id", NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -75,7 +79,10 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), "test-journey-id", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), "test-journey-id", NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -147,7 +154,10 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "test-journey-id", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "test-journey-id", NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 

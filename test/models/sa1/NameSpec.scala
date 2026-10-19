@@ -23,15 +23,17 @@ class NameSpec extends SpecBase {
 
   "Name" - {
 
-    "must round-trip through JSON" in {
-      val name = Name("Jane", "Doe")
-
+    "must round-trip through JSON" in new Setup {
       Json.toJson(name).as[Name] mustEqual name
     }
 
-    "must serialise with firstName and lastName keys" in {
-      Json.toJson(Name("Jane", "Doe")) mustEqual
+    "must serialise with firstName and lastName keys" in new Setup {
+      Json.toJson(name) mustEqual
         Json.obj("firstName" -> "Jane", "lastName" -> "Doe")
     }
+  }
+
+  trait Setup {
+    val name: Name = Name("Jane", "Doe")
   }
 }

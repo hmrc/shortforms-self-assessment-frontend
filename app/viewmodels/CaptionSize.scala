@@ -20,7 +20,7 @@ sealed trait CaptionSize
 
 object CaptionSize {
   case object ExtraLarge extends WithCssClass("govuk-caption-xl hmrc-caption-xl") with CaptionSize
-  case object Large      extends WithCssClass("govuk-caption-l hmrc-caption-l") with CaptionSize
-  case object Medium     extends WithCssClass("govuk-caption-m hmrc-caption-m") with CaptionSize
-  case object Small      extends WithCssClass("govuk-caption-s hmrc-caption-s") with CaptionSize
+  case object Large extends WithCssClass("govuk-caption-l hmrc-caption-l") with CaptionSize
+  case object Medium extends WithCssClass("govuk-caption-m hmrc-caption-m") with CaptionSize
+  case object Small extends WithCssClass("govuk-caption-s hmrc-caption-s") with CaptionSize
 }
