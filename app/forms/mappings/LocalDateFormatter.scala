@@ -43,8 +43,10 @@ private[mappings] class LocalDateFormatter(
     }
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
-
-    if(numericOnly && fieldKeys.exists(field => !data.getOrElse(s"$key.$field", "").trim.matches("[0-9]+"))) {
+    val dateData = if (numericOnly) data.view.mapValues(_.trim).toMap else data
+    val year = dateData.getOrElse(s"$key.year", "")
+    if (numericOnly && (fieldKeys.exists(field => !dateData.getOrElse(s"$key.$field", "").matches("[0-9]+")) || year.length != 4)
+    ) {
       Left(Seq(FormError(key, invalidKey, args)))
     } else {
       val int = intFormatter(

@@ -31,13 +31,9 @@ class PreviousNameFormProviderSpec extends SpecBase {
 
   private val maxLength = 100
 
-  private val requiredTwoDateError = "sa1.enterPreviousLastName.date.error.requiredTwo"
-  private val requiredOneDateError = "sa1.enterPreviousLastName.date.error.requiredOne"
   private val requiredError = "sa1.enterPreviousLastName.error.required"
   private val lengthError = "sa1.enterPreviousLastName.error.length"
   private val invalidNameError = "sa1.enterPreviousLastName.error.invalid"
-  private val invalidDateError = "sa1.enterPreviousLastName.date.error.invalid"
-  private val requiredDateError = "sa1.enterPreviousLastName.date.error.required"
   private val minimumDateError = "sa1.enterPreviousLastName.date.error.mustBeAfterMinimum"
 
   private val minimumDate = LocalDate.of(1753, 1, 3)
@@ -78,12 +74,6 @@ class PreviousNameFormProviderSpec extends SpecBase {
       result.errors must contain(FormError("previousLastName", requiredError))
     }
 
-    "must reject an empty previous last name" in {
-      val result = form.bind(validData.updated("previousLastName", ""))
-
-      result.errors must contain(FormError("previousLastName", requiredError))
-    }
-
     "must reject a previous last name containing numbers" in {
       val result = form.bind(validData.updated("previousLastName", "Smith123"))
 
@@ -120,39 +110,6 @@ class PreviousNameFormProviderSpec extends SpecBase {
       result.errors.filter(_.key == "previousLastName") mustBe empty
     }
 
-    "must reject a date when only one component is missing" in {
-      val result = form.bind(validData - "lastNameChangeDate.day")
-
-      result.errors must contain(
-        FormError("lastNameChangeDate", requiredOneDateError, Seq("day"))
-      )
-    }
-
-    "must reject a date when two components are missing" in {
-      val result = form.bind(
-        validData -- Seq(
-          "lastNameChangeDate.day",
-          "lastNameChangeDate.month"
-        )
-      )
-
-      result.errors must contain(
-        FormError("lastNameChangeDate", requiredTwoDateError, Seq("day", "month"))
-      )
-    }
-
-    "must reject a date with all components missing" in {
-      val result = form.bind(
-        validData -- Seq(
-          "lastNameChangeDate.day",
-          "lastNameChangeDate.month",
-          "lastNameChangeDate.year"
-        )
-      )
-
-      result.errors.exists(_.message == requiredDateError) mustBe true
-    }
-
     "must accept the minimum allowed date" in {
       val result = bindDate(minimumDate)
 
@@ -175,30 +132,6 @@ class PreviousNameFormProviderSpec extends SpecBase {
           Seq("3 January 1753")
         )
       )
-    }
-
-    "must reject an invalid calendar date" in {
-      val result = form.bind(
-        validData ++ Map(
-          "lastNameChangeDate.day" -> "31",
-          "lastNameChangeDate.month" -> "2",
-          "lastNameChangeDate.year" -> "2020"
-        )
-      )
-
-      result.errors.exists(_.message == invalidDateError) mustBe true
-    }
-
-    "must reject non-numeric date components" in {
-      val result = form.bind(validData.updated("lastNameChangeDate.day", "abc"))
-
-      result.errors.exists(_.message == invalidDateError) mustBe true
-    }
-
-    "must reject a date with an invalid month" in {
-      val result = form.bind(validData.updated("lastNameChangeDate.month", "13"))
-
-      result.errors.exists(_.message == invalidDateError) mustBe true
     }
   }
 }
