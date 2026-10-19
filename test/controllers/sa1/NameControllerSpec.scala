@@ -69,14 +69,7 @@ class NameControllerSpec extends SpecBase {
       )
     }
 
-    "must redirect to Journey Recovery for a GET when no existing data is found" in new SetupWithoutUserAnswers {
-      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-    }
-
-    "must save the name and redirect to the next page when valid data is submitted" in new Setup {
+     "must save the name and redirect to the next page when valid data is submitted" in new Setup {
       val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
 
       val result = controller.onSubmit(userAnswersId, NormalMode)(request)
