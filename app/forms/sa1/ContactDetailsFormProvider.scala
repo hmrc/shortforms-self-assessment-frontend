@@ -26,8 +26,8 @@ import javax.inject.Inject
 
 class ContactDetailsFormProvider @Inject() extends Mappings {
 
-  private val regexEmailUserNameRule = "^[a-zA-Z0-9]([a-zA-Z0-9]?-?[a-zA-Z0-9]+)*$"
-  private val regexEmailDomainValidationRule = "^([\\w-]+\\S?)*[\\w-]$"
+  private val regexEmailUserNameRule = "^([\\w-]+\\S?)*[\\w-]$"
+  private val regexEmailDomainValidationRule = "^[a-zA-Z0-9]([a-zA-Z0-9]?-?[a-zA-Z0-9]+)*$"
   private val regexPhoneNumber = "^[0-9-()+ ]{0,40}$"
   private val emailIdMaxLength = 129
   private val phoneNumberMaxLength = 40

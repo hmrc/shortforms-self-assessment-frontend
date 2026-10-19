@@ -101,7 +101,7 @@ class ContactDetailsFormProviderSpec extends StringFieldBehaviours {
 
       val phoneNumber = "+ 44 01111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
       val result = form.bind(Map("emailAddress" -> "name@example.com", "phoneNumber" -> phoneNumber))
-      result.errors must contain(FormError("phoneNumber", lengthKey, Seq(40)))
+      result.errors must contain(FormError("phoneNumber", lengthKey, Seq(maxLength)))
     }
 
     "must fail to bind with error message when phoneNumber has empty value" in {
