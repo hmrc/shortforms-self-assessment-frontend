@@ -16,118 +16,118 @@
 
 package controllers.sa1
 
-import base.SpecBase
+import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.PreviousNameFormProvider
-import models.{NormalMode, PreviousName, UserAnswers}
+import models.{JourneyType, NormalMode, PreviousName, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import org.scalatestplus.mockito.MockitoSugar.mock
+import org.scalatest.TryValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.PreviousLastNamePage
-import play.api.inject.bind
+import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.EnterPreviousLastNameView
 
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class EnterPreviousLastNameControllerSpec extends SpecBase {
-  private val journeyId = userAnswersId
+class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
+  private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  "Enter Previous Last Name Controller" - {
+  private val journeyId = "test-journey-id"
+  private val userId = "test-user-id"
+  private val previousName = PreviousName(previousLastName = "John Doe", lastNameChangeDate = LocalDate.of(2020, 5, 10))
+  private val mockViewContent = "test view"
+  private val validFormData = Map(
+    "previousLastName" -> "John Doe",
+    "lastNameChangeDate.day" -> "10",
+    "lastNameChangeDate.month" -> "5",
+    "lastNameChangeDate.year" -> "2020"
+  )
 
-    "must return OK and the correct view for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      val formProvider = application.injector.instanceOf[PreviousNameFormProvider]
-      val form = formProvider()(messages(application))
+  private class Setup {
+    protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+    protected val sessionRepository: SessionRepository = mock[SessionRepository]
+    protected val view: EnterPreviousLastNameView = mock[EnterPreviousLastNameView]
 
-      running(application) {
-        val request = FakeRequest(GET, routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url)
+    private val controllerComponents = stubMessagesControllerComponents()
+    private val identifierAction = new FakeIdentifierAction(controllerComponents.parsers)
+    private lazy val dataRequiredAction = new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers)))
+    private val formProvider = new PreviousNameFormProvider()
 
-        val result = route(application, request).value
+    protected lazy val controller = new EnterPreviousLastNameController(
+      controllerComponents,
+      identifierAction,
+      dataRequiredAction,
+      formProvider,
+      sessionRepository,
+      view
+    )
 
-        val view = application.injector.instanceOf[EnterPreviousLastNameView]
+    when(view.apply(any[Form[PreviousName]], any[String])(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
+  }
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, journeyId)(request, messages(application)).toString
-      }
+  "EnterPreviousLastNameController" should {
+
+    "return OK when loading the page" in new Setup {
+      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe mockViewContent
     }
 
-    "must pre-populate the form when previous name data exists" in {
-      val previousName = PreviousName(
-        previousLastName = "John Doe",
-        lastNameChangeDate = LocalDate.of(2020, 5, 10)
+    "pre-populate the form when previous name data exists" in new Setup {
+      override protected val userAnswers: UserAnswers =
+        UserAnswers(journeyId, userId, JourneyType.SA1).set(PreviousLastNamePage, previousName).success.value
+
+      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+      status(result) mustBe OK
+      val captor: ArgumentCaptor[Form[PreviousName]] = ArgumentCaptor.forClass(classOf[Form[PreviousName]])
+      verify(view).apply(captor.capture(), eqTo(journeyId))(any[Request[?]], any[Messages])
+
+      val populatedForm: Form[PreviousName] = captor.getValue
+      populatedForm("previousLastName").value mustBe Some("John Doe")
+      populatedForm("lastNameChangeDate.day").value mustBe Some("10")
+      populatedForm("lastNameChangeDate.month").value mustBe Some("5")
+      populatedForm("lastNameChangeDate.year").value mustBe Some("2020")
+    }
+
+    "return BAD_REQUEST when the submitted form is invalid" in new Setup {
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
+        "previousLastName" -> "",
+        "lastNameChangeDate.day" -> "10",
+        "lastNameChangeDate.month" -> "5",
+        "lastNameChangeDate.year" -> "2020"
       )
 
-      val userAnswers = emptyUserAnswers.set(PreviousLastNamePage, previousName).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val result = controller.onSubmit(journeyId, NormalMode)(request)
 
-      running(application) {
-        val request = FakeRequest(GET, routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustBe OK
-        contentAsString(result) must include("John Doe")
-      }
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe mockViewContent
     }
 
-    "must return BAD_REQUEST when the submitted form is invalid" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "save the submitted data and redirect when the form is valid" in new Setup {
+      when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-      running(application) {
-        val request = FakeRequest(POST, routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode).url)
-          .withFormUrlEncodedBody(
-            "previousLastName" -> "",
-            "lastNameChangeDate.day" -> "10",
-            "lastNameChangeDate.month" -> "5",
-            "lastNameChangeDate.year" -> "2020"
-          )
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq *)
 
-        val result = route(application, request).value
-        status(result) mustEqual BAD_REQUEST
-      }
-    }
+      val result = controller.onSubmit(journeyId, NormalMode)(request)
 
-    "must save the submitted data and redirect when the form is valid" in {
-      val mockSessionRepository = mock[SessionRepository]
-      val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url)
 
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request = FakeRequest(POST, routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode).url)
-          .withFormUrlEncodedBody(
-            "previousLastName" -> "John Doe",
-            "lastNameChangeDate.day" -> "10",
-            "lastNameChangeDate.month" -> "5",
-            "lastNameChangeDate.year" -> "2020"
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-         //TODO: Change it to DOB page once its ready
-          controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url
-
-        verify(mockSessionRepository).set(captor.capture())
-
-        val savedAnswers = captor.getValue
-        savedAnswers.get(PreviousLastNamePage).value mustBe PreviousName(
-          previousLastName = "John Doe",
-          lastNameChangeDate = LocalDate.of(2020, 5, 10)
-        )
-      }
+      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(captor.capture())
+      captor.getValue.get(PreviousLastNamePage) mustBe Some(previousName)
     }
   }
 }
