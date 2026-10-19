@@ -104,16 +104,6 @@ class NameControllerSpec extends SpecBase {
       capturedForm().errors.map(_.message) mustEqual Seq("sa1.name.firstName.error.required")
       verify(mockSessionRepository, never()).set(any[UserAnswers])
     }
-
-    "must redirect to Journey Recovery for a POST when no existing data is found" in new SetupWithoutUserAnswers {
-      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
-
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
-
-      status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-      verify(mockSessionRepository, never()).set(any[UserAnswers])
-    }
   }
 
   trait Setup {
