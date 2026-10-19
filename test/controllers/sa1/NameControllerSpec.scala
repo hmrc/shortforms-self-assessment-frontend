@@ -69,7 +69,7 @@ class NameControllerSpec extends SpecBase {
       )
     }
 
-     "must save the name and redirect to the next page when valid data is submitted" in new Setup {
+    "must save the name and redirect to the next page when valid data is submitted" in new Setup {
       val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
 
       val result = controller.onSubmit(userAnswersId, NormalMode)(request)
