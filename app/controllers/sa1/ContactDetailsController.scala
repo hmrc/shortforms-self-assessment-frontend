@@ -20,10 +20,9 @@ import controllers.actions.*
 import forms.sa1.ContactDetailsFormProvider
 import models.Mode
 import models.sa1.ContactDetails
-import navigation.Navigator
 import pages.sa1.ContactDetailsPage
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -33,13 +32,11 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsController @Inject()(
-                                      override val messagesApi: MessagesApi,
+                                      override val controllerComponents: MessagesControllerComponents,
                                       sessionRepository: SessionRepository,
-                                      navigator: Navigator,
                                       identify: IdentifierAction,
                                       sa1DataRequiredAction: SA1DataRequiredAction,
                                       formProvider: ContactDetailsFormProvider,
-                                      val controllerComponents: MessagesControllerComponents,
                                       view: ContactDetailsView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 

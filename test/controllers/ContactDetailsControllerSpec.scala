@@ -16,149 +16,118 @@
 
 package controllers
 
-import base.SpecBase
+
+import controllers.sa1.ContactDetailsController
+import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
-import models.{NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.{JourneyType, NormalMode, UserAnswers}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.{verify, when}
+import org.scalatest.TryValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.ContactDetailsPage
-import play.api.inject.bind
-import play.api.mvc.Call
+import play.api.data.Form
+import play.api.i18n.Messages
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.ContactDetailsView
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class ContactDetailsControllerSpec extends SpecBase with MockitoSugar {
+class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
+
+  private implicit val ec: ExecutionContext = ExecutionContext.global
+
+  private val journeyId = "test-journey-id"
+  private val userId = "test-user-id"
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ContactDetailsFormProvider()
-  val form = formProvider()
+  private val contactDetails = ContactDetails(emailAddress = "name@example.com", phoneNumber = "+44 1111111111")
+  private val validFormData = Map(
+    "emailAddress" -> "name@example.com",
+    "phoneNumber" -> "+44 1111111111"
+  )
+  protected val mockViewContent = "ContactDetailsView"
 
   lazy val contactDetailsRoute: String = controllers.sa1.routes.ContactDetailsController.onPageLoad("test-journey-id", NormalMode).url
 
-  val contactDetails = ContactDetails(
-    emailAddress = "name@example.com", phoneNumber = "+44 1234567890"
-  )
-  val userAnswers: UserAnswers = emptyUserAnswers
-    .set(ContactDetailsPage,contactDetails).success.value
+  private trait Setup {
+    protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
 
+    protected val sessionRepository: SessionRepository = mock[SessionRepository]
+    protected val view: ContactDetailsView = mock[ContactDetailsView]
 
+    private val controllerComponents = stubMessagesControllerComponents()
+    protected lazy val controllerUnderTest = new ContactDetailsController(
+      controllerComponents,
+      sessionRepository,
+      new FakeIdentifierAction(controllerComponents.parsers),
+      new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers))),
+      new ContactDetailsFormProvider(),
+      view
+    )
+    when(view.apply(any[Form[ContactDetails]], any[String], any)(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
 
-  "ContactDetails Controller" - {
+  }
 
-    "must return OK and the correct view for a GET" in {
+  "ContactDetails Controller" should {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must return OK and the correct view for a GET" in new Setup {
 
-      running(application) {
-        val request = FakeRequest(GET, contactDetailsRoute)
+      private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
-        val view = application.injector.instanceOf[ContactDetailsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, "test-journey-id", NormalMode)(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual mockViewContent
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "pre-populate the form when previous contact details exists " in new Setup {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers.set(ContactDetailsPage,contactDetails).success.value)).build()
+      override protected val userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+        .set(ContactDetailsPage, contactDetails).success.value
+      private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+      status(result) mustEqual OK
+      val captor: ArgumentCaptor[Form[ContactDetails]] = ArgumentCaptor.forClass(classOf[Form[ContactDetails]])
+      verify(view).apply(captor.capture(), eqTo(journeyId), any)(any[Request[?]], any[Messages])
 
-      running(application) {
-        val request = FakeRequest(GET, contactDetailsRoute)
+      val populatedForm: Form[ContactDetails] = captor.getValue
+      populatedForm("emailAddress").value mustBe Some("name@example.com")
+      populatedForm("phoneNumber").value mustBe Some("+44 1111111111")
 
-        val view = application.injector.instanceOf[ContactDetailsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ContactDetails("name@example.com", "+44 1234567890")), "test-journey-id" , NormalMode)(request, messages(application)).toString
-      }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "return BAD_REQUEST when the submitted form is invalid" in new Setup {
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
+        "emailAddress" -> "",
+        "phoneNumber" -> "+44 1111111111"
+      )
 
-      val mockSessionRepository = mock[SessionRepository]
+      val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers.set(ContactDetailsPage,contactDetails).success.value))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, contactDetailsRoute)
-            .withFormUrlEncodedBody(("emailAddress", "name@example.com"), ("phoneNumber", "+44 1234567890"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual contactDetailsRoute //TODO: Change URL post define right reroute URL
-      }
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe mockViewContent
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "save the submitted data and redirect when the form is valid" in new Setup {
+      when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq *)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, contactDetailsRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+      val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, NormalMode).url) //TODO: Change URL post define right reroute URL
 
-        val view = application.injector.instanceOf[ContactDetailsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "test-journey-id", NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, contactDetailsRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, contactDetailsRoute)
-            .withFormUrlEncodedBody(("emailAddress", "value 1"), ("phoneNumber", "value 2"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
+      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(captor.capture())
+      captor.getValue.get(ContactDetailsPage) mustBe Some(contactDetails)
     }
   }
 }

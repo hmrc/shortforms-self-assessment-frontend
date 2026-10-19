@@ -47,13 +47,18 @@
             )
             .withHint(HintViewModel(messages("sa1.contactDetails.emailAddress.hint")))
             .withWidth(Fixed20)
+            .withAutocomplete("off")
+            .withInputType("email")
         )
         @govukInput(
             InputViewModel(
                 field = form("phoneNumber"),
                 label = LabelViewModel(messages("sa1.contactDetails.phoneNumber.subHeading")).asPageSubHeading()
             )
-            .withHint(HintViewModel(messages("sa1.contactDetails.phoneNumber.hint"))).withWidth(Fixed20)
+            .withHint(HintViewModel(messages("sa1.contactDetails.phoneNumber.hint")))
+            .withWidth(Fixed20)
+            .withAutocomplete("off")
+            .withInputType("tel")
         )
 
         @govukButton(
