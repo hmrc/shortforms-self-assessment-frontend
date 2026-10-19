@@ -16,7 +16,7 @@
 
 package controllers.sa1
 
-import base.UnitSpec
+import base.SpecBase
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.NameFormProvider
 import models.sa1.Name
@@ -31,14 +31,14 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.NameView
 
 import scala.concurrent.Future
 
-class NameControllerSpec extends UnitSpec {
+class NameControllerSpec extends SpecBase {
 
   implicit val mat: Materializer = NoMaterializer
 
@@ -53,7 +53,7 @@ class NameControllerSpec extends UnitSpec {
     }
 
     "must populate the view with the saved name on a GET when the question has been answered" in new SetupWithSavedName {
-      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
+      val result = controller.onPageLoad(userAnswersId, NormalMode)  (FakeRequest(GET, "/"))
 
       status(result) mustEqual OK
       capturedForm().value mustBe Some(Name("Jane", "Doe"))
