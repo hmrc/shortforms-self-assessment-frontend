@@ -25,7 +25,6 @@ import views.html.sa1.NameView
 import javax.inject.Inject
 
 class NameController @Inject()(
-                                override val messagesApi: MessagesApi,
                                 identify: IdentifierAction,
                                 sa1DataRequiredAction: SA1DataRequiredAction,
                                 val controllerComponents: MessagesControllerComponents,

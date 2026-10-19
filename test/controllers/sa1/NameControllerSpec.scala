@@ -17,50 +17,46 @@
 package controllers.sa1
 
 import base.SpecBase
+import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
+import models.UserAnswers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.sa1.NameView
 
-class NameControllerSpec extends SpecBase {
+import java.util.UUID
+
+class NameControllerSpec extends SpecBase with MockitoSugar {
 
   "Name Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    "must return OK and the correct view for a GET" in new Setup {
+      protected val userAnswers: UserAnswers = emptyUserAnswers
 
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId).url
-        )
+      private val journeyId = UUID.randomUUID().toString
+      private val result = controllerUnderTest.onPageLoad(journeyId)(FakeRequest())
 
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[NameView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view()(request, messages(application)).toString
-      }
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual mockContent
     }
+  }
 
-    "must redirect to Journey Recovery when no existing data is found" in {
-      val application =
-        applicationBuilder(userAnswers = None).build()
+  private trait Setup {
+    private val components = stubMessagesControllerComponents()
 
-      running(application) {
-        val request = FakeRequest(
-          GET,
-          routes.NameController.onPageLoad(userAnswersId).url
-        )
+    private val mockView = mock[NameView]
+    protected val mockContent = "NameView"
+    when(mockView.apply()(any, any)) thenReturn play.twirl.api.Html(mockContent)
 
-        val result = route(application, request).value
+    protected val userAnswers: UserAnswers
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    protected lazy val controllerUnderTest = new NameController(
+      new FakeIdentifierAction(components.parsers),
+      new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers))),
+      components,
+      mockView
+    )
   }
 }

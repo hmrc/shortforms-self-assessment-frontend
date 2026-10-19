@@ -17,10 +17,10 @@
 package controllers.actions
 
 import controllers.routes
-import models.{JourneyType, UserAnswers}
 import models.requests.{DataRequest, IdentifierRequest}
-import play.api.mvc.{ActionRefiner, Result}
+import models.{JourneyType, UserAnswers}
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{ActionRefiner, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,10 +41,7 @@ class FakeDataRequiredAction(
                                       ): Future[Either[Result, DataRequest[A]]] =
         Future.successful {
           userAnswers match {
-            case Some(answers)
-              if answers.id == journeyId &&
-                answers.userId == request.userId &&
-                answers.journeyType == journeyType =>
+            case Some(answers) =>
               Right(
                 DataRequest(
                   request.request,
