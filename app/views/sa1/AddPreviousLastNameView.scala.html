@@ -27,7 +27,7 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("sa1.addPreviousLastName.title"), section = Some(messages("site.registerForSa.caption")))) {
+@layout(pageTitle = title(form, messages("sa1.addPreviousLastName.title"))) {
 
     @formHelper(action = controllers.sa1.routes.AddPreviousLastNameController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 
