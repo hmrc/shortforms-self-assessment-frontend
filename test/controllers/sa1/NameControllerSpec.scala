@@ -53,7 +53,7 @@ class NameControllerSpec extends SpecBase {
     }
 
     "must populate the view with the saved name on a GET when the question has been answered" in new SetupWithSavedName {
-      val result = controller.onPageLoad(userAnswersId, NormalMode)  (FakeRequest(GET, "/"))
+      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
 
       status(result) mustEqual OK
       capturedForm().value mustBe Some(Name("Jane", "Doe"))
