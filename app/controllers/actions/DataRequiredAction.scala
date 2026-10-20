@@ -28,24 +28,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DataRequiredActionImpl @Inject()(
-                                        sessionRepository: SessionRepository,
-                                        errorTemplate: ErrorTemplate,
-                                        messagesApi: MessagesApi
-                                      )(implicit ec: ExecutionContext)
-  extends DataRequiredAction {
+class DataRequiredActionImpl @Inject() (
+  sessionRepository: SessionRepository,
+  errorTemplate: ErrorTemplate,
+  messagesApi: MessagesApi
+)(implicit ec: ExecutionContext)
+    extends DataRequiredAction {
 
   override def apply(
-                      journeyId: String,
-                      journeyType: JourneyType
-                    ): ActionRefiner[IdentifierRequest, DataRequest] =
+    journeyId: String,
+    journeyType: JourneyType
+  ): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
       override protected def executionContext: ExecutionContext = ec
 
       override protected def refine[A](
-                                        request: IdentifierRequest[A]
-                                      ): Future[Either[Result, DataRequest[A]]] =
+        request: IdentifierRequest[A]
+      ): Future[Either[Result, DataRequest[A]]] =
         sessionRepository
           .get(journeyId, request.userId, journeyType)
           .map {
@@ -62,9 +62,8 @@ class DataRequiredActionImpl @Inject()(
               implicit val messages: Messages = messagesApi.preferred(request.request)
               Left(
                 NotFound(
-                  errorTemplate("notFound.title",
-                    "notFound.heading",
-                    "notFound.message")(request.request, messages))
+                  errorTemplate("notFound.title", "notFound.heading", "notFound.message")(request.request, messages)
+                )
               )
           }
     }
@@ -73,7 +72,7 @@ class DataRequiredActionImpl @Inject()(
 trait DataRequiredAction {
 
   def apply(
-             journeyId: String,
-             journeyType: JourneyType
-           ): ActionRefiner[IdentifierRequest, DataRequest]
+    journeyId: String,
+    journeyType: JourneyType
+  ): ActionRefiner[IdentifierRequest, DataRequest]
 }

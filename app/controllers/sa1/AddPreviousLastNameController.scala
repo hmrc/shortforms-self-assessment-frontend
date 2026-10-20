@@ -30,41 +30,42 @@ import views.html.sa1.AddPreviousLastNameView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddPreviousLastNameController @Inject()(
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,
-                                         identify: IdentifierAction,
-                                         sa1DataRequiredAction: SA1DataRequiredAction,
-                                         formProvider: AddPreviousLastNameFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: AddPreviousLastNameView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class AddPreviousLastNameController @Inject() (
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  sa1DataRequiredAction: SA1DataRequiredAction,
+  formProvider: AddPreviousLastNameFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AddPreviousLastNameView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
+    with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) {
-    implicit request =>
-      
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+
       val preparedForm = request.userAnswers.get(AddPreviousLastNamePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, journeyId, mode))
-  }
+    }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPreviousLastNamePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AddPreviousLastNamePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddPreviousLastNamePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AddPreviousLastNamePage, mode, updatedAnswers))
+        )
+    }
 }

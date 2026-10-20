@@ -32,37 +32,37 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat = UserAnswers.format,
-    indexes = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
-      ),
-      IndexModel(
-        Indexes.ascending("userId"),
-        IndexOptions().name("userIdIdx")
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock
+)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        ),
+        IndexModel(
+          Indexes.ascending("userId"),
+          IndexOptions().name("userIdIdx")
+        )
       )
-    )
-  ) {
+    ) {
 
   implicit val instantFormat: Format[Instant] =
     MongoJavatimeFormats.instantFormat
 
   private def byJourneyUserAndType(
-                                    journeyId: String,
-                                    userId: String,
-                                    journeyType: JourneyType
-                                  ): Bson =
+    journeyId: String,
+    userId: String,
+    journeyType: JourneyType
+  ): Bson =
     Filters.and(
       Filters.equal("_id", journeyId),
       Filters.equal("userId", userId),
@@ -70,10 +70,10 @@ class SessionRepository @Inject()(
     )
 
   def keepAlive(
-                 journeyId: String,
-                 userId: String,
-                 journeyType: JourneyType
-               ): Future[Boolean] =
+    journeyId: String,
+    userId: String,
+    journeyType: JourneyType
+  ): Future[Boolean] =
     collection
       .updateOne(
         filter = byJourneyUserAndType(journeyId, userId, journeyType),
@@ -82,22 +82,18 @@ class SessionRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
-  def get(journeyId: String,
-          userId: String,
-          journeyType: JourneyType): Future[Option[UserAnswers]] = {
-    keepAlive(journeyId, userId, journeyType).flatMap {
-      _ =>
-        Mdc.preservingMdc {
-          collection
-            .find(byJourneyUserAndType(journeyId, userId, journeyType))
-            .headOption()
-        }
+  def get(journeyId: String, userId: String, journeyType: JourneyType): Future[Option[UserAnswers]] =
+    keepAlive(journeyId, userId, journeyType).flatMap { _ =>
+      Mdc.preservingMdc {
+        collection
+          .find(byJourneyUserAndType(journeyId, userId, journeyType))
+          .headOption()
+      }
     }
-  }
 
   def set(answers: UserAnswers): Future[Boolean] = {
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
-    val filter =
+    val filter         =
       byJourneyUserAndType(
         updatedAnswers.id,
         updatedAnswers.userId,
@@ -114,10 +110,10 @@ class SessionRepository @Inject()(
   }
 
   def clear(
-             journeyId: String,
-             userId: String,
-             journeyType: JourneyType
-           ): Future[Boolean] =
+    journeyId: String,
+    userId: String,
+    journeyType: JourneyType
+  ): Future[Boolean] =
     collection
       .deleteOne(byJourneyUserAndType(journeyId, userId, journeyType))
       .toFuture()

@@ -86,6 +86,21 @@ sa1.addPreviousLastName.checkYourAnswersLabel = Do you have a previous last name
 sa1.addPreviousLastName.error.required = Select yes if you have a previous last name
 sa1.addPreviousLastName.change.hidden = Do you have a previous last name?
 
+sa1.name.title = What is your name?
+sa1.name.heading = What is your name?
+sa1.name.caption = Registering for Self Assessment
+sa1.name.firstName = First name
+sa1.name.lastName = Last name
+sa1.name.firstName.error.required = Enter your first name
+sa1.name.firstName.error.length = Your first name must be 100 characters or less
+sa1.name.firstName.error.invalid = Your first name must only include letters, apostrophes, hyphens or spaces
+sa1.name.lastName.error.required = Enter your last name
+sa1.name.lastName.error.length = Your last name must be 100 characters or less
+sa1.name.lastName.error.invalid = Your last name must only include letters, apostrophes, hyphens or spaces
+sa1.name.checkYourAnswersLabel = Name
+sa1.name.change.hidden = name
+
+
 sa1.enterPreviousLastName.title = Your previous last name
 sa1.enterPreviousLastName.heading = Your previous last name
 sa1.enterPreviousLastName.label = What was your previous last name?

@@ -31,7 +31,7 @@ import play.api.test.FakeRequest
 import scala.concurrent.ExecutionContext
 
 trait SpecBase
-  extends AnyFreeSpec
+    extends AnyFreeSpec
     with Matchers
     with TryValues
     with OptionValues
@@ -41,15 +41,15 @@ trait SpecBase
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   val userAnswersId: String = "test-journey-id"
-  val testUserId: String = "test-user-id"
+  val testUserId: String    = "test-user-id"
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
-                                    userAnswers: Option[UserAnswers] = None
-                                  ): GuiceApplicationBuilder =
+    userAnswers: Option[UserAnswers] = None
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].toInstance(new FakeDataRequiredAction(userAnswers)),

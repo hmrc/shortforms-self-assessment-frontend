@@ -23,21 +23,23 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddPreviousLastNameSummary  {
+object AddPreviousLastNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AddPreviousLastNamePage).map {
-      answer =>
+    answers.get(AddPreviousLastNamePage).map { answer =>
 
-        val value = if (answer) "site.yes" else "site.no"
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "sa1.addPreviousLastName.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(answers.id, CheckMode).url)
-              .withVisuallyHiddenText(messages("sa1.addPreviousLastName.change.hidden"))
+      SummaryListRowViewModel(
+        key = "sa1.addPreviousLastName.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(answers.id, CheckMode).url
           )
+            .withVisuallyHiddenText(messages("sa1.addPreviousLastName.change.hidden"))
         )
+      )
     }
 }

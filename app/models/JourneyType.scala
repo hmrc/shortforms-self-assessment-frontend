@@ -38,5 +38,3 @@ object JourneyType {
     Writes(journeyType => JsString(journeyType.toString))
   )
 }
-
-
