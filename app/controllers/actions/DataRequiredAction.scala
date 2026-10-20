@@ -16,19 +16,16 @@
 
 package controllers.actions
 
-import controllers.routes
-import javax.inject.{Inject, Singleton}
 import models.JourneyType
 import models.requests.{DataRequest, IdentifierRequest}
-import play.api.mvc.{ActionRefiner, Result}
-import play.api.mvc.Results.Redirect
-import repositories.SessionRepository
-
-import scala.concurrent.{ExecutionContext, Future}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Results.NotFound
+import play.api.mvc.{ActionRefiner, Result}
+import repositories.SessionRepository
 import views.html.ErrorTemplate
-import play.api.i18n.Messages
-import play.api.i18n.MessagesApi
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DataRequiredActionImpl @Inject() (

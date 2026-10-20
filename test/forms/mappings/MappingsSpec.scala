@@ -16,11 +16,15 @@
 
 package forms.mappings
 
+import models.Enumerable
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.data.{Form, FormError}
-import models.Enumerable
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
+
+import java.time.LocalDate
 
 object MappingsSpec {
 
@@ -39,7 +43,7 @@ object MappingsSpec {
 
 class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mappings {
 
-  import MappingsSpec._
+  import MappingsSpec.*
 
   "text" - {
 
@@ -228,6 +232,189 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must unbind a valid value" in {
       val result = testForm.fill(1)
       result.apply("value").value.value mustEqual "1"
+    }
+  }
+
+  "localDate" - {
+
+    implicit val msgs: Messages = stubMessages()
+
+    val testForm: Form[LocalDate] =
+      Form(
+        "dateOfBirth" -> localDate(
+          invalidKey = "date.error.invalid",
+          allRequiredKey = "date.error.required",
+          twoRequiredKey = "date.error.requiredTwo",
+          requiredKey = "date.error.requiredOne",
+          numericOnly = true
+        )
+      )
+
+    "must bind a valid date" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "1990"
+        )
+      )
+
+      result.get mustBe LocalDate.of(1990, 5, 10)
+    }
+
+    "must not bind an invalid calendar date" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "31",
+          "dateOfBirth.month" -> "2",
+          "dateOfBirth.year"  -> "2000"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind an invalid month" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "13",
+          "dateOfBirth.year"  -> "1990"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind an invalid day" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "0",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "1990"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind a year with fewer than four digits" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "123"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind a year with more than four digits" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "19900"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind a non-numeric year" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "abcd"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind a non-numeric day" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "ab",
+          "dateOfBirth.month" -> "5",
+          "dateOfBirth.year"  -> "1990"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must not bind a non-numeric month" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "May",
+          "dateOfBirth.year"  -> "1990"
+        )
+      )
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.invalid"))
+    }
+
+    "must return the all-required error when all components are missing" in {
+      val result = testForm.bind(Map.empty[String, String])
+
+      result.errors must contain(FormError("dateOfBirth", "date.error.required"))
+    }
+
+    "must return the two-required error when one component is provided" in {
+      val result = testForm.bind(
+        Map("dateOfBirth.day" -> "10")
+      )
+
+      result.errors must contain(
+        FormError(
+          "dateOfBirth",
+          "date.error.requiredTwo",
+          List("date.error.month", "date.error.year")
+        )
+      )
+    }
+
+    "must return the one-required error when two components are provided" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> "10",
+          "dateOfBirth.month" -> "5"
+        )
+      )
+
+      result.errors must contain(
+        FormError(
+          "dateOfBirth",
+          "date.error.requiredOne",
+          List("date.error.year")
+        )
+      )
+    }
+
+    "must trim whitespace around numeric components" in {
+      val result = testForm.bind(
+        Map(
+          "dateOfBirth.day"   -> " 10 ",
+          "dateOfBirth.month" -> " 5 ",
+          "dateOfBirth.year"  -> " 1990 "
+        )
+      )
+
+      result.get mustBe LocalDate.of(1990, 5, 10)
+    }
+
+    "must unbind a valid date" in {
+      val result = testForm.fill(LocalDate.of(1990, 5, 10))
+
+      result.data mustBe Map(
+        "dateOfBirth.day"   -> "10",
+        "dateOfBirth.month" -> "5",
+        "dateOfBirth.year"  -> "1990"
+      )
     }
   }
 }

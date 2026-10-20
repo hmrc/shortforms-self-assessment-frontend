@@ -17,7 +17,6 @@
 package controllers.sa1
 
 import base.SpecBase
-import controllers.routes
 import forms.sa1.AddPreviousLastNameFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
@@ -158,36 +157,6 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
           request,
           messages(application)
         ).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, addPreviousLastNameRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, addPreviousLastNameRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

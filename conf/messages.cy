@@ -1,4 +1,5 @@
 
+
 site.back = xxxxxxxxxxxxx
 site.remove = xxxxxxxxxxxxx
 site.change = xxxxxxxxxxxxx
@@ -85,4 +86,21 @@ sa1.name.lastName.error.length = xxxxxxxxxxxxx
 sa1.name.lastName.error.invalid = xxxxxxxxxxxxx
 sa1.name.checkYourAnswersLabel = xxxxxxxxxxxxx
 sa1.name.change.hidden = xxxxxxxxxxxxx
+
+sa1.enterPreviousLastName.title = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.heading = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.label = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.label = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.hint = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.error.required = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.error.length = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.error.required = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.error.invalid = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.error.requiredOne = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.error.requiredTwo = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.error.mustBeAfterMinimum = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.change.hidden = xxxxxxxxxxxxx
+sa1.enterPreviousLastName.date.change.hidden = xxxxxxxxxxxxx
+
 

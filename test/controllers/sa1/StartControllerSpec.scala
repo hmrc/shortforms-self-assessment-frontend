@@ -16,89 +16,76 @@
 
 package controllers.sa1
 
-import base.SpecBase
+import controllers.actions.FakeIdentifierAction
 import controllers.routes
 import models.JourneyType.SA1
-import org.mockito.Mockito.{mock, when}
-import play.api.inject.bind
+import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
+import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import services.StartJourneyService
 import views.html.sa1.StartView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class StartControllerSpec extends SpecBase {
+class StartControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
+  private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  "Start Controller" - {
+  private val journeyId       = "test-journey-id"
+  private val userId          = "test-user-id"
+  private val mockViewContent = "test view"
 
-    "onPageLoad" - {
+  private class Setup {
+    protected val startJourneyService: StartJourneyService = mock[StartJourneyService]
+    private val view: StartView                            = mock[StartView]
 
-      "must return OK and display the start page" in {
-        val application = applicationBuilder().build()
+    private val controllerComponents = stubMessagesControllerComponents()
+    private val identifierAction     = new FakeIdentifierAction(controllerComponents.parsers)
 
-        running(application) {
-          val request =
-            FakeRequest(GET, controllers.sa1.routes.StartController.onPageLoad().url)
+    protected lazy val controller = new StartController(
+      identifierAction,
+      controllerComponents,
+      startJourneyService,
+      view
+    )
 
-          val result = route(application, request).value
-          val view   = application.injector.instanceOf[StartView]
+    when(view.apply()(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
+  }
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view()(request, messages(application)).toString
-        }
-      }
+  "StartController" should {
+
+    "return OK and display the start page" in new Setup {
+      val result = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe OK
+      contentAsString(result) mustBe mockViewContent
     }
 
-    "onSubmit" - {
+    "start an SA1 journey and redirect to the Name page" in new Setup {
+      when(startJourneyService.startJourney(userId, SA1)).thenReturn(Future.successful(journeyId))
 
-      "must start an SA1 journey and redirect to the Name page" in {
-        val startJourneyService = mock(classOf[StartJourneyService])
+      val result = controller.onSubmit()(FakeRequest(POST, "/"))
 
-        when(startJourneyService.startJourney(testUserId, SA1))
-          .thenReturn(Future.successful(userAnswersId))
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.sa1.routes.NameController.onPageLoad(journeyId, NormalMode).url)
+      verify(startJourneyService).startJourney(userId, SA1)
+    }
 
-        val application = applicationBuilder()
-          .overrides(
-            bind[StartJourneyService].toInstance(startJourneyService)
-          )
-          .build()
+    "redirect to Journey Recovery when starting the journey fails" in new Setup {
+      when(startJourneyService.startJourney(userId, SA1))
+        .thenReturn(Future.failed(new RuntimeException("Journey creation failed")))
 
-        running(application) {
-          val request =
-            FakeRequest(POST, controllers.sa1.routes.StartController.onSubmit().url)
+      val result = controller.onSubmit()(FakeRequest(POST, "/"))
 
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual
-            controllers.sa1.routes.NameController.onPageLoad(userAnswersId, models.NormalMode).url
-        }
-      }
-
-      "must redirect to Journey Recovery when starting the journey fails" in {
-        val startJourneyService = mock(classOf[StartJourneyService])
-
-        when(startJourneyService.startJourney(testUserId, SA1))
-          .thenReturn(Future.failed(new RuntimeException("Journey creation failed")))
-
-        val application = applicationBuilder()
-          .overrides(
-            bind[StartJourneyService].toInstance(startJourneyService)
-          )
-          .build()
-
-        running(application) {
-          val request =
-            FakeRequest(POST, controllers.sa1.routes.StartController.onSubmit().url)
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual
-            routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
     }
   }
 }

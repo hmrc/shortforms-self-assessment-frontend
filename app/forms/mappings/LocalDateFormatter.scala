@@ -28,7 +28,8 @@ private[mappings] class LocalDateFormatter(
   allRequiredKey: String,
   twoRequiredKey: String,
   requiredKey: String,
-  args: Seq[String] = Seq.empty
+  args: Seq[String] = Seq.empty,
+  numericOnly: Boolean = false
 )(implicit messages: Messages)
     extends Formatter[LocalDate]
     with Formatters {
@@ -44,28 +45,38 @@ private[mappings] class LocalDateFormatter(
     }
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+    val dateData = if (numericOnly) data.view.mapValues(_.trim).toMap else data
 
-    val int = intFormatter(
-      requiredKey = invalidKey,
-      wholeNumberKey = invalidKey,
-      nonNumericKey = invalidKey,
-      args
-    )
+    if (
+      numericOnly && fieldKeys.exists { field =>
+        val pattern = if (field == "year") "[0-9]{4}" else "[0-9]+"
+        !dateData.getOrElse(s"$key.$field", "").matches(pattern)
+      }
+    ) {
+      Left(Seq(FormError(key, invalidKey, args)))
+    } else {
+      val int = intFormatter(
+        requiredKey = invalidKey,
+        wholeNumberKey = invalidKey,
+        nonNumericKey = invalidKey,
+        args
+      )
 
-    val month = new MonthFormatter(invalidKey, args)
-
-    for {
-      day   <- int.bind(s"$key.day", data)
-      month <- month.bind(s"$key.month", data)
-      year  <- int.bind(s"$key.year", data)
-      date  <- toDate(key, day, month, year)
-    } yield date
+      val month    = new MonthFormatter(invalidKey, args)
+      val dateData = if (numericOnly) data.view.mapValues(_.trim).toMap else data
+      for {
+        day   <- int.bind(s"$key.day", dateData)
+        month <- if (numericOnly) int.bind(s"$key.month", dateData) else month.bind(s"$key.month", dateData)
+        year  <- int.bind(s"$key.year", dateData)
+        date  <- toDate(key, day, month, year)
+      } yield date
+    }
   }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
     val fields = fieldKeys.map { field =>
-      field -> data.get(s"$key.$field").filter(_.nonEmpty)
+      field -> data.get(s"$key.$field").filter(value => if (numericOnly) value.trim.nonEmpty else value.nonEmpty)
     }.toMap
 
     lazy val missingFields = fields
