@@ -100,7 +100,6 @@ sa1.name.lastName.error.invalid = Your last name must only include letters, apos
 sa1.name.checkYourAnswersLabel = Name
 sa1.name.change.hidden = name
 
-
 sa1.enterPreviousLastName.title = Your previous last name
 sa1.enterPreviousLastName.heading = Your previous last name
 sa1.enterPreviousLastName.label = What was your previous last name?
@@ -117,3 +116,17 @@ sa1.enterPreviousLastName.date.error.mustBeAfterMinimum = Date must be after {0}
 sa1.enterPreviousLastName.checkYourAnswersLabel = What was your previous last name?
 sa1.enterPreviousLastName.change.hidden = What was your previous last name?
 sa1.enterPreviousLastName.date.change.hidden = When did your last name change?
+
+sa1.addNiNumber.title = National Insurance number
+sa1.addNiNumber.heading = National Insurance number
+sa1.addNiNumber.p1 = You only need a National Insurance number if you intend to:
+sa1.addNiNumber.b1 = work
+sa1.addNiNumber.b2 = claim benefits
+sa1.addNiNumber.b3 = apply for a student loan
+sa1.addNiNumber.b4 = pay Class 3 voluntary National Insurance contributions
+sa1.addNiNumber.p2 = If none of these apply to you, you can still register for Self Assessment without one. You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+sa1.addNiNumber.p2.linkText = find your National Insurance number (opens in a new tab)
+sa1.addNiNumber.subHeading = Do you have a National Insurance number?
+sa1.addNiNumber.checkYourAnswersLabel = Do you have a National Insurance number?
+sa1.addNiNumber.error.required = Select yes if you have a National Insurance number
+sa1.addNiNumber.change.hidden = Do you have a National Insurance number?

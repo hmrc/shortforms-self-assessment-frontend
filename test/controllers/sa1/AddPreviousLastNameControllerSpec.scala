@@ -17,17 +17,20 @@
 package controllers.sa1
 
 import base.SpecBase
+import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.AddPreviousLastNameFormProvider
-import models.NormalMode
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.{NormalMode, UserAnswers}
+import navigation.Navigator
+import org.apache.pekko.actor.ActorSystem
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.sa1.AddPreviousLastNamePage
-import play.api.inject.bind
-import play.api.mvc.Call
+import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.AddPreviousLastNameView
 
@@ -37,127 +40,107 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  val formProvider = new AddPreviousLastNameFormProvider()
-  val form         = formProvider()
-
   lazy val addPreviousLastNameRoute =
     controllers.sa1.routes.AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
 
   "AddPreviousLastName Controller" - {
+    "must return OK and the correct view for a GET" in new Setup {
+      val userAnswers: UserAnswers = emptyUserAnswers
+      val request                  = FakeRequest(GET, addPreviousLastNameRoute)
 
-    "must return OK and the correct view for a GET" in {
+      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual mockContent
 
-      running(application) {
-        val request = FakeRequest(GET, addPreviousLastNameRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[AddPreviousLastNameView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, "test-journey-id", NormalMode)(
-          request,
-          messages(application)
-        ).toString
-      }
+      verify(mockView).apply(
+        eqTo(form),
+        eqTo(userAnswersId),
+        eqTo(NormalMode)
+      )(any(), any())
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
+      val userAnswers: UserAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
+      val request                  = FakeRequest(GET, addPreviousLastNameRoute)
 
-      val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
+      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual mockContent
 
-      running(application) {
-        val request = FakeRequest(GET, addPreviousLastNameRoute)
-
-        val view = application.injector.instanceOf[AddPreviousLastNameView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), "test-journey-id", NormalMode)(
-          request,
-          messages(application)
-        ).toString
-      }
+      verify(mockView).apply(
+        eqTo(form.fill(true)),
+        eqTo(userAnswersId),
+        eqTo(NormalMode)
+      )(any(), any())
     }
 
-    "must redirect to the SA1-002a: Previous last name page when the answer 'yes' is submitted" in {
+    "must redirect to the next page when valid data is submitted" in new Setup {
+      val userAnswers: UserAnswers = emptyUserAnswers
+      val request                  = FakeRequest(POST, addPreviousLastNameRoute)
+        .withFormUrlEncodedBody(("value", "true"))
 
-      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any[UserAnswers]))
+        .thenReturn(Future.successful(true))
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
 
-      running(application) {
-        val request =
-          FakeRequest(POST, addPreviousLastNameRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      verify(mockSessionRepository).set(any())
     }
 
-    "must redirect to the SA1-003: DoB page when the answer 'no' is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted" in new Setup {
+      val userAnswers: UserAnswers = emptyUserAnswers
+      val request                  =
+        FakeRequest(POST, addPreviousLastNameRoute)
+          .withFormUrlEncodedBody(("value", ""))
+      val boundForm                = form.bind(Map("value" -> ""))
 
-      val mockSessionRepository = mock[SessionRepository]
+      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      status(result) mustEqual BAD_REQUEST
+      contentAsString(result) mustEqual mockContent
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, addPreviousLastNameRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
+      verify(mockView).apply(
+        eqTo(boundForm),
+        eqTo(userAnswersId),
+        eqTo(NormalMode)
+      )(any(), any())
     }
+  }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+  abstract private class Setup {
+    implicit val actorSystem: ActorSystem                  = ActorSystem("test")
+    protected val userAnswers: UserAnswers
+    private lazy val identifierAction                      =
+      new FakeIdentifierAction(stubPlayBodyParsers())
+    private lazy val dataRequiredAction                    =
+      new SA1DataRequiredAction(
+        new FakeDataRequiredAction(Some(userAnswers))
+      )
+    protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
+    protected val mockNavigator: Navigator                 = mock[Navigator]
+    protected val mockView                                 = mock[AddPreviousLastNameView]
+    protected val mockContent                              = "AddPreviousLastName"
+    private val addPreviousLastNameFormProvider            = new AddPreviousLastNameFormProvider()
+    protected val form                                     = addPreviousLastNameFormProvider()
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    when(mockView(any(), any(), any())(any(), any()))
+      .thenReturn(Html(mockContent))
 
-      running(application) {
-        val request =
-          FakeRequest(POST, addPreviousLastNameRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[AddPreviousLastNameView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "test-journey-id", NormalMode)(
-          request,
-          messages(application)
-        ).toString
-      }
-    }
+    protected lazy val controller: AddPreviousLastNameController = new AddPreviousLastNameController(
+      mockSessionRepository,
+      mockNavigator,
+      identifierAction,
+      dataRequiredAction,
+      addPreviousLastNameFormProvider,
+      stubMessagesControllerComponents(),
+      mockView
+    )
   }
 }

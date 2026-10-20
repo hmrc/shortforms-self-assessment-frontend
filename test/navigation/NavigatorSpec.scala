@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
-import pages.sa1.AddPreviousLastNamePage
+import pages.sa1.{AddNiNumberPage, AddPreviousLastNamePage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -36,31 +36,61 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController.onPageLoad()
       }
 
-      // TODO DTR-8719: Redirect to Enter previous last name
-      "must go from add previous last name page to enter previous last name page when answer is 'yes'" in {
-        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
-        navigator.nextPage(
-          AddPreviousLastNamePage,
-          NormalMode,
-          userAnswers
-        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
-          .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+      "when add previous last name page" - {
+        // TODO DTR-8719: Redirect to Enter previous last name
+        "must go from add previous last name page to enter previous last name page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
+          navigator.nextPage(
+            AddPreviousLastNamePage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        // TODO DTR-8691: Redirect to Enter DOB page
+        "must go from add previous last name page to date of birth page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
+          navigator.nextPage(
+            AddPreviousLastNamePage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from add previous last name page to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController
+            .onPageLoad()
+        }
       }
 
-      // TODO DTR-8691: Redirect to Enter DOB page
-      "must go from add previous last name page to date of birth page when answer is 'no'" in {
-        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
-        navigator.nextPage(
-          AddPreviousLastNamePage,
-          NormalMode,
-          userAnswers
-        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
-          .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
-      }
+      "when add NI number page" - {
+        // TODO DTR-8726: Redirect to Enter NI number page
+        "must go from add NI number page to enter NI number page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(AddNiNumberPage, true).success.value
+          navigator.nextPage(
+            AddNiNumberPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
 
-      "must go from add previous last name page to Index when answer is empty" in {
-        val userAnswers = emptyUserAnswers
-        navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        // TODO DTR-8641: Redirect to Reason(s) for no NI number page
+        "must go from add NI number page to enter reason(s) for no NI number page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(AddNiNumberPage, false).success.value
+          navigator.nextPage(
+            AddNiNumberPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from add previous last name page to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AddNiNumberPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        }
       }
     }
 
@@ -81,6 +111,11 @@ class NavigatorSpec extends SpecBase {
           emptyUserAnswers
         ) mustBe controllers.sa1.routes.AddPreviousLastNameController
           .onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+        navigator.nextPage(
+          AddNiNumberPage,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
       }
     }
   }
