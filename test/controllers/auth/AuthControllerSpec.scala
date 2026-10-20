@@ -64,7 +64,7 @@ class AuthControllerSpec extends SpecBase with MockitoSugar {
   "signOutNoSurvey" - {
 
     "must clear user answers and redirect to sign out, specifying SignedOut as the continue URL" in {
-      
+
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.clearByUserId(any[String])).thenReturn(Future.successful(true))
 
