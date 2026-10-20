@@ -53,11 +53,12 @@ class EnterPreviousLastNameSummarySpec extends SpecBase {
       result must have size 2
 
       result.head.value.content.toString must include("John Doe")
-      result(1).value.content.toString must include("10 May 2020")
+      result(1).value.content.toString   must include("10 May 2020")
 
       val expectedUrl =
         controllers.sa1.routes.EnterPreviousLastNameController
-          .onPageLoad(userAnswersId, CheckMode).url
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
 
       result.head.actions.value.items.head.href mustBe expectedUrl
       result(1).actions.value.items.head.href mustBe expectedUrl

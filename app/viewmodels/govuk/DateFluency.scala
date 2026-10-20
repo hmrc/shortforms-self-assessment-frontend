@@ -63,7 +63,7 @@ trait DateFluency {
           value = field("day").value,
           label = Some(messages("date.day")),
           classes = s"govuk-input--width-2 $dayErrorClass".trim,
-            autocomplete = Some("off")
+          autocomplete = Some("off")
         ),
         InputItem(
           id = s"${field.id}.month",

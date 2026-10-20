@@ -24,20 +24,20 @@ import java.time.LocalDate
 
 class PreviousNameFormProviderSpec extends SpecBase {
 
-  private val application = applicationBuilder().build()
-  private val msgs = messages(application)
+  private val application  = applicationBuilder().build()
+  private val msgs         = messages(application)
   private val formProvider = new PreviousNameFormProvider
-  private val form = formProvider()(msgs)
+  private val form         = formProvider()(msgs)
 
   private val maxLength = 100
 
-  private val requiredError = "sa1.enterPreviousLastName.error.required"
-  private val lengthError = "sa1.enterPreviousLastName.error.length"
+  private val requiredError    = "sa1.enterPreviousLastName.error.required"
+  private val lengthError      = "sa1.enterPreviousLastName.error.length"
   private val invalidNameError = "sa1.enterPreviousLastName.error.invalid"
   private val minimumDateError = "sa1.enterPreviousLastName.date.error.mustBeAfterMinimum"
 
   private val minimumDate = LocalDate.of(1753, 1, 3)
-  private val validDate = LocalDate.of(2020, 5, 10)
+  private val validDate   = LocalDate.of(2020, 5, 10)
 
   private val validData: Map[String, String] = Map(
     "previousLastName" -> "John Doe"
@@ -45,9 +45,9 @@ class PreviousNameFormProviderSpec extends SpecBase {
 
   private def dateData(date: LocalDate): Map[String, String] =
     Map(
-      "lastNameChangeDate.day" -> date.getDayOfMonth.toString,
+      "lastNameChangeDate.day"   -> date.getDayOfMonth.toString,
       "lastNameChangeDate.month" -> date.getMonthValue.toString,
-      "lastNameChangeDate.year" -> date.getYear.toString
+      "lastNameChangeDate.year"  -> date.getYear.toString
     )
 
   private def bindDate(date: LocalDate) =

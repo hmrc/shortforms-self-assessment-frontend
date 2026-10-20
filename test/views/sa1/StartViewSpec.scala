@@ -25,15 +25,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.stubMessages
 import views.html.sa1.StartView
 
-class StartViewSpec
-  extends AnyWordSpec
-    with Matchers
-    with GuiceOneAppPerSuite {
+class StartViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  private val view = app.injector.instanceOf[StartView]
+  private val view      = app.injector.instanceOf[StartView]
   private val appConfig = app.injector.instanceOf[FrontendAppConfig]
-  private val request = FakeRequest()
-  private val msgs = stubMessages()
+  private val request   = FakeRequest()
+  private val msgs      = stubMessages()
 
   "Start view" should {
 
@@ -50,14 +47,15 @@ class StartViewSpec
     "render the introductory content" in {
       val doc = Jsoup.parse(view()(request, msgs).body)
 
-      doc.select("p.govuk-body")
+      doc
+        .select("p.govuk-body")
         .eachText()
         .toArray
         .toSeq must contain(msgs("sa1.start.intro"))
     }
 
     "render the section headings" in {
-      val doc = Jsoup.parse(view()(request, msgs).body)
+      val doc      = Jsoup.parse(view()(request, msgs).body)
       val headings = doc.select("h2").eachText().toArray.toSeq
 
       headings must contain(msgs("sa1.start.directors.heading"))
@@ -104,20 +102,20 @@ class StartViewSpec
     "render the external links with appropriate attributes" in {
       val doc = Jsoup.parse(view()(request, msgs).body)
 
-        val payeLink = doc.select(
-          s"""a[href="${appConfig.highIncomeChildBenefitChargeUrl}"]"""
-        )
+      val payeLink = doc.select(
+        s"""a[href="${appConfig.highIncomeChildBenefitChargeUrl}"]"""
+      )
 
-        payeLink.size() mustBe 1
-        payeLink.text() mustBe
-          msgs("sa1.start.childBenefitCharge.payeService.linkText")
-        payeLink.attr("target") mustBe "_blank"
-        payeLink.attr("rel") must include("noopener")
-        payeLink.attr("rel") must include("noreferrer")
+      payeLink.size() mustBe 1
+      payeLink.text() mustBe
+        msgs("sa1.start.childBenefitCharge.payeService.linkText")
+      payeLink.attr("target") mustBe "_blank"
+      payeLink.attr("rel") must include("noopener")
+      payeLink.attr("rel") must include("noreferrer")
 
-        val ninoLink = doc.select(
-          s"""a[href="${appConfig.applyNinoUrl}"]"""
-        )
+      val ninoLink = doc.select(
+        s"""a[href="${appConfig.applyNinoUrl}"]"""
+      )
 
       ninoLink.size() mustBe 1
       ninoLink.text() mustBe
@@ -128,12 +126,12 @@ class StartViewSpec
     }
 
     "render the Start button inside the form with the correct action" in {
-      val doc = Jsoup.parse(view()(request, msgs).body)
+      val doc  = Jsoup.parse(view()(request, msgs).body)
       val form = doc.select("form")
 
-        form.size() mustBe 1
-        form.attr("action") mustBe
-          controllers.sa1.routes.StartController.onSubmit().url
+      form.size() mustBe 1
+      form.attr("action") mustBe
+        controllers.sa1.routes.StartController.onSubmit().url
 
       form.select("button").text() mustBe msgs("site.start")
     }

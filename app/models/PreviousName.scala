@@ -21,11 +21,10 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.LocalDate
 
 final case class PreviousName(
-                               previousLastName: String,
-                               lastNameChangeDate: LocalDate
-                             )
+  previousLastName: String,
+  lastNameChangeDate: LocalDate
+)
 
 object PreviousName {
   implicit val format: OFormat[PreviousName] = Json.format[PreviousName]
 }
-

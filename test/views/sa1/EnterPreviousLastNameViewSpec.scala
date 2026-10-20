@@ -28,14 +28,12 @@ import views.html.sa1.EnterPreviousLastNameView
 
 import java.time.LocalDate
 
-class EnterPreviousLastNameViewSpec extends AnyWordSpec
-  with Matchers
-  with GuiceOneAppPerSuite {
+class EnterPreviousLastNameViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  private val msgs = stubMessages()
-  private val view = app.injector.instanceOf[EnterPreviousLastNameView]
-  private val formProvider = app.injector.instanceOf[PreviousNameFormProvider]
-  private val request = FakeRequest()
+  private val msgs          = stubMessages()
+  private val view          = app.injector.instanceOf[EnterPreviousLastNameView]
+  private val formProvider  = app.injector.instanceOf[PreviousNameFormProvider]
+  private val request       = FakeRequest()
   private val userAnswersId = "test-journey-id"
 
   "EnterPreviousLastNameView" should {
@@ -45,29 +43,29 @@ class EnterPreviousLastNameViewSpec extends AnyWordSpec
 
       val doc = Jsoup.parse(view(form, userAnswersId)(request, msgs).toString)
 
-        doc.title() must include(msgs("sa1.enterPreviousLastName.title"))
+      doc.title() must include(msgs("sa1.enterPreviousLastName.title"))
 
-        doc.select("h1").text() mustBe msgs("sa1.enterPreviousLastName.heading")
+      doc.select("h1").text() mustBe msgs("sa1.enterPreviousLastName.heading")
 
-        doc.select("#previousLastName").size mustBe 1
+      doc.select("#previousLastName").size mustBe 1
 
-        doc.select("label[for=previousLastName]").text() must include(msgs("sa1.enterPreviousLastName.label"))
+      doc.select("label[for=previousLastName]").text() must include(msgs("sa1.enterPreviousLastName.label"))
 
-        doc.select("#lastNameChangeDate-hint").text() mustBe msgs("sa1.enterPreviousLastName.date.hint")
+      doc.select("#lastNameChangeDate-hint").text() mustBe msgs("sa1.enterPreviousLastName.date.hint")
 
-        doc.select("button[type=submit]").text() mustBe msgs("site.continue")
+      doc.select("button[type=submit]").text() mustBe msgs("site.continue")
 
-        doc.select("form").attr("action") mustBe
-          controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(userAnswersId, NormalMode).url
+      doc.select("form").attr("action") mustBe
+        controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(userAnswersId, NormalMode).url
     }
 
     "must display an error summary when the form contains errors" in {
       val form = formProvider()(msgs).bind(
         Map(
-          "previousLastName" -> "",
-          "lastNameChangeDate.day" -> "",
+          "previousLastName"         -> "",
+          "lastNameChangeDate.day"   -> "",
           "lastNameChangeDate.month" -> "",
-          "lastNameChangeDate.year" -> ""
+          "lastNameChangeDate.year"  -> ""
         )
       )
 

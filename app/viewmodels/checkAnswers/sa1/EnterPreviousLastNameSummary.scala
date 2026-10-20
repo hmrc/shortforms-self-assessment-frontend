@@ -30,9 +30,9 @@ object EnterPreviousLastNameSummary {
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def rows(
-            journeyId: String,
-            answers: UserAnswers
-          )(implicit messages: Messages): Seq[SummaryListRow] =
+    journeyId: String,
+    answers: UserAnswers
+  )(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(PreviousLastNamePage).toSeq.flatMap { answer =>
       Seq(
         SummaryListRowViewModel(

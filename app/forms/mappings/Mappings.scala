@@ -51,12 +51,13 @@ trait Mappings extends Formatters with Constraints {
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
 
   protected def localDate(
-                           invalidKey: String,
-                           allRequiredKey: String,
-                           twoRequiredKey: String,
-                           requiredKey: String,
-                           args: Seq[String] = Seq.empty,
-                           numericOnly: Boolean = false)(implicit messages: Messages): FieldMapping[LocalDate] =
+    invalidKey: String,
+    allRequiredKey: String,
+    twoRequiredKey: String,
+    requiredKey: String,
+    args: Seq[String] = Seq.empty,
+    numericOnly: Boolean = false
+  )(implicit messages: Messages): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args, numericOnly))
 
   protected def currency(

@@ -238,7 +238,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
   "localDate" - {
 
     implicit val msgs: Messages = stubMessages()
-    
+
     val testForm: Form[LocalDate] =
       Form(
         "dateOfBirth" -> localDate(
@@ -253,9 +253,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must bind a valid date" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "1990"
+          "dateOfBirth.year"  -> "1990"
         )
       )
 
@@ -265,9 +265,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind an invalid calendar date" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "31",
+          "dateOfBirth.day"   -> "31",
           "dateOfBirth.month" -> "2",
-          "dateOfBirth.year" -> "2000"
+          "dateOfBirth.year"  -> "2000"
         )
       )
 
@@ -277,9 +277,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind an invalid month" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "13",
-          "dateOfBirth.year" -> "1990"
+          "dateOfBirth.year"  -> "1990"
         )
       )
 
@@ -289,9 +289,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind an invalid day" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "0",
+          "dateOfBirth.day"   -> "0",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "1990"
+          "dateOfBirth.year"  -> "1990"
         )
       )
 
@@ -301,9 +301,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind a year with fewer than four digits" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "123"
+          "dateOfBirth.year"  -> "123"
         )
       )
 
@@ -313,9 +313,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind a year with more than four digits" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "19900"
+          "dateOfBirth.year"  -> "19900"
         )
       )
 
@@ -325,9 +325,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind a non-numeric year" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "abcd"
+          "dateOfBirth.year"  -> "abcd"
         )
       )
 
@@ -337,9 +337,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind a non-numeric day" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "ab",
+          "dateOfBirth.day"   -> "ab",
           "dateOfBirth.month" -> "5",
-          "dateOfBirth.year" -> "1990"
+          "dateOfBirth.year"  -> "1990"
         )
       )
 
@@ -349,9 +349,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must not bind a non-numeric month" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "May",
-          "dateOfBirth.year" -> "1990"
+          "dateOfBirth.year"  -> "1990"
         )
       )
 
@@ -381,7 +381,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must return the one-required error when two components are provided" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> "10",
+          "dateOfBirth.day"   -> "10",
           "dateOfBirth.month" -> "5"
         )
       )
@@ -398,9 +398,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
     "must trim whitespace around numeric components" in {
       val result = testForm.bind(
         Map(
-          "dateOfBirth.day" -> " 10 ",
+          "dateOfBirth.day"   -> " 10 ",
           "dateOfBirth.month" -> " 5 ",
-          "dateOfBirth.year" -> " 1990 "
+          "dateOfBirth.year"  -> " 1990 "
         )
       )
 
@@ -411,9 +411,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       val result = testForm.fill(LocalDate.of(1990, 5, 10))
 
       result.data mustBe Map(
-        "dateOfBirth.day" -> "10",
+        "dateOfBirth.day"   -> "10",
         "dateOfBirth.month" -> "5",
-        "dateOfBirth.year" -> "1990"
+        "dateOfBirth.year"  -> "1990"
       )
     }
   }

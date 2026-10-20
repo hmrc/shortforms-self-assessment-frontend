@@ -29,16 +29,15 @@ import javax.inject.Singleton
 @Singleton
 class PreviousNameFormProvider extends Mappings {
 
-  private val maxLength = 100
+  private val maxLength             = 100
   private val previousLastNameRegex = "^[A-Za-z\\-' ]+$"
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  private val minimumDate = LocalDate.of(1753, 1, 3)
+  private val dateFormatter         = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private val minimumDate           = LocalDate.of(1753, 1, 3)
 
-  def apply()(implicit messages: Messages): Form[PreviousName] = {
-
+  def apply()(implicit messages: Messages): Form[PreviousName] =
     Form(
       mapping(
-        "previousLastName" -> text("sa1.enterPreviousLastName.error.required")
+        "previousLastName"   -> text("sa1.enterPreviousLastName.error.required")
           .transform[String](_.trim, identity)
           .verifying(
             firstError(
@@ -57,12 +56,8 @@ class PreviousNameFormProvider extends Mappings {
             minimumDate,
             "sa1.enterPreviousLastName.date.error.mustBeAfterMinimum",
             minimumDate.format(dateFormatter)
-          ),
+          )
         )
-      )(PreviousName.apply)(answer =>
-        Some((answer.previousLastName, answer.lastNameChangeDate))
-      )
+      )(PreviousName.apply)(answer => Some((answer.previousLastName, answer.lastNameChangeDate)))
     )
-  }
 }
-

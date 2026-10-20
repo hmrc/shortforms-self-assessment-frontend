@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.actions.FakeIdentifierAction
 import controllers.routes
 import models.JourneyType.SA1
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.must.Matchers
@@ -37,23 +38,23 @@ import scala.concurrent.{ExecutionContext, Future}
 class StartControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  private val journeyId = "test-journey-id"
-  private val userId = "test-user-id"
+  private val journeyId       = "test-journey-id"
+  private val userId          = "test-user-id"
   private val mockViewContent = "test view"
 
   private class Setup {
     protected val startJourneyService: StartJourneyService = mock[StartJourneyService]
-    private val view: StartView = mock[StartView]
+    private val view: StartView                            = mock[StartView]
 
     private val controllerComponents = stubMessagesControllerComponents()
-    private val identifierAction = new FakeIdentifierAction(controllerComponents.parsers)
+    private val identifierAction     = new FakeIdentifierAction(controllerComponents.parsers)
 
     protected lazy val controller = new StartController(
-        identifierAction,
-        controllerComponents,
-        startJourneyService,
-        view
-      )
+      identifierAction,
+      controllerComponents,
+      startJourneyService,
+      view
+    )
 
     when(view.apply()(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
   }
@@ -73,12 +74,13 @@ class StartControllerSpec extends AnyWordSpec with Matchers with MockitoSugar {
       val result = controller.onSubmit()(FakeRequest(POST, "/"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.sa1.routes.NameController.onPageLoad(journeyId).url)
+      redirectLocation(result) mustBe Some(controllers.sa1.routes.NameController.onPageLoad(journeyId, NormalMode).url)
       verify(startJourneyService).startJourney(userId, SA1)
     }
 
     "redirect to Journey Recovery when starting the journey fails" in new Setup {
-      when(startJourneyService.startJourney(userId, SA1)).thenReturn(Future.failed(new RuntimeException("Journey creation failed")))
+      when(startJourneyService.startJourney(userId, SA1))
+        .thenReturn(Future.failed(new RuntimeException("Journey creation failed")))
 
       val result = controller.onSubmit()(FakeRequest(POST, "/"))
 

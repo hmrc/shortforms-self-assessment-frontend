@@ -29,37 +29,37 @@ import views.html.sa1.EnterPreviousLastNameView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnterPreviousLastNameController @Inject()(
-                                        override val controllerComponents: MessagesControllerComponents,
-                                        identify: IdentifierAction,
-                                        sa1DataRequiredAction: SA1DataRequiredAction,
-                                        formProvider: PreviousNameFormProvider,
-                                        sessionRepository: SessionRepository,
-                                        view: EnterPreviousLastNameView
-                                      )(implicit ec: ExecutionContext)
-  extends FrontendBaseController
+class EnterPreviousLastNameController @Inject() (
+  override val controllerComponents: MessagesControllerComponents,
+  identify: IdentifierAction,
+  sa1DataRequiredAction: SA1DataRequiredAction,
+  formProvider: PreviousNameFormProvider,
+  sessionRepository: SessionRepository,
+  view: EnterPreviousLastNameView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
     (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
-      val form = formProvider()
+      val form         = formProvider()
       val preparedForm = request.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
       Ok(view(preparedForm, journeyId))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
     (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
-      formProvider().bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId))),
-        answer =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
-            saved <- sessionRepository.set(updatedAnswers)
-          } yield {
-            //TODO: Redirect it to DOB Page once ready
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          answer =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
+              saved          <- sessionRepository.set(updatedAnswers)
+            } yield
+            // TODO: Redirect it to DOB Page once ready
             Redirect(controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, mode))
-          }
-      )
+        )
     }
 }

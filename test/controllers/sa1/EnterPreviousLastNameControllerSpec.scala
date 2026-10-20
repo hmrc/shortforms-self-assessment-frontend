@@ -42,26 +42,26 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
-  private val journeyId = "test-journey-id"
-  private val userId = "test-user-id"
-  private val previousName = PreviousName(previousLastName = "John Doe", lastNameChangeDate = LocalDate.of(2020, 5, 10))
+  private val journeyId       = "test-journey-id"
+  private val userId          = "test-user-id"
+  private val previousName    = PreviousName(previousLastName = "John Doe", lastNameChangeDate = LocalDate.of(2020, 5, 10))
   private val mockViewContent = "test view"
-  private val validFormData = Map(
-    "previousLastName" -> "John Doe",
-    "lastNameChangeDate.day" -> "10",
+  private val validFormData   = Map(
+    "previousLastName"         -> "John Doe",
+    "lastNameChangeDate.day"   -> "10",
     "lastNameChangeDate.month" -> "5",
-    "lastNameChangeDate.year" -> "2020"
+    "lastNameChangeDate.year"  -> "2020"
   )
 
   private class Setup {
-    protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+    protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: EnterPreviousLastNameView = mock[EnterPreviousLastNameView]
+    protected val view: EnterPreviousLastNameView      = mock[EnterPreviousLastNameView]
 
-    private val controllerComponents = stubMessagesControllerComponents()
-    private val identifierAction = new FakeIdentifierAction(controllerComponents.parsers)
+    private val controllerComponents    = stubMessagesControllerComponents()
+    private val identifierAction        = new FakeIdentifierAction(controllerComponents.parsers)
     private lazy val dataRequiredAction = new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers)))
-    private val formProvider = new PreviousNameFormProvider()
+    private val formProvider            = new PreviousNameFormProvider()
 
     protected lazy val controller = new EnterPreviousLastNameController(
       controllerComponents,
@@ -72,7 +72,8 @@ class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with
       view
     )
 
-    when(view.apply(any[Form[PreviousName]], any[String])(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
+    when(view.apply(any[Form[PreviousName]], any[String])(any[Request[?]], any[Messages]))
+      .thenReturn(Html(mockViewContent))
   }
 
   "EnterPreviousLastNameController" should {
@@ -103,10 +104,10 @@ class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with
 
     "return BAD_REQUEST when the submitted form is invalid" in new Setup {
       val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
-        "previousLastName" -> "",
-        "lastNameChangeDate.day" -> "10",
+        "previousLastName"         -> "",
+        "lastNameChangeDate.day"   -> "10",
         "lastNameChangeDate.month" -> "5",
-        "lastNameChangeDate.year" -> "2020"
+        "lastNameChangeDate.year"  -> "2020"
       )
 
       val result = controller.onSubmit(journeyId, NormalMode)(request)
@@ -118,7 +119,8 @@ class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq *)
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
 
       val result = controller.onSubmit(journeyId, NormalMode)(request)
 
