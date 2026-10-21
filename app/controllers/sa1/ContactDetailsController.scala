@@ -50,7 +50,7 @@ class ContactDetailsController @Inject() (
   }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-     SA1DataAction(journeyId).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
