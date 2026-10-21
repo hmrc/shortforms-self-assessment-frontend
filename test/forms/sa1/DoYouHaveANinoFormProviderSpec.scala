@@ -19,12 +19,12 @@ package forms.sa1
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class AddNiNumberFormProviderSpec extends BooleanFieldBehaviours {
+class DoYouHaveANinoFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "sa1.addNiNumber.error.required"
+  val requiredKey = "sa1.doYouHaveANino.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new AddNiNumberFormProvider()()
+  val form = new DoYouHaveANinoFormProvider()()
 
   ".value" - {
 

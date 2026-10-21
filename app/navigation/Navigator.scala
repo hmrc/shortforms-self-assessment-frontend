@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.sa1.{AddNiNumberPage, AddPreviousLastNamePage}
+import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage}
 
 @Singleton
 class Navigator @Inject() () {
@@ -41,16 +41,16 @@ class Navigator @Inject() () {
           case _ => routes.IndexController.onPageLoad()
         }
 
-    case AddNiNumberPage =>
+    case DoYouHaveANinoPage =>
       ua =>
-        ua.get(AddNiNumberPage) match {
+        ua.get(DoYouHaveANinoPage) match {
           case Some(true) =>
             // TODO DTR-8726: Redirect to Enter NI number page
-            controllers.sa1.routes.AddNiNumberController.onPageLoad(ua.id, NormalMode)
+            controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
 
           case Some(false) =>
             // TODO DTR-8641: Redirect to Reason(s) for no NI number page
-            controllers.sa1.routes.AddNiNumberController.onPageLoad(ua.id, NormalMode)
+            controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
 
           case _ => routes.IndexController.onPageLoad()
         }
@@ -62,8 +62,8 @@ class Navigator @Inject() () {
   private val checkRouteMap: Page => UserAnswers => Call = {
     case AddPreviousLastNamePage =>
       ua => controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
-    case AddNiNumberPage         =>
-      ua => controllers.sa1.routes.AddNiNumberController.onPageLoad(ua.id, CheckMode)
+    case DoYouHaveANinoPage      =>
+      ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, CheckMode)
     case _                       => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 

@@ -17,28 +17,28 @@
 package viewmodels.checkAnswers.sa1
 
 import models.{CheckMode, UserAnswers}
-import pages.sa1.AddNiNumberPage
+import pages.sa1.DoYouHaveANinoPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddNiNumberSummary {
+object DoYouHaveANinoSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AddNiNumberPage).map { answer =>
+    answers.get(DoYouHaveANinoPage).map { answer =>
 
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "sa1.addNiNumber.checkYourAnswersLabel",
+        key = "sa1.doYouHaveANino.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.sa1.routes.AddNiNumberController.onPageLoad(answers.id, CheckMode).url
+            controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(answers.id, CheckMode).url
           )
-            .withVisuallyHiddenText(messages("sa1.addNiNumber.change.hidden"))
+            .withVisuallyHiddenText(messages("sa1.doYouHaveANino.change.hidden"))
         )
       )
     }

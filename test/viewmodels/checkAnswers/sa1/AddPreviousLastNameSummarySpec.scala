@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.govuk.checkAnswers.sa1
+package viewmodels.checkAnswers.sa1
 
 import base.SpecBase
 import models.CheckMode
@@ -22,7 +22,6 @@ import pages.sa1.AddPreviousLastNamePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import viewmodels.checkAnswers.sa1.AddPreviousLastNameSummary
 
 class AddPreviousLastNameSummarySpec extends SpecBase {
 

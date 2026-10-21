@@ -19,9 +19,9 @@ package pages.sa1
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AddNiNumberPage extends QuestionPage[Boolean] {
+case object DoYouHaveANinoPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "addNiNumber"
+  override def toString: String = "doYouHaveANino"
 }

@@ -21,10 +21,10 @@ import play.api.data.Form
 
 import javax.inject.Inject
 
-class AddNiNumberFormProvider @Inject() extends Mappings {
+class DoYouHaveANinoFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("sa1.addNiNumber.error.required")
+      "value" -> boolean("sa1.doYouHaveANino.error.required")
     )
 }

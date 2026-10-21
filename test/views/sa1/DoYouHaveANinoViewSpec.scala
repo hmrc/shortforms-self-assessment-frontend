@@ -17,21 +17,21 @@
 package views.sa1
 
 import base.SpecBase
-import forms.sa1.AddNiNumberFormProvider
+import forms.sa1.DoYouHaveANinoFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
-import views.html.sa1.AddNiNumberView
+import views.html.sa1.DoYouHaveANinoView
 
 import scala.jdk.CollectionConverters.*
 
-class AddNiNumberViewSpec extends SpecBase {
+class DoYouHaveANinoViewSpec extends SpecBase {
 
-  private val addNiNumberFormProvider = new AddNiNumberFormProvider()
-  protected val form                  = addNiNumberFormProvider()
+  private val doYouHaveANinoFormProvider = new DoYouHaveANinoFormProvider()
+  protected val form                     = doYouHaveANinoFormProvider()
 
-  "AddNiNumberView" - {
+  "DoYouHaveANinoView" - {
 
     "must render the page title and main heading" in {
 
@@ -39,7 +39,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 
@@ -48,10 +48,10 @@ class AddNiNumberViewSpec extends SpecBase {
             view(form, userAnswersId, NormalMode)(request, msgs).body
           )
 
-        doc.title() must include(msgs("sa1.addNiNumber.title"))
+        doc.title() must include(msgs("sa1.doYouHaveANino.title"))
 
         doc.select("h1").size() mustEqual 1
-        doc.select("h1").text() mustEqual msgs("sa1.addNiNumber.heading")
+        doc.select("h1").text() mustEqual msgs("sa1.doYouHaveANino.heading")
       }
     }
 
@@ -61,7 +61,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 
@@ -70,17 +70,17 @@ class AddNiNumberViewSpec extends SpecBase {
             view(form, userAnswersId, NormalMode)(request, msgs).body
           )
 
-        doc.select("p").text() must include(msgs("sa1.addNiNumber.p1"))
+        doc.select("p").text() must include(msgs("sa1.doYouHaveANino.p1"))
 
         val bulletItems =
           doc.select("ul.govuk-list--bullet li")
 
         bulletItems.size() mustEqual 4
 
-        bulletItems.get(0).text() mustEqual msgs("sa1.addNiNumber.b1")
-        bulletItems.get(1).text() mustEqual msgs("sa1.addNiNumber.b2")
-        bulletItems.get(2).text() mustEqual msgs("sa1.addNiNumber.b3")
-        bulletItems.get(3).text() mustEqual msgs("sa1.addNiNumber.b4")
+        bulletItems.get(0).text() mustEqual msgs("sa1.doYouHaveANino.b1")
+        bulletItems.get(1).text() mustEqual msgs("sa1.doYouHaveANino.b2")
+        bulletItems.get(2).text() mustEqual msgs("sa1.doYouHaveANino.b3")
+        bulletItems.get(3).text() mustEqual msgs("sa1.doYouHaveANino.b4")
       }
     }
 
@@ -90,7 +90,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 
@@ -105,10 +105,10 @@ class AddNiNumberViewSpec extends SpecBase {
         val link = doc
           .select("a")
           .asScala
-          .find(_.text() == msgs("sa1.addNiNumber.p2.linkText"))
+          .find(_.text() == msgs("sa1.doYouHaveANino.p2.linkText"))
           .value
 
-        link.text() mustEqual msgs("sa1.addNiNumber.p2.linkText")
+        link.text() mustEqual msgs("sa1.doYouHaveANino.p2.linkText")
         link.attr("target") mustBe "_blank"
         link.attr("rel") must include("noopener")
         link.attr("rel") must include("noreferrer")
@@ -121,7 +121,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 
@@ -143,7 +143,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 
@@ -162,7 +162,7 @@ class AddNiNumberViewSpec extends SpecBase {
 
       running(application) {
 
-        val view    = application.injector.instanceOf[AddNiNumberView]
+        val view    = application.injector.instanceOf[DoYouHaveANinoView]
         val request = FakeRequest()
         val msgs    = messages(application)
 

@@ -17,27 +17,27 @@
 package controllers.sa1
 
 import controllers.actions.*
-import forms.sa1.AddNiNumberFormProvider
+import forms.sa1.DoYouHaveANinoFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.sa1.AddNiNumberPage
+import pages.sa1.DoYouHaveANinoPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.sa1.AddNiNumberView
+import views.html.sa1.DoYouHaveANinoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddNiNumberController @Inject() (
+class DoYouHaveANinoController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Navigator,
   identify: IdentifierAction,
   sa1DataRequiredAction: SA1DataRequiredAction,
-  formProvider: AddNiNumberFormProvider,
+  formProvider: DoYouHaveANinoFormProvider,
   val controllerComponents: MessagesControllerComponents,
-  view: AddNiNumberView
+  view: DoYouHaveANinoView
 )(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
@@ -47,7 +47,7 @@ class AddNiNumberController @Inject() (
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
     (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
 
-      val preparedForm = request.userAnswers.get(AddNiNumberPage) match {
+      val preparedForm = request.userAnswers.get(DoYouHaveANinoPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -63,9 +63,9 @@ class AddNiNumberController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddNiNumberPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveANinoPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AddNiNumberPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(DoYouHaveANinoPage, mode, updatedAnswers))
         )
     }
 }

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.*
 import pages.*
-import pages.sa1.{AddNiNumberPage, AddPreviousLastNamePage}
+import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -66,30 +66,32 @@ class NavigatorSpec extends SpecBase {
         }
       }
 
-      "when add NI number page" - {
+      "when Do you have a Nino page" - {
         // TODO DTR-8726: Redirect to Enter NI number page
-        "must go from add NI number page to enter NI number page when answer is 'yes'" in {
-          val userAnswers = emptyUserAnswers.set(AddNiNumberPage, true).success.value
+        "must go from Do you have a Nino page to Enter Nino number page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, true).success.value
           navigator.nextPage(
-            AddNiNumberPage,
+            DoYouHaveANinoPage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+          ) mustBe controllers.sa1.routes.DoYouHaveANinoController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
         // TODO DTR-8641: Redirect to Reason(s) for no NI number page
-        "must go from add NI number page to enter reason(s) for no NI number page when answer is 'no'" in {
-          val userAnswers = emptyUserAnswers.set(AddNiNumberPage, false).success.value
+        "must go from Do you have a Nino page to Enter reason(s) for no Nino number page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, false).success.value
           navigator.nextPage(
-            AddNiNumberPage,
+            DoYouHaveANinoPage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+          ) mustBe controllers.sa1.routes.DoYouHaveANinoController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
         "must go from add previous last name page to Index when answer is empty" in {
           val userAnswers = emptyUserAnswers
-          navigator.nextPage(AddNiNumberPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+          navigator.nextPage(DoYouHaveANinoPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
         }
       }
     }
@@ -112,10 +114,10 @@ class NavigatorSpec extends SpecBase {
         ) mustBe controllers.sa1.routes.AddPreviousLastNameController
           .onPageLoad(journeyId = userAnswersId, mode = CheckMode)
         navigator.nextPage(
-          AddNiNumberPage,
+          DoYouHaveANinoPage,
           CheckMode,
           emptyUserAnswers
-        ) mustBe controllers.sa1.routes.AddNiNumberController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+        ) mustBe controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
       }
     }
   }

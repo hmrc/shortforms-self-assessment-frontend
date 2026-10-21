@@ -18,7 +18,7 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
-import forms.sa1.AddNiNumberFormProvider
+import forms.sa1.DoYouHaveANinoFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import org.apache.pekko.actor.ActorSystem
@@ -26,27 +26,28 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.mockito.MockitoSugar.mock
-import pages.sa1.AddNiNumberPage
+import pages.sa1.DoYouHaveANinoPage
 import play.api.mvc.{Call, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.sa1.AddNiNumberView
+import views.html.sa1.DoYouHaveANinoView
 
 import scala.concurrent.Future
 
-class AddNiNumberControllerSpec extends SpecBase with MockitoSugar {
+class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val addNiNumberRoute = controllers.sa1.routes.AddNiNumberController.onPageLoad(userAnswersId, NormalMode).url
+  lazy val doYouHaveANinoRoute =
+    controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(userAnswersId, NormalMode).url
 
-  "AddNiNumber Controller" - {
+  "DoYouHaveANino Controller" - {
 
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(GET, addNiNumberRoute)
+      val request                  = FakeRequest(GET, doYouHaveANinoRoute)
 
       val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
 
@@ -61,8 +62,8 @@ class AddNiNumberControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(AddNiNumberPage, true).success.value
-      val request                  = FakeRequest(GET, addNiNumberRoute)
+      val userAnswers: UserAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, true).success.value
+      val request                  = FakeRequest(GET, doYouHaveANinoRoute)
 
       val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
 
@@ -78,7 +79,7 @@ class AddNiNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(POST, addNiNumberRoute)
+      val request                  = FakeRequest(POST, doYouHaveANinoRoute)
         .withFormUrlEncodedBody(("value", "true"))
 
       when(mockSessionRepository.set(any[UserAnswers]))
@@ -96,7 +97,7 @@ class AddNiNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(POST, addNiNumberRoute)
+      val request                  = FakeRequest(POST, doYouHaveANinoRoute)
         .withFormUrlEncodedBody(("value", ""))
       val boundForm                = form.bind(Map("value" -> ""))
 
@@ -125,20 +126,20 @@ class AddNiNumberControllerSpec extends SpecBase with MockitoSugar {
       )
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
     protected val mockNavigator: Navigator                 = mock[Navigator]
-    protected val mockView: AddNiNumberView                = mock[AddNiNumberView]
-    protected val mockContent                              = "AddNiNumber"
-    private val addNiNumberFormProvider                    = new AddNiNumberFormProvider()
-    protected val form                                     = addNiNumberFormProvider()
+    protected val mockView: DoYouHaveANinoView             = mock[DoYouHaveANinoView]
+    protected val mockContent                              = "DoYouHaveANino"
+    private val doYouHaveANinoFormProvider                 = new DoYouHaveANinoFormProvider()
+    protected val form                                     = doYouHaveANinoFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controller: AddNiNumberController = new AddNiNumberController(
+    protected lazy val controller: DoYouHaveANinoController = new DoYouHaveANinoController(
       mockSessionRepository,
       mockNavigator,
       identifierAction,
       dataRequiredAction,
-      addNiNumberFormProvider,
+      doYouHaveANinoFormProvider,
       stubMessagesControllerComponents(),
       mockView
     )
