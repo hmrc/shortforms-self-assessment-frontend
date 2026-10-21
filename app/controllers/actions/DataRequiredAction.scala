@@ -39,6 +39,14 @@ class DataRequiredActionImpl @Inject() (
     journeyId: String,
     journeyType: JourneyType
   ): ActionRefiner[IdentifierRequest, DataRequest] =
+    refine(userId => sessionRepository.get(journeyId, userId, journeyType))
+
+  override def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest] =
+    refine(userId => sessionRepository.get(journeyId, userId))
+
+  private def refine(
+    loadAnswers: String => Future[Option[models.UserAnswers]]
+  ): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
       override protected def executionContext: ExecutionContext = ec
@@ -46,8 +54,7 @@ class DataRequiredActionImpl @Inject() (
       override protected def refine[A](
         request: IdentifierRequest[A]
       ): Future[Either[Result, DataRequest[A]]] =
-        sessionRepository
-          .get(journeyId, request.userId, journeyType)
+        loadAnswers(request.userId)
           .map {
             case Some(userAnswers) =>
               Right(
@@ -70,6 +77,8 @@ class DataRequiredActionImpl @Inject() (
 }
 
 trait DataRequiredAction {
+
+  def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest]
 
   def apply(
     journeyId: String,

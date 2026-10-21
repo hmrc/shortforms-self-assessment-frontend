@@ -55,6 +55,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val cacheTtl: Long = configuration.get[Int]("mongodb.timeToLiveInSeconds")
 
+  val addressLookupBaseUrl: String =
+    configuration.get[Service]("microservice.services.address-lookup-frontend").baseUrl
+
   lazy val highIncomeChildBenefitChargeUrl: String = configuration.get[String]("urls.highIncomeChildBenefitChargeUrl")
   lazy val applyNinoUrl: String                    = configuration.get[String]("urls.applyNinoUrl")
   lazy val findYourNinoUrl: String                 = configuration.get[String]("urls.findYourNinoUrl")

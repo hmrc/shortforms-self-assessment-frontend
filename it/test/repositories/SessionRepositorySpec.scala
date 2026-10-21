@@ -19,6 +19,7 @@ package repositories
 import config.FrontendAppConfig
 import models.JourneyType.SA1
 import models.UserAnswers
+import models.address.{AddressDetails, ConfirmedAddress, Country}
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalactic.source.Position
@@ -28,6 +29,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.MDC
+import pages.AddressPage
 import play.api.libs.json.Json
 import uk.gov.hmrc.mdc.MdcExecutionContext
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
@@ -83,6 +85,28 @@ class SessionRepositorySpec
     }
 
     mustPreserveMdc(repository.set(userAnswers))
+
+    "must persist the confirmed address in data.address and retain it across generic and SA1 reads" in {
+      val address = ConfirmedAddress(
+        address = AddressDetails(
+          lines = Seq("1 Test Street"),
+          town = Some("London"),
+          postcode = Some("SW1A 1AA"),
+          country = Some(Country("GB", "United Kingdom"))
+        ),
+        auditRef = "alf-audit-ref",
+        uprn = Some(123456789L)
+      )
+      val updatedAnswers = userAnswers.set(AddressPage, address).get
+
+      repository.set(updatedAnswers).futureValue mustBe true
+
+      val storedAnswers = repository.get(userAnswers.id, userId).futureValue.value
+      storedAnswers.get(AddressPage).value mustBe address
+      (storedAnswers.data \ "address").as[ConfirmedAddress] mustBe address
+      (storedAnswers.data \ "foo").as[String] mustBe "bar"
+      repository.get(userAnswers.id, userId, SA1).futureValue.value.get(AddressPage).value mustBe address
+    }
   }
 
   ".get(journeyId, userId, journeyType)" - {
@@ -94,6 +118,28 @@ class SessionRepositorySpec
         repository.get(userAnswers.id, userId, SA1).futureValue
 
       result.value mustEqual userAnswers.copy(lastUpdated = instant)
+    }
+
+    ".get(journeyId, userId)" - {
+      models.JourneyType.values.foreach { journeyType =>
+        s"must return the stored $journeyType journey and refresh lastUpdated" in {
+          val answers = userAnswers.copy(journeyType = journeyType)
+          insert(answers).futureValue
+          repository.get(answers.id, userId).futureValue.value mustEqual answers.copy(lastUpdated = instant)
+        }
+      }
+
+      "must not read or refresh another user's journey" in {
+        insert(userAnswers).futureValue
+        repository.get(userAnswers.id, anotherUserId).futureValue mustBe None
+        find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value mustEqual userAnswers
+      }
+
+      "must return None when the journey is missing" in {
+        repository.get("missing-journey-id", userId).futureValue mustBe None
+      }
+
+      mustPreserveMdc(repository.get(userAnswers.id, userId))
     }
 
     "must return None when the record does not exist" in {

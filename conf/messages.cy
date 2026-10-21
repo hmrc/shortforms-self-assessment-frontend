@@ -1,5 +1,4 @@
 
-
 site.back = xxxxxxxxxxxxx
 site.remove = xxxxxxxxxxxxx
 site.change = xxxxxxxxxxxxx
@@ -123,3 +122,20 @@ sa1.doYouHaveANino.checkYourAnswersLabel = xxxxxxxxxxxxx
 sa1.doYouHaveANino.error.required = xxxxxxxxxxxxx
 sa1.doYouHaveANino.change.hidden = xxxxxxxxxxxxx
 
+address.label = xxxxxxxxxxxxx
+service.name = XXXXX
+address.countryPicker.title = XXXXX
+address.countryPicker.label = XXXXX
+address.lookup.title = XXXXX
+address.lookup.filter = XXXXX
+address.edit.title = XXXXX
+address.select.title = XXXXX
+address.confirm.title = XXXXX
+address.enterManually = XXXXX
+address.editManually = XXXXX
+address.line1 = XXXXX
+address.line2 = XXXXX
+address.line3 = XXXXX
+address.town = XXXXX
+address.postcode = XXXXX
+address.country = XXXXX

@@ -32,6 +32,9 @@ abstract class AppController extends FrontendBaseController with I18nSupport {
 
   protected def IdentifierAction: IdentifierAction = controllerComponents.identify
 
+  protected def DataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
+    controllerComponents.identify andThen controllerComponents.getData(journeyId)
+
   protected def SA1DataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
     controllerComponents.identify andThen controllerComponents.getData(journeyId, SA1)
 

@@ -16,10 +16,11 @@
 
 package controllers.actions
 
+import controllers.routes
 import models.{JourneyType, UserAnswers}
 import models.requests.{DataRequest, IdentifierRequest}
 import play.api.mvc.{ActionRefiner, Result}
-import play.api.mvc.Results.NotFound
+import play.api.mvc.Results.Redirect
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,6 +33,15 @@ class FakeDataRequiredAction(
     journeyId: String,
     journeyType: JourneyType
   ): ActionRefiner[IdentifierRequest, DataRequest] =
+    refine(journeyId, Some(journeyType))
+
+  override def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest] =
+    refine(journeyId, None)
+
+  private def refine(
+    journeyId: String,
+    journeyType: Option[JourneyType]
+  ): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
       override protected def executionContext: ExecutionContext = ec
@@ -41,7 +51,10 @@ class FakeDataRequiredAction(
       ): Future[Either[Result, DataRequest[A]]] =
         Future.successful {
           userAnswers match {
-            case Some(answers) =>
+            case Some(answers)
+                if answers.id == journeyId &&
+                  answers.userId == request.userId &&
+                  journeyType.forall(_ == answers.journeyType) =>
               Right(
                 DataRequest(
                   request.request,
@@ -51,7 +64,11 @@ class FakeDataRequiredAction(
               )
 
             case _ =>
-              Left(NotFound)
+              Left(
+                Redirect(
+                  routes.JourneyRecoveryController.onPageLoad()
+                )
+              )
           }
         }
     }
