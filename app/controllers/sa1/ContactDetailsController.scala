@@ -16,33 +16,30 @@
 
 package controllers.sa1
 
-import controllers.actions.*
+import controllers.{AppController, AppControllerComponents}
 import forms.sa1.ContactDetailsFormProvider
 import models.Mode
 import models.sa1.ContactDetails
 import pages.sa1.ContactDetailsPage
 import play.api.data.Form
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.ContactDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactDetailsController @Inject()(
-                                      override val controllerComponents: MessagesControllerComponents,
+                                      val controllerComponents: AppControllerComponents,
                                       sessionRepository: SessionRepository,
-                                      identify: IdentifierAction,
-                                      sa1DataRequiredAction: SA1DataRequiredAction,
                                       formProvider: ContactDetailsFormProvider,
-                                      view: ContactDetailsView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                      view: ContactDetailsView,
+                                     )(implicit ec: ExecutionContext) extends AppController {
 
   val form: Form[ContactDetails] = formProvider()
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)) {
+
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =  SA1DataAction(journeyId) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ContactDetailsPage) match {
@@ -53,7 +50,7 @@ class ContactDetailsController @Inject()(
       Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = (identify andThen sa1DataRequiredAction(journeyId)).async {
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = (IdentifierAction andThen SA1DataAction(journeyId)).async {
     implicit request =>
 
       form.bindFromRequest().fold(

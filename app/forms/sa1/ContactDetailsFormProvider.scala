@@ -30,8 +30,8 @@ class ContactDetailsFormProvider @Inject() extends Mappings {
   private val regexEmailDomainValidationRule = "^[a-zA-Z0-9]([a-zA-Z0-9]?-?[a-zA-Z0-9]+)*$"
   private val regexPhoneNumber = "^[0-9-()+ ]{0,40}$"
   private val emailIdMaxLength = 129
+  private val emailPartsMaxLength = 64
   private val phoneNumberMaxLength = 40
-
 
   def apply(): Form[ContactDetails] = Form(
     mapping(
@@ -49,29 +49,26 @@ class ContactDetailsFormProvider @Inject() extends Mappings {
 
   private def validateEmail(errorKey: String): Constraint[String] = Constraint {
     email =>
-      if (!email.contains("@")) {
-        Invalid(errorKey)
-      } else {
-        val parts = email.split("@")
-        if (parts.length == 2) {
-          val username = parts(0)
-          val emailDomain = parts(1)
-          val isUsernameLengthValid = username.length <= 64
-          val isDomainSegmentLengthValid = emailDomain.length <= 64
-          val hasDotExtension = emailDomain.contains(".") && !emailDomain.startsWith(".") && !emailDomain.endsWith(".")
-          val emailDomainParts = emailDomain.split("\\.")
-
-          val isUserNameValid = isUsernameLengthValid && username.matches(regexEmailUserNameRule)
-          val isDomainValid = isDomainSegmentLengthValid && hasDotExtension && emailDomainParts.nonEmpty && emailDomainParts.forall(_.matches(regexEmailDomainValidationRule))
-          if (isUserNameValid && isDomainValid) {
-            Valid
-          } else {
-            Invalid(errorKey)
-          }
-        } else {
-          Invalid(errorKey)
-        }
-      }
+      email.split('@').toList match
+        case username :: domain :: Nil if isUsernameValid(username) && isDomainValid(domain) => Valid
+        case _ => Invalid(errorKey)
   }
+
+  private def isUsernameValid(username: String): Boolean = {
+    val isUserNameSegmentLengthValid: Boolean = username.length <= emailPartsMaxLength
+    val isEmailUserNameRegexValid: Boolean = username.matches(regexEmailUserNameRule)
+
+    isUserNameSegmentLengthValid && isEmailUserNameRegexValid
+  }
+
+  private def isDomainValid(domain: String): Boolean =
+    val isDomainSegmentLengthValid: Boolean = domain.length <= emailPartsMaxLength
+    val hasDotExtensionValid: Boolean = domain.contains(".") && !domain.startsWith(".") && !domain.endsWith(".")
+    val emailDomainParts = domain.split("\\.")
+    val isEmailDomainPartsValid: Boolean = emailDomainParts.nonEmpty &&
+      emailDomainParts.forall(_.matches(regexEmailDomainValidationRule))
+
+    isDomainSegmentLengthValid && hasDotExtensionValid && isEmailDomainPartsValid
 }
+
 
