@@ -41,10 +41,7 @@ class FakeDataRequiredAction(
       ): Future[Either[Result, DataRequest[A]]] =
         Future.successful {
           userAnswers match {
-            case Some(answers)
-                if answers.id == journeyId &&
-                  answers.userId == request.userId &&
-                  answers.journeyType == journeyType =>
+            case Some(answers) =>
               Right(
                 DataRequest(
                   request.request,

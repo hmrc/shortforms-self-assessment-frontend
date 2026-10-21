@@ -16,37 +16,30 @@
 
 package controllers.sa1
 
-import controllers.actions.IdentifierAction
-import controllers.routes
+import controllers.{AppController, AppControllerComponents, routes}
 import models.JourneyType.SA1
 import models.NormalMode
 import play.api.Logging
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import services.StartJourneyService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.StartView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class StartController @Inject() (
-  identify: IdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
+  val controllerComponents: AppControllerComponents,
   startJourneyService: StartJourneyService,
   view: StartView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
+) extends AppController
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    identify { implicit request =>
+    IdentifierAction { implicit request =>
       Ok(view())
     }
 
   def onSubmit(): Action[AnyContent] =
-    identify.async { implicit request =>
+    IdentifierAction.async { implicit request =>
       startJourneyService
         .startJourney(request.userId, SA1)
         .map { journeyId =>
