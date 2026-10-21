@@ -29,39 +29,39 @@ import views.html.sa1.ContactDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactDetailsController @Inject()(
-                                      val controllerComponents: AppControllerComponents,
-                                      sessionRepository: SessionRepository,
-                                      formProvider: ContactDetailsFormProvider,
-                                      view: ContactDetailsView,
-                                     )(implicit ec: ExecutionContext) extends AppController {
+class ContactDetailsController @Inject() (
+  val controllerComponents: AppControllerComponents,
+  sessionRepository: SessionRepository,
+  formProvider: ContactDetailsFormProvider,
+  view: ContactDetailsView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
   val form: Form[ContactDetails] = formProvider()
 
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =  SA1DataAction(journeyId) {
-    implicit request =>
+    val preparedForm = request.userAnswers.get(ContactDetailsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val preparedForm = request.userAnswers.get(ContactDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, journeyId, mode))
+    Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = (IdentifierAction andThen SA1DataAction(journeyId)).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactDetailsPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode))  //TODO - redirect to next page without navigator post new route is defined
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (IdentifierAction andThen SA1DataAction(journeyId)).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactDetailsPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(
+              controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode)
+            ) // TODO - redirect to next page without navigator post new route is defined
+        )
+    }
 }

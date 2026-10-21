@@ -18,7 +18,7 @@ package models.sa1
 
 import play.api.libs.json.*
 
-case class ContactDetails (emailAddress: String, phoneNumber: String)
+case class ContactDetails(emailAddress: String, phoneNumber: String)
 
 object ContactDetails {
 

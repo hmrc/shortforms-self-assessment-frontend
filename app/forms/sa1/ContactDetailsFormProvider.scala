@@ -26,12 +26,12 @@ import javax.inject.Inject
 
 class ContactDetailsFormProvider @Inject() extends Mappings {
 
-  private val regexEmailUserNameRule = "^([\\w-]+\\S?)*[\\w-]$"
+  private val regexEmailUserNameRule         = "^([\\w-]+\\S?)*[\\w-]$"
   private val regexEmailDomainValidationRule = "^[a-zA-Z0-9]([a-zA-Z0-9]?-?[a-zA-Z0-9]+)*$"
-  private val regexPhoneNumber = "^[0-9-()+ ]{0,40}$"
-  private val emailIdMaxLength = 129
-  private val emailPartsMaxLength = 64
-  private val phoneNumberMaxLength = 40
+  private val regexPhoneNumber               = "^[0-9-()+ ]{0,40}$"
+  private val emailIdMaxLength               = 129
+  private val emailPartsMaxLength            = 64
+  private val phoneNumberMaxLength           = 40
 
   def apply(): Form[ContactDetails] = Form(
     mapping(
@@ -39,36 +39,38 @@ class ContactDetailsFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(emailIdMaxLength, "sa1.contactDetails.error.emailAddress.length"),
-            validateEmail("sa1.contactDetails.emailAddress.invalid"))
+            validateEmail("sa1.contactDetails.emailAddress.invalid")
+          )
         ),
-      "phoneNumber" -> text("sa1.contactDetails.error.phoneNumber.required")
-        .verifying(firstError(maxLength(phoneNumberMaxLength, "sa1.contactDetails.error.phoneNumber.length"),
-          regexp(regexPhoneNumber, "sa1.contactDetails.phoneNumber.invalid")))
+      "phoneNumber"  -> text("sa1.contactDetails.error.phoneNumber.required")
+        .verifying(
+          firstError(
+            maxLength(phoneNumberMaxLength, "sa1.contactDetails.error.phoneNumber.length"),
+            regexp(regexPhoneNumber, "sa1.contactDetails.phoneNumber.invalid")
+          )
+        )
     )(ContactDetails.apply)(x => Some((x.emailAddress, x.phoneNumber)))
   )
 
-  private def validateEmail(errorKey: String): Constraint[String] = Constraint {
-    email =>
-      email.split('@').toList match
-        case username :: domain :: Nil if isUsernameValid(username) && isDomainValid(domain) => Valid
-        case _ => Invalid(errorKey)
+  private def validateEmail(errorKey: String): Constraint[String] = Constraint { email =>
+    email.split('@').toList match
+      case username :: domain :: Nil if isUsernameValid(username) && isDomainValid(domain) => Valid
+      case _                                                                               => Invalid(errorKey)
   }
 
   private def isUsernameValid(username: String): Boolean = {
     val isUserNameSegmentLengthValid: Boolean = username.length <= emailPartsMaxLength
-    val isEmailUserNameRegexValid: Boolean = username.matches(regexEmailUserNameRule)
+    val isEmailUserNameRegexValid: Boolean    = username.matches(regexEmailUserNameRule)
 
     isUserNameSegmentLengthValid && isEmailUserNameRegexValid
   }
 
   private def isDomainValid(domain: String): Boolean =
     val isDomainSegmentLengthValid: Boolean = domain.length <= emailPartsMaxLength
-    val hasDotExtensionValid: Boolean = domain.contains(".") && !domain.startsWith(".") && !domain.endsWith(".")
-    val emailDomainParts = domain.split("\\.")
-    val isEmailDomainPartsValid: Boolean = emailDomainParts.nonEmpty &&
+    val hasDotExtensionValid: Boolean       = domain.contains(".") && !domain.startsWith(".") && !domain.endsWith(".")
+    val emailDomainParts                    = domain.split("\\.")
+    val isEmailDomainPartsValid: Boolean    = emailDomainParts.nonEmpty &&
       emailDomainParts.forall(_.matches(regexEmailDomainValidationRule))
 
     isDomainSegmentLengthValid && hasDotExtensionValid && isEmailDomainPartsValid
 }
-
-

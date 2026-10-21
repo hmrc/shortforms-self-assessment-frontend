@@ -16,7 +16,6 @@
 
 package controllers
 
-
 import controllers.sa1.ContactDetailsController
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.ContactDetailsFormProvider
@@ -46,26 +45,27 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
   private val journeyId = "test-journey-id"
-  private val userId = "test-user-id"
+  private val userId    = "test-user-id"
 
   def onwardRoute = Call("GET", "/foo")
 
-  private val contactDetails = ContactDetails(emailAddress = "name@example.com", phoneNumber = "+44 1111111111")
-  private val validFormData = Map(
+  private val contactDetails    = ContactDetails(emailAddress = "name@example.com", phoneNumber = "+44 1111111111")
+  private val validFormData     = Map(
     "emailAddress" -> "name@example.com",
-    "phoneNumber" -> "+44 1111111111"
+    "phoneNumber"  -> "+44 1111111111"
   )
   protected val mockViewContent = "ContactDetailsView"
 
-  lazy val contactDetailsRoute: String = controllers.sa1.routes.ContactDetailsController.onPageLoad("test-journey-id", NormalMode).url
+  lazy val contactDetailsRoute: String =
+    controllers.sa1.routes.ContactDetailsController.onPageLoad("test-journey-id", NormalMode).url
 
   private trait Setup {
     protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
 
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: ContactDetailsView = mock[ContactDetailsView]
+    protected val view: ContactDetailsView             = mock[ContactDetailsView]
 
-    private val controllerComponents = stubMessagesControllerComponents()
+    private val controllerComponents       = stubMessagesControllerComponents()
     protected lazy val controllerUnderTest = new ContactDetailsController(
       controllerComponents,
       sessionRepository,
@@ -74,7 +74,8 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
       new ContactDetailsFormProvider(),
       view
     )
-    when(view.apply(any[Form[ContactDetails]], any[String], any)(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
+    when(view.apply(any[Form[ContactDetails]], any[String], any)(any[Request[?]], any[Messages]))
+      .thenReturn(Html(mockViewContent))
 
   }
 
@@ -90,9 +91,11 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
 
     "pre-populate the form when previous contact details exists " in new Setup {
 
-      override protected val userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
-        .set(ContactDetailsPage, contactDetails).success.value
-      private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+      override protected val userAnswers: UserAnswers  = UserAnswers(journeyId, userId, JourneyType.SA1)
+        .set(ContactDetailsPage, contactDetails)
+        .success
+        .value
+      private val result                               = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
       status(result) mustEqual OK
       val captor: ArgumentCaptor[Form[ContactDetails]] = ArgumentCaptor.forClass(classOf[Form[ContactDetails]])
       verify(view).apply(captor.capture(), eqTo(journeyId), any)(any[Request[?]], any[Messages])
@@ -106,7 +109,7 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
     "return BAD_REQUEST when the submitted form is invalid" in new Setup {
       val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
         "emailAddress" -> "",
-        "phoneNumber" -> "+44 1111111111"
+        "phoneNumber"  -> "+44 1111111111"
       )
 
       val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
@@ -118,12 +121,15 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq *)
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
 
       val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, NormalMode).url) //TODO: Change URL post define right reroute URL
+      redirectLocation(result) mustBe Some(
+        controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, NormalMode).url
+      ) // TODO: Change URL post define right reroute URL
 
       val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())

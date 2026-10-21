@@ -24,28 +24,26 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object ContactDetailsSummary  {
+object ContactDetailsSummary {
 
   def rows(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
-
-    answers.get(ContactDetailsPage).toSeq.flatMap {
-      answer =>
+    answers.get(ContactDetailsPage).toSeq.flatMap { answer =>
       Seq(
         SummaryListRowViewModel(
-          key     = "contactDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(answer.emailAddress)),
-          actions = Seq(changeAction(journeyId,"sa1.ontactDetails.change.hidden"))
-          ),
+          key = "contactDetails.checkYourAnswersLabel",
+          value = ValueViewModel(HtmlContent(answer.emailAddress)),
+          actions = Seq(changeAction(journeyId, "sa1.ontactDetails.change.hidden"))
+        ),
         SummaryListRowViewModel(
           key = "contactDetails.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(answer.phoneNumber)),
-          actions = Seq(changeAction(journeyId,"sa1.ontactDetails.change.hidden"))
-          )
+          actions = Seq(changeAction(journeyId, "sa1.ontactDetails.change.hidden"))
         )
+      )
     }
-  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages) =
-      ActionItemViewModel(
-        "site.change",
-        controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, CheckMode).url
-      ).withVisuallyHiddenText(messages(hiddenTextKey))
+  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages)     =
+    ActionItemViewModel(
+      "site.change",
+      controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, CheckMode).url
+    ).withVisuallyHiddenText(messages(hiddenTextKey))
 }
