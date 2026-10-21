@@ -20,11 +20,11 @@ import base.SpecBase
 import models.CheckMode
 import models.sa1.ContactDetails
 import pages.sa1.ContactDetailsPage
+import play.api.test.Helpers.stubMessages
 
 class ContactDetailsSummarySpec extends SpecBase {
 
-  private val application = applicationBuilder().build()
-  private val msgs        = messages(application)
+  private val msgs = stubMessages()
 
   "ContactDetailsSummary" - {
 
