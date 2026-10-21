@@ -34,7 +34,7 @@ class WhyTaxReturnSummarySpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
-          implicit val msgs: Messages = messages(application)
+          implicit val msgs: Messages    = messages(application)
           val reasons: Set[WhyTaxReturn] =
             Set(WhyTaxReturn.Other, WhyTaxReturn.CompanyDirector, WhyTaxReturn.CapitalGainsTax)
 
@@ -65,7 +65,8 @@ class WhyTaxReturnSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome)).success.value
+          val userAnswers =
+            emptyUserAnswers.set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome)).success.value
 
           val row = WhyTaxReturnSummary.row(userAnswers).value
 

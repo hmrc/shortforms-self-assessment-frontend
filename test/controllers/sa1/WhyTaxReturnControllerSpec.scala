@@ -89,7 +89,7 @@ class WhyTaxReturnControllerSpec extends SpecBase with MockitoSugar {
   }
 
   private class Setup {
-    protected val userAnswers: UserAnswers = emptyUserAnswers
+    protected val userAnswers: UserAnswers  = emptyUserAnswers
     protected val answer: Set[WhyTaxReturn] = Set(WhyTaxReturn.CompanyDirector, WhyTaxReturn.Other)
 
     protected val mockSessionRepository: SessionRepository = mock
