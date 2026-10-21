@@ -37,7 +37,7 @@ import java.time.{Clock, Instant, ZoneId}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SessionRepositorySpec
-  extends AnyFreeSpec
+    extends AnyFreeSpec
     with Matchers
     with DefaultPlayMongoRepositorySupport[UserAnswers]
     with ScalaFutures
@@ -45,10 +45,10 @@ class SessionRepositorySpec
     with OptionValues
     with MockitoSugar {
 
-  private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
+  private val instant          = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
 
-  private val userId = "test-user-id"
+  private val userId        = "test-user-id"
   private val anotherUserId = "another-user-id"
 
   private val userAnswers = UserAnswers(
@@ -66,8 +66,8 @@ class SessionRepositorySpec
 
   protected override val repository: SessionRepository = new SessionRepository(
     mongoComponent = mongoComponent,
-    appConfig      = mockAppConfig,
-    clock          = stubClock
+    appConfig = mockAppConfig,
+    clock = stubClock
   )
 
   ".set" - {
@@ -214,10 +214,7 @@ class SessionRepositorySpec
       result mustEqual true
 
       val updatedAnswers =
-        find(Filters.equal("_id", userAnswers.id))
-          .futureValue
-          .headOption
-          .value
+        find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
       updatedAnswers mustEqual userAnswers.copy(lastUpdated = instant)
     }
@@ -235,10 +232,7 @@ class SessionRepositorySpec
         .keepAlive(userAnswers.id, anotherUserId, SA1)
         .futureValue mustEqual true
 
-      find(Filters.equal("_id", userAnswers.id))
-        .futureValue
-        .headOption
-        .value mustEqual userAnswers
+      find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value mustEqual userAnswers
     }
 
     mustPreserveMdc(repository.keepAlive(userAnswers.id, userId, SA1))

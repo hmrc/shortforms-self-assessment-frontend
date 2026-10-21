@@ -103,4 +103,23 @@ sa1.enterPreviousLastName.checkYourAnswersLabel = xxxxxxxxxxxxx
 sa1.enterPreviousLastName.change.hidden = xxxxxxxxxxxxx
 sa1.enterPreviousLastName.date.change.hidden = xxxxxxxxxxxxx
 
+sa1.addPreviousLastName.title = xxxxxxxxxxxxx
+sa1.addPreviousLastName.heading = xxxxxxxxxxxxx
+sa1.addPreviousLastName.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.addPreviousLastName.error.required = xxxxxxxxxxxxx
+sa1.addPreviousLastName.change.hidden = xxxxxxxxxxxxx
+
+sa1.doYouHaveANino.title = xxxxxxxxxxxxx
+sa1.doYouHaveANino.heading = xxxxxxxxxxxxx
+sa1.doYouHaveANino.p1 = xxxxxxxxxxxxx
+sa1.doYouHaveANino.b1 = xxxxxxxxxxxxx
+sa1.doYouHaveANino.b2 = xxxxxxxxxxxxx
+sa1.doYouHaveANino.b3 = axxxxxxxxxxxxx
+sa1.doYouHaveANino.b4 = xxxxxxxxxxxxx
+sa1.doYouHaveANino.p2 = xxxxxxxxxxxxx
+sa1.doYouHaveANino.p2.linkText = xxxxxxxxxxxxx
+sa1.doYouHaveANino.subHeading = xxxxxxxxxxxxx
+sa1.doYouHaveANino.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.doYouHaveANino.error.required = xxxxxxxxxxxxx
+sa1.doYouHaveANino.change.hidden = xxxxxxxxxxxxx
 
