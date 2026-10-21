@@ -16,8 +16,8 @@
 
 package controllers
 
+import controllers.actions.FakeIdentifierAction
 import controllers.sa1.ContactDetailsController
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
@@ -61,22 +61,19 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
 
   private trait Setup {
     protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+    private val components                 = new MockAppControllerComponents(userAnswers)
 
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: ContactDetailsView             = mock[ContactDetailsView]
 
-    private val controllerComponents       = stubMessagesControllerComponents()
     protected lazy val controllerUnderTest = new ContactDetailsController(
-      controllerComponents,
+      new MockAppControllerComponents(userAnswers),
       sessionRepository,
-      new FakeIdentifierAction(controllerComponents.parsers),
-      new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers))),
       new ContactDetailsFormProvider(),
       view
     )
     when(view.apply(any[Form[ContactDetails]], any[String], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockViewContent))
-
   }
 
   "ContactDetails Controller" should {
