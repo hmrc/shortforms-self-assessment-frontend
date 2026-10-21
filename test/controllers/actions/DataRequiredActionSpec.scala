@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import models.JourneyType.SA1
-import models.UserAnswers
+import models.{JourneyType, UserAnswers}
 import models.requests.IdentifierRequest
 import org.mockito.ArgumentMatchers.eq as eqTo
 import org.mockito.Mockito.{mock, verify, when}

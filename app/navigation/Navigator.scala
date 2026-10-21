@@ -64,7 +64,7 @@ class Navigator @Inject() () {
       ua => controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
     case DoYouHaveANinoPage      =>
       ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, CheckMode)
-    case _                       => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    case _                       => ua => controllers.sa1.routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

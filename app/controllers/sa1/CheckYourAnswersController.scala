@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa1
 
 import com.google.inject.Inject
 import controllers.actions.{IdentifierAction, SA1DataRequiredAction}
+import models.CheckMode
+import pages.sa1.NamePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.checkAnswers.AddressJourneySummary
+import viewmodels.checkAnswers.sa1.NameSummary
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
-import models.CheckMode
-import pages.sa1.NamePage
-import viewmodels.checkAnswers.sa1.NameSummary
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -36,15 +37,11 @@ class CheckYourAnswersController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(journeyId: String): Action[AnyContent] = (identify andThen requireData(journeyId)) {
-    implicit request =>
+  def onPageLoad(journeyId: String): Action[AnyContent] =
+    (identify andThen requireData(journeyId)) { implicit request =>
+      val nameRows = request.userAnswers.get(NamePage).map(NameSummary.row(_, journeyId, CheckMode)).toSeq
+      val rows     = nameRows ++ AddressJourneySummary.rows(request.userAnswers)
 
-      val rows = request.userAnswers.get(NamePage).map(NameSummary.row(_, journeyId, CheckMode)).toSeq
-
-      val list = SummaryListViewModel(
-        rows = rows
-      )
-
-      Ok(view(list))
-  }
+      Ok(view(SummaryListViewModel(rows = rows)))
+    }
 }
