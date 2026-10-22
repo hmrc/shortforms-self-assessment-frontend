@@ -17,7 +17,7 @@
 package views.sa1
 
 import forms.sa1.DateLandPropertyFormProvider
-import models.{NormalMode, CheckMode}
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec

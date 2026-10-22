@@ -56,7 +56,7 @@ class DateLandPropertyControllerSpec extends AnyWordSpec with Matchers with TryV
   private class Setup {
     protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: DateLandPropertyView         = mock[DateLandPropertyView]
+    protected val view: DateLandPropertyView           = mock[DateLandPropertyView]
 
     private val controllerComponents    = stubMessagesControllerComponents()
     private val identifierAction        = new FakeIdentifierAction(controllerComponents.parsers)
@@ -64,7 +64,7 @@ class DateLandPropertyControllerSpec extends AnyWordSpec with Matchers with TryV
     private val formProvider            = new DateLandPropertyFormProvider()
     private val navigator               = new Navigator()
 
-    protected lazy val     controller = new DateLandPropertyController(
+    protected lazy val controller = new DateLandPropertyController(
       controllerComponents,
       identifierAction,
       dataRequiredAction,
