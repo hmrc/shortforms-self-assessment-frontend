@@ -153,3 +153,14 @@ sa1.noNinoReason.hint = Submissions without a valid reason will be rejected.
 sa1.noNinoReason.error.required = Tell us why you do not have a National Insurance number
 sa1.noNinoReason.error.length = Your reason must be 2000 characters or less
 
+
+sa1.dateOfBirth.title = What is your date of birth?
+sa1.dateOfBirth.heading = What is your date of birth?
+sa1.dateOfBirth.checkYourAnswersLabel = What is your date of birth?
+sa1.dateOfBirth.change.hidden = What is your date of birth?
+sa1.dateOfBirth.hint = For example, 19 3 2002
+sa1.dateOfBirth.date.error.required = Enter your date of birth
+sa1.dateOfBirth.date.error.invalid = Date of birth must be a real date
+sa1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
+sa1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
+sa1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
