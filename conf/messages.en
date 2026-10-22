@@ -153,3 +153,14 @@ sa1.noNinoReason.hint = Submissions without a valid reason will be rejected.
 sa1.noNinoReason.error.required = Tell us why you do not have a National Insurance number
 sa1.noNinoReason.error.length = Your reason must be 2000 characters or less
 
+sa1.moveAddress.title = When did you move to your address?
+sa1.moveAddress.heading = When did you move to your address?
+sa1.moveAddress.checkYourAnswersLabel = When did you move to your address?
+sa1.moveAddress.change.hidden = When did you move to your address?
+sa1.moveAddress.hint = For example, 19 3 2002
+sa1.moveAddress.date.error.required = Enter the date you moved to your address
+sa1.moveAddress.date.error.invalid = Date of move must be a real date
+sa1.moveAddress.date.error.requiredOne = Date of move must include a {0}
+sa1.moveAddress.date.error.requiredTwo = Date of move must include a {0} and {1}
+sa1.moveAddress.date.error.mustBeInPast = Date of move must be on or before {0}
+
