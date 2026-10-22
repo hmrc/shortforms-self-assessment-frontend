@@ -16,35 +16,29 @@
 
 package controllers
 
-import controllers.actions.IdentifierAction
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{IndexView, StubPageView}
+import play.api.mvc.{Action, AnyContent}
+import views.html.IndexView
 
 import javax.inject.Inject
 
 class IndexController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  view: IndexView,
-  stubPageView: StubPageView
-) extends FrontendBaseController
-    with I18nSupport {
+  val controllerComponents: AppControllerComponents,
+  view: IndexView
+) extends AppController {
 
-  def onPageLoad(): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(): Action[AnyContent] = IdentifierAction { implicit request =>
     Ok(view())
   }
 
-  def startSA1(): Action[AnyContent] = identify { implicit request =>
+  def startSA1(): Action[AnyContent] = IdentifierAction { implicit request =>
     Redirect(controllers.sa1.routes.StartController.onPageLoad())
   }
 
-  def startCWF1ST(): Action[AnyContent] = identify { implicit request =>
-    Ok(stubPageView("Hello, CWF1ST!"))
+  def startCWF1ST(): Action[AnyContent] = IdentifierAction { implicit request =>
+    Ok("Hello, CWF1ST!")
   }
 
-  def startCeaseTrading(): Action[AnyContent] = identify { implicit request =>
-    Ok(stubPageView("Hello, Cease Trading!"))
+  def startCeaseTrading(): Action[AnyContent] = IdentifierAction { implicit request =>
+    Ok("Hello, Cease Trading!")
   }
 }
