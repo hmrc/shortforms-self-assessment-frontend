@@ -20,71 +20,56 @@ import base.SpecBase
 import models.CheckMode
 import pages.sa1.AddPreviousLastNamePage
 import play.api.i18n.Messages
-import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 class AddPreviousLastNameSummarySpec extends SpecBase {
+  private given Messages = play.api.test.Helpers.stubMessages()
 
   "AddPreviousLastNameSummary" - {
     "when previous last name answer is present" - {
       "must return a SummaryListRow with 'yes' text and change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
 
-          val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
+        val row = AddPreviousLastNameSummary.row(userAnswers).value
 
-          val row = AddPreviousLastNameSummary.row(userAnswers).value
+        row.key.content.asHtml.toString() mustEqual "sa1.addPreviousLastName.checkYourAnswersLabel"
 
-          row.key.content.asHtml.toString() mustEqual msgs("sa1.addPreviousLastName.checkYourAnswersLabel")
+        val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
+        contentString mustEqual "site.yes"
 
-          val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
-          contentString mustEqual msgs("site.yes")
-
-          row.actions.get.items.size mustEqual 1
-          row.actions.get.items.head.href mustEqual controllers.sa1.routes.AddPreviousLastNameController
-            .onPageLoad(userAnswersId, CheckMode)
-            .url
-          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("sa1.addPreviousLastName.change.hidden")
-        }
+        row.actions.get.items.size mustEqual 1
+        row.actions.get.items.head.href mustEqual controllers.sa1.routes.AddPreviousLastNameController
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
+        row.actions.get.items.head.content.asHtml.toString() must include("site.change")
+        row.actions.get.items.head.visuallyHiddenText.value mustEqual "sa1.addPreviousLastName.change.hidden"
       }
 
       "must return a SummaryListRow with 'no' text and change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
 
-          val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
+        val row = AddPreviousLastNameSummary.row(userAnswers).value
 
-          val row = AddPreviousLastNameSummary.row(userAnswers).value
+        row.key.content.asHtml.toString() mustEqual "sa1.addPreviousLastName.checkYourAnswersLabel"
 
-          row.key.content.asHtml.toString() mustEqual msgs("sa1.addPreviousLastName.checkYourAnswersLabel")
+        val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
+        contentString mustEqual "site.no"
 
-          val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
-          contentString mustEqual msgs("site.no")
-
-          row.actions.get.items.size mustEqual 1
-          row.actions.get.items.head.href mustEqual controllers.sa1.routes.AddPreviousLastNameController
-            .onPageLoad(userAnswersId, CheckMode)
-            .url
-          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("sa1.addPreviousLastName.change.hidden")
-        }
+        row.actions.get.items.size mustEqual 1
+        row.actions.get.items.head.href mustEqual controllers.sa1.routes.AddPreviousLastNameController
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
+        row.actions.get.items.head.content.asHtml.toString() must include("site.change")
+        row.actions.get.items.head.visuallyHiddenText.value mustEqual "sa1.addPreviousLastName.change.hidden"
       }
     }
 
     "when previous last name answer is not present" - {
       "must return None" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          AddPreviousLastNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
-        }
+        AddPreviousLastNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
       }
     }
   }

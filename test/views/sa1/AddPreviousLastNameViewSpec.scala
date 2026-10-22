@@ -20,11 +20,12 @@ import base.SpecBase
 import forms.sa1.AddPreviousLastNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 import views.html.sa1.AddPreviousLastNameView
 
-class AddPreviousLastNameViewSpec extends SpecBase {
+class AddPreviousLastNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
   private val addPreviousLastNameFormProvider = new AddPreviousLastNameFormProvider()
   protected val form                          = addPreviousLastNameFormProvider()
@@ -33,87 +34,67 @@ class AddPreviousLastNameViewSpec extends SpecBase {
 
     "must render the page title and main heading" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[AddPreviousLastNameView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[AddPreviousLastNameView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.title() must include(msgs("sa1.addPreviousLastName.title"))
 
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.title() must include(msgs("sa1.addPreviousLastName.title"))
-
-        doc.select("h1").size() mustEqual 1
-        doc.select("h1").text() mustEqual msgs("sa1.addPreviousLastName.heading")
-      }
+      doc.select("h1").size() mustEqual 1
+      doc.select("h1").text() mustEqual msgs("sa1.addPreviousLastName.heading")
     }
 
     "must render yes and no radio buttons" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[AddPreviousLastNameView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[AddPreviousLastNameView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.select("input[type=radio]").size() mustEqual 2
 
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select("input[type=radio]").size() mustEqual 2
-
-        doc.getElementById("value").attr("value") mustEqual "true"
-        doc.getElementById("value-2").attr("value") mustEqual "false"
-      }
+      doc.getElementById("value").attr("value") mustEqual "true"
+      doc.getElementById("value-2").attr("value") mustEqual "false"
     }
 
     "must render the continue button" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[AddPreviousLastNameView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[AddPreviousLastNameView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
-
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select("button").text() mustEqual msgs("site.continue")
-      }
+      doc.select("button").text() mustEqual msgs("site.continue")
     }
 
     "must render an error summary when the form contains errors" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[AddPreviousLastNameView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val formWithErrors =
+        form.bind(Map("value" -> ""))
 
-        val view    = application.injector.instanceOf[AddPreviousLastNameView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      val doc =
+        Jsoup.parse(
+          view(formWithErrors, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val formWithErrors =
-          form.bind(Map("value" -> ""))
-
-        val doc =
-          Jsoup.parse(
-            view(formWithErrors, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select(".govuk-error-summary").size() mustEqual 1
-      }
+      doc.select(".govuk-error-summary").size() mustEqual 1
     }
   }
 }
