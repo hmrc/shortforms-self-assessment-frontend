@@ -50,6 +50,11 @@ POST       /sa1/contact-details/:journeyId                        controllers.sa
 GET        /sa1/contact-details/change/:journeyId                  controllers.sa1.ContactDetailsController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST       /sa1/contact-details/change/:journeyId                 controllers.sa1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/no-ni-number/:journeyId                        controllers.sa1.NoNinoReasonController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/no-ni-number/:journeyId                        controllers.sa1.NoNinoReasonController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
 GET         /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = CheckMode)

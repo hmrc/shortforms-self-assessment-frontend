@@ -38,14 +38,13 @@ class NavigatorSpec extends SpecBase {
       }
 
       "when add previous last name page" - {
-        // TODO DTR-8719: Redirect to Enter previous last name
         "must go from add previous last name page to enter previous last name page when answer is 'yes'" in {
           val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
           navigator.nextPage(
             AddPreviousLastNamePage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.sa1.routes.AddPreviousLastNameController
+          ) mustBe controllers.sa1.routes.EnterPreviousLastNameController
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
@@ -79,14 +78,13 @@ class NavigatorSpec extends SpecBase {
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
-        // TODO DTR-8641: Redirect to Reason(s) for no NI number page
         "must go from Do you have a Nino page to Enter reason(s) for no Nino number page when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, false).success.value
           navigator.nextPage(
             DoYouHaveANinoPage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.sa1.routes.DoYouHaveANinoController
+          ) mustBe controllers.sa1.routes.NoNinoReasonController
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 

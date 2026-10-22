@@ -147,6 +147,12 @@ sa1.contactDetails.phoneNumber.hint = This can be a home, work or mobile telepho
 sa1.contactDetails.emailAddress.invalid = The email address must only include letters, numbers, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
 sa1.contactDetails.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
 
+sa1.noNinoReason.title = Why do you not have a National Insurance number?
+sa1.noNinoReason.heading = Why do you not have a National Insurance number?
+sa1.noNinoReason.hint = Submissions without a valid reason will be rejected.
+sa1.noNinoReason.error.required = Tell us why you do not have a National Insurance number
+sa1.noNinoReason.error.length = Your reason must be 2000 characters or less
+
 
 sa1.whyTaxReturn.title = Why do you need to complete a tax return?
 sa1.whyTaxReturn.heading = Why do you need to complete a tax return?
