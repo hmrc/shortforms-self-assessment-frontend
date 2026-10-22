@@ -131,6 +131,23 @@ sa1.doYouHaveANino.checkYourAnswersLabel = Do you have a National Insurance numb
 sa1.doYouHaveANino.error.required = Select yes if you have a National Insurance number
 sa1.doYouHaveANino.change.hidden = Do you have a National Insurance number?
 
+sa1.contactDetails.title = What are your contact details?
+sa1.contactDetails.heading = What are your contact details?
+sa1.contactDetails.emailAddress.subHeading = Email address
+sa1.contactDetails.phoneNumber.subHeading = Phone number
+sa1.contactDetails.checkYourAnswersLabel = Contact Details
+sa1.contactDetails.error.emailAddress.required = Enter an email address for this business
+sa1.contactDetails.error.phoneNumber.required = Enter your phone number
+sa1.contactDetails.error.emailAddress.length = The email address must be 129 characters or less
+sa1.contactDetails.error.phoneNumber.length = The phone number must be 40 characters or less
+sa1.contactDetails.emailAddress.change.hidden = Email address
+sa1.contactDetails.phoneNumber.change.hidden = Phone number
+sa1.contactDetails.emailAddress.hint = We will use this to send you a receipt of your registration
+sa1.contactDetails.phoneNumber.hint = This can be a home, work or mobile telephone number
+sa1.contactDetails.emailAddress.invalid = The email address must only include letters, numbers, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
+sa1.contactDetails.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
+
+
 sa1.whyTaxReturn.title = Why do you need to complete a tax return?
 sa1.whyTaxReturn.heading = Why do you need to complete a tax return?
 sa1.whyTaxReturn.hint = Select all that apply
