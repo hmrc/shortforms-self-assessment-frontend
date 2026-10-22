@@ -94,9 +94,10 @@ class AuthenticatedIdentifierAction @Inject() (
 
     case _: InsufficientConfidenceLevel =>
       val loggedCompletionUrl = getRequestURI
-      val loggedFailureUrl    = routes.UnauthorisedController.onPageLoad().url
+      val loggedFailureUrl    =
+        config.host + controllers.identityVerification.routes.IvController.handleIvFailure(None).url
       val queryParams         = Map(
-        "origin"          -> Seq("shortforms"),
+        "origin"          -> Seq("shortform"),
         "confidenceLevel" -> Seq("250"),
         "completionURL"   -> Seq(loggedCompletionUrl),
         "failureURL"      -> Seq(loggedFailureUrl)
