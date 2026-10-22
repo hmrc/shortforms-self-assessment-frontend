@@ -55,3 +55,7 @@ POST        /sa1/no-ni-number/:journeyId                        controllers.sa1.
 GET         /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/move-address/:journeyId                    controllers.sa1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/move-address/:journeyId                    controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = CheckMode)
