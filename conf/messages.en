@@ -153,3 +153,13 @@ sa1.noNinoReason.hint = Submissions without a valid reason will be rejected.
 sa1.noNinoReason.error.required = Tell us why you do not have a National Insurance number
 sa1.noNinoReason.error.length = Your reason must be 2000 characters or less
 
+sa1.enterNationalInsuranceNumber.title = What is your National Insurance number?
+sa1.enterNationalInsuranceNumber.heading = What is your National Insurance number?
+sa1.enterNationalInsuranceNumber.checkYourAnswersLabel = Enter NationalInsuranceNumber
+sa1.enterNationalInsuranceNumber.error.required = Enter your National Insurance number
+sa1.enterNationalInsuranceNumber.error.length = EYour National Insurance number can only contain 9 letters and numbers
+sa1.enterNationalInsuranceNumber.error.invalid  = Enter National Insurance number in the correct format
+sa1.enterNationalInsuranceNumber.ninoCheck.invalid = Your National Insurance number does not match the one stored in your Government Gateway account
+sa1.enterNationalInsuranceNumber.change.hidden = What is your National Insurance number?
+sa1.enterNationalInsuranceNumber.hint = It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ 12 34 56 C’
+
