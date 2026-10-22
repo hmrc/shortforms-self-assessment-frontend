@@ -21,71 +21,60 @@ import models.CheckMode
 import models.sa1.WhyTaxReturn
 import pages.sa1.WhyTaxReturnPage
 import play.api.i18n.Messages
-import play.api.test.Helpers.running
+import play.api.test.Helpers.{stubMessages, stubMessagesApi}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 
 class WhyTaxReturnSummarySpec extends SpecBase {
+
+  private implicit val msgs: Messages = stubMessages()
 
   "WhyTaxReturnSummary" - {
 
     "when the answer is present" - {
 
       "must return a SummaryListRow listing the selected reasons in display order with a change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val reasons: Set[WhyTaxReturn] =
+          Set(WhyTaxReturn.Other, WhyTaxReturn.CompanyDirector, WhyTaxReturn.CapitalGainsTax)
 
-        running(application) {
-          implicit val msgs: Messages    = messages(application)
-          val reasons: Set[WhyTaxReturn] =
-            Set(WhyTaxReturn.Other, WhyTaxReturn.CompanyDirector, WhyTaxReturn.CapitalGainsTax)
+        val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, reasons).success.value
 
-          val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, reasons).success.value
+        val row = WhyTaxReturnSummary.row(userAnswers).value
 
-          val row = WhyTaxReturnSummary.row(userAnswers).value
+        row.key.content.asHtml.toString() mustEqual msgs("sa1.whyTaxReturn.checkYourAnswersLabel")
 
-          row.key.content.asHtml.toString() mustEqual msgs("sa1.whyTaxReturn.checkYourAnswersLabel")
+        row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual Seq(
+          msgs("sa1.whyTaxReturn.companyDirector"),
+          msgs("sa1.whyTaxReturn.capitalGainsTax"),
+          msgs("sa1.whyTaxReturn.other")
+        ).mkString("<br>")
 
-          row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual Seq(
-            msgs("sa1.whyTaxReturn.companyDirector"),
-            msgs("sa1.whyTaxReturn.capitalGainsTax"),
-            msgs("sa1.whyTaxReturn.other")
-          ).mkString("<br>")
-
-          row.actions.get.items.size mustEqual 1
-          row.actions.get.items.head.href mustEqual controllers.sa1.routes.WhyTaxReturnController
-            .onPageLoad(userAnswersId, CheckMode)
-            .url
-          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("sa1.whyTaxReturn.change.hidden")
-        }
+        row.actions.get.items.size mustEqual 1
+        row.actions.get.items.head.href mustEqual controllers.sa1.routes.WhyTaxReturnController
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
+        row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+        row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("sa1.whyTaxReturn.change.hidden")
       }
 
       "must HTML-escape the reason text" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val escapingMsgs: Messages = stubMessages(
+          stubMessagesApi(Map("default" -> Map("sa1.whyTaxReturn.untaxedIncome" -> "<b>wasn''t</b> & \"quoted\"")))
+        )
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        val userAnswers =
+          emptyUserAnswers.set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome)).success.value
 
-          val userAnswers =
-            emptyUserAnswers.set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome)).success.value
+        val row = WhyTaxReturnSummary.row(userAnswers)(escapingMsgs).value
 
-          val row = WhyTaxReturnSummary.row(userAnswers).value
-
-          row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual
-            "I have untaxed income that wasn&#x27;t collected through my PAYE tax code"
-        }
+        row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual
+          "&lt;b&gt;wasn&#x27;t&lt;/b&gt; &amp; &quot;quoted&quot;"
       }
     }
 
     "when the answer is not present" - {
 
       "must return None" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          WhyTaxReturnSummary.row(emptyUserAnswers) mustBe None
-        }
+        WhyTaxReturnSummary.row(emptyUserAnswers) mustBe None
       }
     }
   }

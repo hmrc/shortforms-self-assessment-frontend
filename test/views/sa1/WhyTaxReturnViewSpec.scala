@@ -22,13 +22,16 @@ import models.sa1.WhyTaxReturn
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.running
 import views.html.sa1.WhyTaxReturnView
 
-class WhyTaxReturnViewSpec extends SpecBase {
+class WhyTaxReturnViewSpec extends SpecBase with GuiceOneAppPerSuite {
+
+  override def fakeApplication(): Application = applicationBuilder().build()
 
   private val form = new WhyTaxReturnFormProvider()()
 
@@ -103,14 +106,11 @@ class WhyTaxReturnViewSpec extends SpecBase {
   }
 
   private class Setup {
-    private val application = applicationBuilder().build()
+    private val view = app.injector.instanceOf[WhyTaxReturnView]
 
-    protected implicit val msgs: Messages = messages(application)
+    protected implicit val msgs: Messages = messages(app)
 
     protected def render(form: Form[_], mode: models.Mode = NormalMode): Document =
-      running(application) {
-        val view = application.injector.instanceOf[WhyTaxReturnView]
-        Jsoup.parse(view(form, userAnswersId, mode)(FakeRequest(), msgs).body)
-      }
+      Jsoup.parse(view(form, userAnswersId, mode)(FakeRequest(), msgs).body)
   }
 }

@@ -44,6 +44,17 @@ class WhyTaxReturnControllerSpec extends SpecBase with MockitoSugar {
 
   "WhyTaxReturn Controller" - {
 
+    "must populate the view correctly onPageLoad when the question has previously been answered" in new Setup {
+      override protected val userAnswers: UserAnswers = emptyUserAnswers.set(WhyTaxReturnPage, answer).success.value
+
+      private val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, whyTaxReturnRoute))
+
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual mockContent
+
+      verify(mockView).apply(eqTo(form.fill(answer)), eqTo(userAnswersId), eqTo(NormalMode))(any(), any())
+    }
+
     "must redirect to the next page when valid data is submitted" in new Setup {
       when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
       when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
