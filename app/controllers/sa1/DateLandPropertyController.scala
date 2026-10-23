@@ -16,6 +16,7 @@
 
 package controllers.sa1
 
+import controllers.{AppController, AppControllerComponents}
 import controllers.actions.*
 import forms.sa1.DateLandPropertyFormProvider
 import models.Mode
@@ -31,27 +32,22 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DateLandPropertyController @Inject() (
-  override val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  sa1DataRequiredAction: SA1DataRequiredAction,
-  formProvider: DateLandPropertyFormProvider,
+  val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
+  formProvider: DateLandPropertyFormProvider,
   navigator: Navigator,
   view: DateLandPropertyView
-)(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+    SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(DateLandPropertyPage).fold(form)(form.fill)
-
       Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(

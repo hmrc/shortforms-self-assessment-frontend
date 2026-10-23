@@ -33,20 +33,18 @@ class DateLandPropertyFormProvider extends Mappings {
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
     Form(
-      mapping(
-        "dateLandPropertyUk" -> localDate(
-          invalidKey = "sa1.dateLandPropertyUk.date.error.invalid",
-          allRequiredKey = "sa1.dateLandPropertyUk.date.error.required",
-          twoRequiredKey = "sa1.dateLandPropertyUk.date.error.requiredTwo",
-          requiredKey = "sa1.dateLandPropertyUk.date.error.requiredOne",
-          numericOnly = true
-        ).verifying(
-          minDate(
-            minimumDate,
-            "sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum",
-            minimumDate.format(dateFormatter)
-          )
+      "dateLandPropertyUk" -> localDate(
+        invalidKey = "sa1.dateLandPropertyUk.date.error.invalid",
+        allRequiredKey = "sa1.dateLandPropertyUk.date.error.required",
+        twoRequiredKey = "sa1.dateLandPropertyUk.date.error.requiredTwo",
+        requiredKey = "sa1.dateLandPropertyUk.date.error.requiredOne",
+        numericOnly = true
+      ).verifying(
+        minDate(
+          minimumDate,
+          "sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum",
+          minimumDate.format(dateFormatter)
         )
-      )(identity)(Some(_))
+      )
     )
 }

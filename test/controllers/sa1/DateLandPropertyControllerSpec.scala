@@ -16,6 +16,8 @@
 
 package controllers.sa1
 
+import base.SpecBase
+import controllers.MockAppControllerComponents
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.DateLandPropertyFormProvider
 import models.{CheckMode, JourneyType, NormalMode, UserAnswers}
@@ -40,7 +42,7 @@ import views.html.sa1.DateLandPropertyView
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class DateLandPropertyControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
+class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   private implicit val ec: ExecutionContext = ExecutionContext.global
 
   private val journeyId       = "test-journey-id"
@@ -65,11 +67,9 @@ class DateLandPropertyControllerSpec extends AnyWordSpec with Matchers with TryV
     private val navigator               = new Navigator()
 
     protected lazy val controller = new DateLandPropertyController(
-      controllerComponents,
-      identifierAction,
-      dataRequiredAction,
-      formProvider,
+      new MockAppControllerComponents(userAnswers),
       sessionRepository,
+      formProvider,
       navigator,
       view
     )
@@ -78,7 +78,7 @@ class DateLandPropertyControllerSpec extends AnyWordSpec with Matchers with TryV
       .thenReturn(Html(mockViewContent))
   }
 
-  "DateLandPropertyController" should {
+  "DateLandPropertyController" - {
 
     "return OK when loading the page" in new Setup {
       val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
