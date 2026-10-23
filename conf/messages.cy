@@ -123,3 +123,14 @@ sa1.doYouHaveANino.checkYourAnswersLabel = xxxxxxxxxxxxx
 sa1.doYouHaveANino.error.required = xxxxxxxxxxxxx
 sa1.doYouHaveANino.change.hidden = xxxxxxxxxxxxx
 
+sa1.dateLandPropertyUk.title = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.heading = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.hint = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.change.hidden = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.date.error.required = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.date.error.invalid = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.date.error.requiredOne = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.date.error.requiredTwo = xxxxxxxxxxxxx
+sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = xxxxxxxxxxxxx
+

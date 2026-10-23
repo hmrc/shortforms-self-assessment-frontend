@@ -163,3 +163,14 @@ sa1.enterNationalInsuranceNumber.ninoCheck.invalid = Your National Insurance num
 sa1.enterNationalInsuranceNumber.change.hidden = What is your National Insurance number?
 sa1.enterNationalInsuranceNumber.hint = It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ 12 34 56 C’
 
+sa1.dateLandPropertyUk.title = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.heading = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.hint = For example, 19 3 2022
+sa1.dateLandPropertyUk.checkYourAnswersLabel = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.change.hidden = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.date.error.required = Enter the date you started getting income from land and property in the UK
+sa1.dateLandPropertyUk.date.error.invalid = Date must be a real date
+sa1.dateLandPropertyUk.date.error.requiredOne = Date must include a {0}
+sa1.dateLandPropertyUk.date.error.requiredTwo = Date must include a {0} and a {1}
+sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = Date must be on or after {0}
+
