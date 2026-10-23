@@ -19,8 +19,6 @@ package pages.sa1
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-import java.time.LocalDate
-
 case object NoNinoReasonPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
