@@ -19,37 +19,25 @@ package viewmodels.checkAnswers.sa1
 import base.SpecBase
 import models.CheckMode
 import models.sa1.Name
-import play.api.Application
-import play.api.test.Helpers.running
 
 class NameSummarySpec extends SpecBase {
+  private val msgs = play.api.test.Helpers.stubMessages()
+
+  private def row(name: Name) = NameSummary.row(name, userAnswersId, CheckMode)(msgs)
 
   "NameSummary.row" - {
 
-    "must show the full name as the value" in new Setup {
-      running(app) {
-        row(Name("Jane", "Doe")).value.content.asHtml.toString must include("Jane Doe")
-      }
+    "must show the full name as the value" in {
+      row(Name("Jane", "Doe")).value.content.asHtml.toString must include("Jane Doe")
     }
 
-    "must link to the name page in check mode for the journey" in new Setup {
-      running(app) {
-        row(Name("Jane", "Doe")).actions.value.items.head.href mustEqual
-          controllers.sa1.routes.NameController.onPageLoad(userAnswersId, CheckMode).url
-      }
+    "must link to the name page in check mode for the journey" in {
+      row(Name("Jane", "Doe")).actions.value.items.head.href mustEqual
+        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, CheckMode).url
     }
 
-    "must escape the name so it is displayed as text" in new Setup {
-      running(app) {
-        row(Name("<b>Jane</b>", "Doe")).value.content.asHtml.toString must include("&lt;b&gt;Jane&lt;/b&gt;")
-      }
+    "must escape the name so it is displayed as text" in {
+      row(Name("<b>Jane</b>", "Doe")).value.content.asHtml.toString must include("&lt;b&gt;Jane&lt;/b&gt;")
     }
-  }
-
-  trait Setup {
-    lazy val app: Application = applicationBuilder().build()
-    lazy val msgs             = messages(app)
-
-    def row(name: Name) = NameSummary.row(name, userAnswersId, CheckMode)(msgs)
   }
 }

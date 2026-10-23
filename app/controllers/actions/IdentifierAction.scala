@@ -27,8 +27,7 @@ import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import uk.gov.hmrc.http.UnauthorizedException
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,16 +49,17 @@ class AuthenticatedIdentifierAction @Inject() (
     request: Request[A],
     block: IdentifierRequest[A] => Future[Result]
   ): Future[Result] = {
+    given RequestHeader = request
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, session = request.session)
     authorised().retrieve(
       Retrievals.affinityGroup and
         Retrievals.confidenceLevel and
         Retrievals.allEnrolments and
-        Retrievals.internalId
+        Retrievals.internalId and
+        Retrievals.nino
     ) {
 
-      case Some(affinityGroup) ~ confidenceLevel ~ enrolments ~ Some(internalId) =>
+      case Some(affinityGroup) ~ confidenceLevel ~ enrolments ~ Some(internalId) ~ nino =>
         val hasValidAgentEnrolment = config.agentEnrolments.exists(enrolmentName =>
           enrolments
             .getEnrolment(enrolmentName)
@@ -68,13 +68,13 @@ class AuthenticatedIdentifierAction @Inject() (
 
         (affinityGroup, hasValidAgentEnrolment, confidenceLevel.level) match {
           case (AffinityGroup.Agent, true, _) =>
-            block(IdentifierRequest(request, internalId))
+            block(new IdentifierRequest(request, internalId, None))
 
           case (AffinityGroup.Individual, _, cl) if cl >= config.requiredConfidenceLevel =>
-            block(IdentifierRequest(request, internalId))
+            block(new IdentifierRequest(request, internalId, nino))
 
           case (AffinityGroup.Organisation, _, cl) if cl >= config.requiredConfidenceLevel =>
-            block(IdentifierRequest(request, internalId))
+            block(new IdentifierRequest(request, internalId, nino))
 
           case (AffinityGroup.Individual, _, _) | (AffinityGroup.Organisation, _, _) =>
             logger.info(
@@ -85,7 +85,7 @@ class AuthenticatedIdentifierAction @Inject() (
           case _ =>
             throw UnsupportedAffinityGroup("Unsupported user type or group configuration")
         }
-      case _                                                                     =>
+      case _                                                                            =>
         throw new UnauthorizedException("Unable to retrieve internalId")
 
     }

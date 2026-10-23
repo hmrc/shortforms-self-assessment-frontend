@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(
-    layout: templates.Layout
-)
+package pages.sa1
 
-@(message: String)(implicit request: Request[_], messages: Messages)
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-@layout(
-    pageTitle    = titleNoForm(message),
-    showBackLink = false
-) {
+case object EnterNationalInsuranceNumberPage extends QuestionPage[String] {
 
-    <h1 class="govuk-heading-xl">@message</h1>
+  override def path: JsPath = JsPath \ toString
 
+  override def toString: String = "enterNationalInsuranceNumber"
 }

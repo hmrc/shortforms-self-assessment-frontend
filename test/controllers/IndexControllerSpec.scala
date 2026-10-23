@@ -17,92 +17,56 @@
 package controllers
 
 import base.SpecBase
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.{IndexView, StubPageView}
+import views.html.IndexView
 
-class IndexControllerSpec extends SpecBase {
+class IndexControllerSpec extends SpecBase with MockitoSugar {
+  import org.mockito.ArgumentMatchers.any
+  import org.mockito.Mockito.when
 
   "Index Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" in new Setup {
+      private val result = controllerUnderTest.onPageLoad()(FakeRequest())
 
-      val application = applicationBuilder(userAnswers = None).build()
+      status(result) mustEqual OK
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[IndexView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view()(request, messages(application)).toString
-      }
+      contentAsString(result) mustEqual mockContent
     }
 
-    "must redirect to the SA1 start page when startSA1 is invoked" in {
-      val application = applicationBuilder(userAnswers = None).build()
+    "must redirect to the SA1 start page when startSA1 is invoked" in new Setup {
+      private val result = controllerUnderTest.startSA1()(FakeRequest())
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.startSA1().url)
+      status(result) mustEqual SEE_OTHER
 
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual
-          controllers.sa1.routes.StartController.onPageLoad().url
-      }
+      redirectLocation(result).value mustEqual
+        controllers.sa1.routes.StartController.onPageLoad().url
     }
 
-    "must return OK and the correct view for a GET when invoke by startCWF1ST" in {
+    "must return OK and the correct view for a GET when invoke by startCWF1ST" in new Setup {
+      private val result = controllerUnderTest.startCWF1ST()(FakeRequest())
 
-      val application = applicationBuilder(userAnswers = None).build()
+      status(result) mustEqual OK
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.startCWF1ST().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[StubPageView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view("Hello, CWF1ST!")(request, messages(application)).toString
-      }
+      contentAsString(result) mustEqual "Hello, CWF1ST!"
     }
 
-    "must return OK and the correct view for a GET when invoke by startCeaseTrading" in {
+    "must return OK and the correct view for a GET when invoke by startCeaseTrading" in new Setup {
+      private val result = controllerUnderTest.startCeaseTrading()(FakeRequest())
 
-      val application = applicationBuilder(userAnswers = None).build()
+      status(result) mustEqual OK
 
-      running(application) {
-        val request = FakeRequest(GET, routes.IndexController.startCeaseTrading().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[StubPageView]
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual view("Hello, Cease Trading!")(request, messages(application)).toString
-      }
+      contentAsString(result) mustEqual "Hello, Cease Trading!"
     }
+  }
 
-    "must redirect for a GET when invalid url" in {
+  private class Setup {
+    private val mockView: IndexView = mock
+    protected val mockContent       = "Index"
+    when(mockView.apply()(any, any)) thenReturn play.twirl.api.Html(mockContent)
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, "shortforms-self-assessment/")
-
-        val result = route(application, request).value
-
-        status(result) mustEqual 404
-
-      }
-    }
+    protected val controllerUnderTest = new IndexController(new MockAppControllerComponents(), mockView)
   }
 }

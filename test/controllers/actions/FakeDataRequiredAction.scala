@@ -43,9 +43,8 @@ class FakeDataRequiredAction(
           userAnswers match {
             case Some(answers) =>
               Right(
-                DataRequest(
-                  request.request,
-                  request.userId,
+                new DataRequest(
+                  request,
                   answers
                 )
               )
