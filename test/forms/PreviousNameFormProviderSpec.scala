@@ -24,8 +24,7 @@ import java.time.LocalDate
 
 class PreviousNameFormProviderSpec extends SpecBase {
 
-  private val application  = applicationBuilder().build()
-  private val msgs         = messages(application)
+  private val msgs         = play.api.test.Helpers.stubMessages()
   private val formProvider = new PreviousNameFormProvider
   private val form         = formProvider()(msgs)
 
