@@ -163,3 +163,20 @@ sa1.enterNationalInsuranceNumber.ninoCheck.invalid = Your National Insurance num
 sa1.enterNationalInsuranceNumber.change.hidden = What is your National Insurance number?
 sa1.enterNationalInsuranceNumber.hint = It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ 12 34 56 C’
 
+
+sa1.taxableForeignIncomeDate.title = Taxable foreign income
+sa1.taxableForeignIncomeDate.heading = Taxable foreign income
+sa1.taxableForeignIncomeDate.subHeading = When did you start getting taxable foreign income?
+sa1.taxableForeignIncomeDate.hint = For example, 19 3 2022
+sa1.taxableForeignIncomeDate.checkYourAnswersLabel = Taxable foreign income date
+sa1.taxableForeignIncomeDate.error.required.two = Date must include a {0} and a {1}
+sa1.taxableForeignIncomeDate.error.required.all = Enter the date you started getting taxable foreign income
+sa1.taxableForeignIncomeDate.error.required = Date must include a {0}
+sa1.taxableForeignIncomeDate.error.invalid = Date must be a real date
+sa1.taxableForeignIncomeDate.error.mustBeAfterMinimum = Date must be after {0}
+sa1.taxableForeignIncomeDate.change.hidden = Taxable foreign income date
+sa1.taxableForeignIncomeDate.p1 = Taxable foreign income can be:
+sa1.taxableForeignIncomeDate.b1 = taxable foreign dividends of £300 or more
+sa1.taxableForeignIncomeDate.b2 = any amount of other taxable foreign income
+
+

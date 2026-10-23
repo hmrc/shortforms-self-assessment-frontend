@@ -63,3 +63,8 @@ GET        /sa1/enter-ni-number/:journeyId                         controllers.s
 POST       /sa1/enter-ni-number/:journeyId                        controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
 POST       /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST       /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
