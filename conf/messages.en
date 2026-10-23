@@ -172,5 +172,5 @@ sa1.dateLandPropertyUk.date.error.required = Enter the date you started getting 
 sa1.dateLandPropertyUk.date.error.invalid = Date must be a real date
 sa1.dateLandPropertyUk.date.error.requiredOne = Date must include a {0}
 sa1.dateLandPropertyUk.date.error.requiredTwo = Date must include a {0} and a {1}
-sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = Date must be after {0}
+sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = Date must be on or after {0}
 
