@@ -37,20 +37,13 @@ class TaxableForeignIncomeDateController @Inject() (
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
 
     val form = formProvider()
-
-    val preparedForm = request.userAnswers.get(TaxableForeignIncomeDatePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+    val preparedForm = request.userAnswers.get(TaxableForeignIncomeDatePage).fold(form)(form.fill)
+    Ok (view (preparedForm, journeyId, mode) )
     }
-
-    Ok(view(preparedForm, journeyId, mode))
-  }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
 
-    val form = formProvider()
-
-    form
+    formProvider()
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
