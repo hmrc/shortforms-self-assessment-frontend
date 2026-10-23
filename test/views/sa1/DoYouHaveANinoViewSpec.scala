@@ -20,162 +20,132 @@ import base.SpecBase
 import forms.sa1.DoYouHaveANinoFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
-import play.api.test.Helpers.running
 import views.html.sa1.DoYouHaveANinoView
 
 import scala.jdk.CollectionConverters.*
 
-class DoYouHaveANinoViewSpec extends SpecBase {
+class DoYouHaveANinoViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
   private val doYouHaveANinoFormProvider = new DoYouHaveANinoFormProvider()
-  protected val form                     = doYouHaveANinoFormProvider()
+  private val form                       = doYouHaveANinoFormProvider()
 
   "DoYouHaveANinoView" - {
 
     "must render the page title and main heading" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.title() must include(msgs("sa1.doYouHaveANino.title"))
 
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.title() must include(msgs("sa1.doYouHaveANino.title"))
-
-        doc.select("h1").size() mustEqual 1
-        doc.select("h1").text() mustEqual msgs("sa1.doYouHaveANino.heading")
-      }
+      doc.select("h1").size() mustEqual 1
+      doc.select("h1").text() mustEqual msgs("sa1.doYouHaveANino.heading")
     }
 
     "must render the page content" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.select("p").text() must include(msgs("sa1.doYouHaveANino.p1"))
 
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
+      val bulletItems =
+        doc.select("ul.govuk-list--bullet li")
 
-        doc.select("p").text() must include(msgs("sa1.doYouHaveANino.p1"))
+      bulletItems.size() mustEqual 4
 
-        val bulletItems =
-          doc.select("ul.govuk-list--bullet li")
-
-        bulletItems.size() mustEqual 4
-
-        bulletItems.get(0).text() mustEqual msgs("sa1.doYouHaveANino.b1")
-        bulletItems.get(1).text() mustEqual msgs("sa1.doYouHaveANino.b2")
-        bulletItems.get(2).text() mustEqual msgs("sa1.doYouHaveANino.b3")
-        bulletItems.get(3).text() mustEqual msgs("sa1.doYouHaveANino.b4")
-      }
+      bulletItems.get(0).text() mustEqual msgs("sa1.doYouHaveANino.b1")
+      bulletItems.get(1).text() mustEqual msgs("sa1.doYouHaveANino.b2")
+      bulletItems.get(2).text() mustEqual msgs("sa1.doYouHaveANino.b3")
+      bulletItems.get(3).text() mustEqual msgs("sa1.doYouHaveANino.b4")
     }
 
     "must render the paragraph and link to find a National Insurance number" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc = Jsoup.parse(
+        view(form, userAnswersId, NormalMode)(request, msgs).body
+      )
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.body.text() must include(
+        "If none of these apply to you, you can still register for Self Assessment without one."
+      )
 
-        val doc = Jsoup.parse(
-          view(form, userAnswersId, NormalMode)(request, msgs).body
-        )
+      val link = doc
+        .select("a")
+        .asScala
+        .find(_.text() == msgs("sa1.doYouHaveANino.p2.linkText"))
+        .value
 
-        doc.body.text() must include(
-          "If none of these apply to you, you can still register for Self Assessment without one."
-        )
-
-        val link = doc
-          .select("a")
-          .asScala
-          .find(_.text() == msgs("sa1.doYouHaveANino.p2.linkText"))
-          .value
-
-        link.text() mustEqual msgs("sa1.doYouHaveANino.p2.linkText")
-        link.attr("target") mustBe "_blank"
-        link.attr("rel") must include("noopener")
-        link.attr("rel") must include("noreferrer")
-      }
+      link.text() mustEqual msgs("sa1.doYouHaveANino.p2.linkText")
+      link.attr("target") mustBe "_blank"
+      link.attr("rel") must include("noopener")
+      link.attr("rel") must include("noreferrer")
     }
 
     "must render yes and no radio buttons" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      doc.select("input[type=radio]").size() mustEqual 2
 
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select("input[type=radio]").size() mustEqual 2
-
-        doc.getElementById("value").attr("value") mustEqual "true"
-        doc.getElementById("value-2").attr("value") mustEqual "false"
-      }
+      doc.getElementById("value").attr("value") mustEqual "true"
+      doc.getElementById("value-2").attr("value") mustEqual "false"
     }
 
     "must render the continue button" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val doc =
+        Jsoup.parse(
+          view(form, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
-
-        val doc =
-          Jsoup.parse(
-            view(form, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select("button").text() mustEqual msgs("site.continue")
-      }
+      doc.select("button").text() mustEqual msgs("site.continue")
     }
 
     "must render an error summary when the form contains errors" in {
 
-      val application = applicationBuilder().build()
+      val view    = app.injector.instanceOf[DoYouHaveANinoView]
+      val request = FakeRequest()
+      val msgs    = messages(app)
 
-      running(application) {
+      val formWithErrors =
+        form.bind(Map("value" -> ""))
 
-        val view    = application.injector.instanceOf[DoYouHaveANinoView]
-        val request = FakeRequest()
-        val msgs    = messages(application)
+      val doc =
+        Jsoup.parse(
+          view(formWithErrors, userAnswersId, NormalMode)(request, msgs).body
+        )
 
-        val formWithErrors =
-          form.bind(Map("value" -> ""))
-
-        val doc =
-          Jsoup.parse(
-            view(formWithErrors, userAnswersId, NormalMode)(request, msgs).body
-          )
-
-        doc.select(".govuk-error-summary").size() mustEqual 1
-      }
+      doc.select(".govuk-error-summary").size() mustEqual 1
     }
   }
 }
