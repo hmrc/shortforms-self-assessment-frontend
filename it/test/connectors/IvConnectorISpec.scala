@@ -17,10 +17,10 @@
 package connectors
 
 import base.ISpecBase
-import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.{ResponseDefinitionBuilder, WireMock}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, okJson, stubFor, urlEqualTo}
 import models.identityVerification.IvResultType
-import org.scalatest.RecoverMethods._
+import org.scalatest.RecoverMethods.*
 import play.api.Application
 import play.api.http.Status.NOT_FOUND
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -36,10 +36,10 @@ class IvConnectorISpec extends ISpecBase with WireMockSupport {
       )
       .build()
 
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    WireMock.reset()
-  }
+  private def whenIvRespondsWith(response: ResponseDefinitionBuilder) =
+    stubFor(
+      WireMock.get(urlEqualTo("/identity-verification/journey/journey-123")) willReturn response
+    )
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
@@ -49,23 +49,19 @@ class IvConnectorISpec extends ISpecBase with WireMockSupport {
   ".getJourneyStatus" - {
     "must return the journey result when the origin is shortform" in {
 
-      stubFor(
-        WireMock
-          .get(urlEqualTo("/identity-verification/journey/journey-123"))
-          .willReturn(
-            okJson(
-              """
-                    {
-                      "serviceContract": {
-                        "origin": "shortform"
-                      },
-                      "progress": {
-                        "result": "TechnicalIssue"
-                      }
-                    }
-                  """
-            )
-          )
+      whenIvRespondsWith(
+        okJson(
+          """
+              {
+                "serviceContract": {
+                  "origin": "shortform"
+                },
+                "progress": {
+                  "result": "TechnicalIssue"
+                }
+              }
+            """
+        )
       )
 
       val result = connector.getJourneyStatus("journey-123").futureValue
@@ -75,23 +71,19 @@ class IvConnectorISpec extends ISpecBase with WireMockSupport {
 
     "must fail with NOT_FOUND when the origin is not shortform" in {
 
-      stubFor(
-        WireMock
-          .get(urlEqualTo("/identity-verification/journey/journey-123"))
-          .willReturn(
-            okJson(
-              """
-                  {
-                    "serviceContract": {
-                      "origin": "another-origin"
-                    },
-                    "progress": {
-                      "result": "TechnicalIssue"
-                    }
-                  }
-                  """
-            )
-          )
+      whenIvRespondsWith(
+        okJson(
+          """
+              {
+                "serviceContract": {
+                  "origin": "another-origin"
+                },
+                "progress": {
+                  "result": "TechnicalIssue"
+                }
+              }
+            """
+        )
       )
 
       val exception =
@@ -105,13 +97,9 @@ class IvConnectorISpec extends ISpecBase with WireMockSupport {
 
     "must propagate an upstream error response" in {
 
-      stubFor(
-        WireMock
-          .get(urlEqualTo("/identity-verification/journey/journey-123"))
-          .willReturn(
-            aResponse()
-              .withStatus(500)
-          )
+      whenIvRespondsWith(
+        aResponse()
+          .withStatus(500)
       )
 
       val exception =
