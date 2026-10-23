@@ -31,8 +31,7 @@ class Navigator @Inject() () {
       ua =>
         ua.get(AddPreviousLastNamePage) match {
           case Some(true) =>
-            // TODO DTR-8719: Redirect to Enter previous last name
-            controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, NormalMode)
+            controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(ua.id, NormalMode)
 
           case Some(false) =>
             // TODO DTR-8691: Redirect to Enter DOB page
@@ -49,8 +48,7 @@ class Navigator @Inject() () {
             controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
 
           case Some(false) =>
-            // TODO DTR-8641: Redirect to Reason(s) for no NI number page
-            controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
+            controllers.sa1.routes.NoNinoReasonController.onPageLoad(ua.id, NormalMode)
 
           case _ => routes.IndexController.onPageLoad()
         }

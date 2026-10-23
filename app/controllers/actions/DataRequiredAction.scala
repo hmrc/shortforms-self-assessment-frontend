@@ -18,9 +18,9 @@ package controllers.actions
 
 import models.JourneyType
 import models.requests.{DataRequest, IdentifierRequest}
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.NotFound
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, RequestHeader, Result}
 import repositories.SessionRepository
 import views.html.ErrorTemplate
 
@@ -31,57 +31,28 @@ import scala.concurrent.{ExecutionContext, Future}
 class DataRequiredActionImpl @Inject() (
   sessionRepository: SessionRepository,
   errorTemplate: ErrorTemplate,
-  messagesApi: MessagesApi
+  val messagesApi: MessagesApi
 )(implicit ec: ExecutionContext)
-    extends DataRequiredAction {
+    extends DataRequiredAction
+    with I18nSupport {
 
-  override def apply(
-    journeyId: String,
-    journeyType: JourneyType
-  ): ActionRefiner[IdentifierRequest, DataRequest] =
-    refine(userId => sessionRepository.get(journeyId, userId, journeyType))
-
-  override def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest] =
-    refine(userId => sessionRepository.get(journeyId, userId))
-
-  private def refine(
-    loadAnswers: String => Future[Option[models.UserAnswers]]
-  ): ActionRefiner[IdentifierRequest, DataRequest] =
+  override def apply(journeyId: String, journeyType: JourneyType): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
-      override protected def executionContext: ExecutionContext = ec
+      protected def executionContext: ExecutionContext = ec
 
-      override protected def refine[A](
-        request: IdentifierRequest[A]
-      ): Future[Either[Result, DataRequest[A]]] =
-        loadAnswers(request.userId)
+      protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, DataRequest[A]]] =
+        given RequestHeader = request
+
+        sessionRepository
+          .get(journeyId, request.userId, journeyType)
           .map {
-            case Some(userAnswers) =>
-              Right(
-                DataRequest(
-                  request.request,
-                  request.userId,
-                  userAnswers
-                )
-              )
-
-            case None =>
-              implicit val messages: Messages = messagesApi.preferred(request.request)
-              Left(
-                NotFound(
-                  errorTemplate("notFound.title", "notFound.heading", "notFound.message")(request.request, messages)
-                )
-              )
+            case Some(userAnswers) => Right(new DataRequest(request, userAnswers))
+            case None              => Left(NotFound(errorTemplate("notFound.title", "notFound.heading", "notFound.message")))
           }
     }
 }
 
 trait DataRequiredAction {
-
-  def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest]
-
-  def apply(
-    journeyId: String,
-    journeyType: JourneyType
-  ): ActionRefiner[IdentifierRequest, DataRequest]
+  def apply(journeyId: String, journeyType: JourneyType): ActionRefiner[IdentifierRequest, DataRequest]
 }

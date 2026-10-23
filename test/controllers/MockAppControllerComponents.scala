@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.MockAppControllerComponents.{base, emptyUserAnswers}
+import controllers.MockAppControllerComponents.base
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction}
 import models.JourneyType.SA1
 import models.UserAnswers
@@ -24,7 +24,7 @@ import play.api.mvc.DefaultActionBuilder
 import play.api.test.Helpers.stubMessagesControllerComponents
 
 final class MockAppControllerComponents(
-  userAnswers: UserAnswers = emptyUserAnswers
+  userAnswers: UserAnswers = MockAppControllerComponents.emptyUserAnswers
 ) extends AppControllerComponents(
       base.messagesActionBuilder,
       base.actionBuilder.asInstanceOf[DefaultActionBuilder],

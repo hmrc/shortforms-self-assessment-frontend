@@ -56,9 +56,8 @@ class FakeDataRequiredAction(
                   answers.userId == request.userId &&
                   journeyType.forall(_ == answers.journeyType) =>
               Right(
-                DataRequest(
-                  request.request,
-                  request.userId,
+                new DataRequest(
+                  request,
                   answers
                 )
               )

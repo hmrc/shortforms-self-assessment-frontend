@@ -37,6 +37,7 @@ class DataRequiredActionSpec extends SpecBase {
 
   private val journeyId = "test-journey-id"
   private val userId    = "test-user-id"
+  private val nino      = Some("NM772208B")
 
   private val userAnswers = UserAnswers(
     id = journeyId,
@@ -47,7 +48,7 @@ class DataRequiredActionSpec extends SpecBase {
   )
 
   private val identifierRequest =
-    IdentifierRequest(FakeRequest(GET, "/"), userId)
+    IdentifierRequest(FakeRequest(GET, "/"), userId, nino)
 
   private lazy val app           = applicationBuilder().build()
   private lazy val errorTemplate = app.injector.instanceOf[ErrorTemplate]
