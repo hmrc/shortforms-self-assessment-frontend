@@ -17,8 +17,6 @@
 package forms.sa1
 
 import forms.behaviours.StringFieldBehaviours
-import forms.sa1.ContactDetailsFormProvider
-import org.mockito.internal.matchers.Contains
 import play.api.data.FormError
 
 class ContactDetailsFormProviderSpec extends StringFieldBehaviours {
