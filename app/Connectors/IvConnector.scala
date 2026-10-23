@@ -20,11 +20,13 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.identityVerification.{IvResult, IvResultType}
 import play.api.Logging
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Failure
 
 @Singleton
 class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClientV2)(implicit ec: ExecutionContext)
@@ -45,8 +47,10 @@ class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClien
             )
 
             Future.failed(
-              new RuntimeException(
-                s"Unexpected origin '${response.origin}', expected '$expectedOrigin'"
+              new UpstreamErrorResponse("Identity Verification result not found.",
+                statusCode = NOT_FOUND,
+                reportAs = NOT_FOUND,
+                headers = Map.empty
               )
             )
           } else {
@@ -57,12 +61,11 @@ class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClien
           logger.error(s"[IvConnector][getJourneyStatus] journeyId=$journeyId", error)
           Future.failed(error)
       }
-      .recoverWith {
-        case e =>
-          logger.error(
-            s"Failed to retrieve IV journey status for journeyId=$journeyId",
-            e
-          )
-          Future.failed(e)
-      }
+    .andThen {
+      case Failure(e) =>
+        logger.error(
+          s"Failed to retrieve IV journey status for journeyId=$journeyId",
+          e
+        )
+    }
 }

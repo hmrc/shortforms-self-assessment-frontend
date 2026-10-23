@@ -95,7 +95,7 @@ class AuthenticatedIdentifierAction @Inject() (
     case _: InsufficientConfidenceLevel =>
       val loggedCompletionUrl = getRequestURI
       val loggedFailureUrl    =
-        config.host + controllers.identityVerification.routes.IvController.handleIvFailure(None).url
+        getHost + controllers.identityVerification.routes.IvController.handleIvFailure(None).url
       val queryParams         = Map(
         "origin"          -> Seq("shortform"),
         "confidenceLevel" -> Seq("250"),
@@ -114,8 +114,11 @@ class AuthenticatedIdentifierAction @Inject() (
   }
 }
 
-private def getRequestURI(using req: Request[?]) =
-  if req.host startsWith "localhost" then
-    val protocol = if req.secure then "https" else "http"
-    s"$protocol://${req.host}${req.uri}"
-  else req.uri
+private def getHost(using rh: RequestHeader): String =
+  if rh.host startsWith "localhost" then
+    val protocol = if rh.secure then "https" else "http"
+    s"$protocol://${rh.host}"
+  else ""
+
+private def getRequestURI(using rh: RequestHeader): String =
+  s"$getHost${rh.uri}"
