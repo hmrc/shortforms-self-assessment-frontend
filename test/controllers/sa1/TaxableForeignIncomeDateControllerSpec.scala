@@ -17,16 +17,12 @@
 package controllers.sa1
 
 import base.SpecBase
-import controllers.{MockAppControllerComponents, routes}
+import controllers.MockAppControllerComponents
 import forms.sa1.TaxableForeignIncomeDateFormProvider
-import models.{CheckMode, JourneyType, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.TryValues
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.TaxableForeignIncomeDatePage
 import play.api.data.Form
@@ -37,79 +33,93 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.TaxableForeignIncomeDateView
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 
 import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class TaxableForeignIncomeDateControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
+class TaxableForeignIncomeDateControllerSpec extends SpecBase with MockitoSugar {
 
-  private implicit val ec: ExecutionContext = ExecutionContext.global
+  private val validDate = LocalDate.of(1990, 5, 10)
 
-  private val journeyId       = "test-journey-id"
-  private val userId          = "test-user-id"
-  private val date            = LocalDate.of(2022, 3, 19)
-  private val mockViewContent = "test view"
-  private val validFormData   = Map(
-    "value.day"   -> "19",
-    "value.month" -> "3",
-    "value.year"  -> "2022"
+  private val validDateData = Map(
+    "value.day"   -> validDate.getDayOfMonth.toString,
+    "value.month" -> validDate.getMonthValue.toString,
+    "value.year"  -> validDate.getYear.toString
   )
 
-  private class Setup {
-    protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+  "TaxableForeignIncomeDateController" - {
 
-    private val components                             = new MockAppControllerComponents(userAnswers)
-    protected val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: TaxableForeignIncomeDateView   = mock[TaxableForeignIncomeDateView]
+    "return OK when loading the page without a saved date" in new Setup {
+      val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
-    protected lazy val controller = new TaxableForeignIncomeDateController(
-      new MockAppControllerComponents(userAnswers),
-      sessionRepository,
-      new TaxableForeignIncomeDateFormProvider(),
-      view
-    )
+      status(result) mustBe OK
+      contentAsString(result) mustBe mockContent
+    }
 
-    when(view.apply(any[Form[LocalDate]], any[String], any())(any[Request[?]], any[Messages]))
-      .thenReturn(Html(mockViewContent))
+    "pre-populate the form when a date has already been saved" in
+      new Setup(emptyUserAnswers.set(TaxableForeignIncomeDatePage, validDate).success.value) {
+        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
+
+        status(result) mustBe OK
+
+        val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
+        verify(mockView).apply(captor.capture(), any[String], any)(any[Request[?]], any[Messages])
+
+        val populatedForm: Form[LocalDate] = captor.getValue
+
+        populatedForm("value.day").value mustBe Some("10")
+        populatedForm("value.month").value mustBe Some("5")
+        populatedForm("value.year").value mustBe Some("1990")
+      }
   }
 
-  "TaxableForeignIncomeDateController" should {
-
-    "return OK when loading the page" in new Setup {
-      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
-
-      status(result) mustBe OK
-      contentAsString(result) mustBe mockViewContent
-    }
-
-    "pre-populate the form when a date already exists" in new Setup {
-      override protected def userAnswers: UserAnswers =
-        UserAnswers(journeyId, userId, JourneyType.SA1).set(TaxableForeignIncomeDatePage, date).success.value
-
-      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
-
-      status(result) mustBe OK
-      val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
-      verify(view).apply(captor.capture(), eqTo(journeyId), eqTo(NormalMode))(any[Request[?]], any[Messages])
-
-      val populatedForm = captor.getValue
-      populatedForm("value.day").value mustBe Some("19")
-      populatedForm("value.month").value mustBe Some("3")
-      populatedForm("value.year").value mustBe Some("2022")
-    }
-
-    "return BAD_REQUEST when the submitted date is invalid" in new Setup {
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
-        "value.day"   -> "",
-        "value.month" -> "3",
-        "value.year"  -> "2022"
+  "return BAD_REQUEST when the submitted date is invalid" in new Setup {
+    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+      FakeRequest(POST, "/").withFormUrlEncodedBody(
+        "value.day"   -> "31",
+        "value.month" -> "2",
+        "value.year"  -> "2000"
       )
 
-      val result = controller.onSubmit(journeyId, NormalMode)(request)
+    val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) mustBe mockViewContent
-    }
+    status(result) mustBe BAD_REQUEST
+    contentAsString(result) mustBe mockContent
+  }
+
+  "save the date and redirect after a valid submission" in new Setup {
+    when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+      FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
+
+    val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(
+      controllers.sa1.routes.TaxableForeignIncomeDateController.onPageLoad(userAnswersId, NormalMode).url
+    )
+
+    val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(sessionRepository).set(captor.capture())
+    captor.getValue.get(TaxableForeignIncomeDatePage) mustBe Some(validDate)
+  }
+
+  private class Setup(
+    userAnswers: UserAnswers = emptyUserAnswers
+  ) {
+    protected val mockView: TaxableForeignIncomeDateView = mock
+    protected val mockContent                            = "TaxableForeignIncomeDateView"
+    protected val sessionRepository: SessionRepository   = mock
+    private val formProvider                             = new TaxableForeignIncomeDateFormProvider()
+
+    when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
+      .thenReturn(Html(mockContent))
+
+    protected lazy val controllerUnderTest = new TaxableForeignIncomeDateController(
+      new MockAppControllerComponents(userAnswers),
+      sessionRepository,
+      formProvider,
+      mockView
+    )
   }
 }

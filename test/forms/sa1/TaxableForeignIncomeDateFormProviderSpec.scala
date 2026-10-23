@@ -16,57 +16,70 @@
 
 package forms.sa1
 
+import forms.behaviours.DateBehaviours
 import org.scalatest.matchers.must.Matchers.mustBe
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import play.api.data.FormError
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class TaxableForeignIncomeDateFormProviderSpec extends AnyWordSpec with Matchers {
+class TaxableForeignIncomeDateFormProviderSpec extends DateBehaviours {
 
-  private implicit val messages: Messages = stubMessages()
-  private val form                        = new TaxableForeignIncomeDateFormProvider()()
-  private val fieldName                   = "value"
+  private implicit val msgs: Messages = stubMessages()
+  private val formProvider            = new TaxableForeignIncomeDateFormProvider()
+  private val minimumDate             = LocalDate.of(1753, 1, 3)
+  private val dateFormatter           = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private val form                    = formProvider()(msgs)
 
-  private def bind(day: String, month: String, year: String) =
-    form.bind(Map(s"$fieldName.day" -> day, s"$fieldName.month" -> month, s"$fieldName.year" -> year))
+  private val minimumDateError = FormError(
+    "value",
+    "sa1.taxableForeignIncomeDate.date.error.mustBeAfterMinimum",
+    Seq(minimumDate.format(dateFormatter))
+  )
 
-  "TaxableForeignIncomeDateFormProvider" should {
+  "TaxableForeignIncomeDateFormProvider" - {
 
-    "bind a valid date" in {
-      val result = bind("19", "3", "2022")
-      result.errors mustBe empty
-      result.value mustBe Some(LocalDate.of(2022, 3, 19))
-    }
+    "taxableForeignIncomeDate" - {
+      dateField(
+        form,
+        "value",
+        datesBetween(minimumDate, LocalDate.now())
+      )
 
-    "accept the lower boundary date of 3 January 1753" in {
-      bind("3", "1", "1753").errors mustBe empty
-    }
+      mandatoryDateField(
+        form,
+        "value",
+        "sa1.taxableForeignIncomeDate.date.error.required"
+      )
 
-    "reject a date with no fields" in {
-      bind("", "", "").errors.map(_.message) mustBe Seq("sa1.taxableForeignIncomeDate.error.required.all")
-    }
+      "must reject a date before the minimum date" in {
+        val result = form.bind(dateData(minimumDate.minusDays(1)))
 
-    "reject a date missing the day" in {
-      val error = bind("", "3", "2022").errors.head
-      error.message mustBe "sa1.taxableForeignIncomeDate.error.required"
-      error.args mustBe Seq(messages("date.error.day"))
-    }
+        result.errors must contain(minimumDateError)
+      }
 
-    "reject a date missing the month and year" in {
-      val error = bind("19", "", "").errors.head
-      error.message mustBe "sa1.taxableForeignIncomeDate.error.required.two"
-      error.args mustBe Seq(messages("date.error.month"), messages("date.error.year"))
-    }
+      "must accept the minimum date" in {
+        val result = form.bind(dateData(minimumDate))
 
-    "reject a non-existent date" in {
-      bind("31", "2", "2022").errors.map(_.message) mustBe Seq("sa1.taxableForeignIncomeDate.error.invalid")
-    }
+        result.value.value mustBe minimumDate
+        result.errors mustBe empty
+      }
 
-    "reject a date before 3 January 1753" in {
-      bind("2", "1", "1753").errors.map(_.message) mustBe Seq("sa1.taxableForeignIncomeDate.error.mustBeAfterMinimum")
+      "must accept a date after the minimum date" in {
+        val date   = minimumDate.plusDays(1)
+        val result = form.bind(dateData(date))
+
+        result.value.value mustBe date
+        result.errors mustBe empty
+      }
     }
   }
+
+  private def dateData(date: LocalDate): Map[String, String] =
+    Map(
+      "value.day"   -> date.getDayOfMonth.toString,
+      "value.month" -> date.getMonthValue.toString,
+      "value.year"  -> date.getYear.toString
+    )
 }

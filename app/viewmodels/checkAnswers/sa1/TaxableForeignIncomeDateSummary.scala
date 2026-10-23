@@ -17,28 +17,30 @@
 package viewmodels.checkAnswers.sa1
 import models.{CheckMode, UserAnswers}
 import pages.sa1.TaxableForeignIncomeDatePage
-import play.api.i18n.{Lang, Messages}
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
+import java.time.format.DateTimeFormatter
+
 object TaxableForeignIncomeDateSummary {
 
-  def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(TaxableForeignIncomeDatePage).map { answer =>
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-      implicit val lang: Lang = messages.lang
-
-      SummaryListRowViewModel(
-        key = "sa1.taxableForeignIncomeDate.checkYourAnswersLabel",
-        value = ValueViewModel(answer.format(dateTimeFormat())),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.sa1.routes.TaxableForeignIncomeDateController.onPageLoad(journeyId, CheckMode).url
+  def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    answers.get(TaxableForeignIncomeDatePage).toSeq.flatMap { answer =>
+      Seq(
+        SummaryListRowViewModel(
+          key = "sa1.taxableForeignIncomeDate.checkYourAnswersLabel",
+          value = ValueViewModel(answer.format(dateFormatter)),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.sa1.routes.TaxableForeignIncomeDateController.onPageLoad(journeyId, CheckMode).url
+            )
+              .withVisuallyHiddenText(messages("sa1.taxableForeignIncomeDate.change.hidden"))
           )
-            .withVisuallyHiddenText(messages("sa1.taxableForeignIncomeDate.change.hidden"))
         )
       )
     }

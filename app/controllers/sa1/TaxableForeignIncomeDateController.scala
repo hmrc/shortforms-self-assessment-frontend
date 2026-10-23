@@ -17,17 +17,12 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import controllers.actions.*
 import forms.sa1.TaxableForeignIncomeDateFormProvider
 import models.Mode
-import navigation.Navigator
 import pages.sa1.TaxableForeignIncomeDatePage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.TaxableForeignIncomeDateView
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

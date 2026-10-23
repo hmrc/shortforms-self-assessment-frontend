@@ -29,6 +29,12 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@dateErrorTarget = @{
+    Seq("day", "month", "year")
+    .find(component => form("value").error.exists(_.args.contains(messages(s"date.error.$component"))))
+    .getOrElse("day")
+}
+
 @layout(pageTitle = title(form, messages("sa1.taxableForeignIncomeDate.title"))) {
 
     @formHelper(action = controllers.sa1.routes.TaxableForeignIncomeDateController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
@@ -43,9 +49,13 @@
         </p>
 
         @bulletList(Seq(
-        "sa1.taxableForeignIncomeDate.b1",
-        "sa1.taxableForeignIncomeDate.b2"
+            "sa1.taxableForeignIncomeDate.b1",
+            "sa1.taxableForeignIncomeDate.b2"
         ))
+
+        @if(form.hasErrors) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Map("value" -> s"value.$dateErrorTarget")))
+        }
 
         @govukDateInput(
             DateViewModel(

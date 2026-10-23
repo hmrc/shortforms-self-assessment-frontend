@@ -28,13 +28,13 @@ class TaxableForeignIncomeDateSummarySpec extends SpecBase {
   private val msgs = stubMessages()
   "TaxableForeignIncomeDateSummary" - {
 
-    "must return no rows when the answer does not exist" in {
+    "must return no rows when the taxable foreign income date answer does not exist" in {
       val result = TaxableForeignIncomeDateSummary.row(userAnswersId, emptyUserAnswers)(msgs)
 
       result mustBe empty
     }
 
-    "must return a row with the formatted date when the answer exists" in {
+    "must return one row with the taxable foreign income date answer exists" in {
       val userAnswers =
         emptyUserAnswers
           .set(TaxableForeignIncomeDatePage, LocalDate.of(2022, 3, 19))
@@ -42,15 +42,19 @@ class TaxableForeignIncomeDateSummarySpec extends SpecBase {
           .value
 
       val result = TaxableForeignIncomeDateSummary.row(userAnswersId, userAnswers)(msgs)
-
+      result                             must have size 1
       result.head.value.content.toString must include("19 March 2022")
+      result.head.key.content.toString   must include(msgs("sa1.taxableForeignIncomeDate.checkYourAnswersLabel"))
 
       val expectedUrl =
         controllers.sa1.routes.TaxableForeignIncomeDateController
           .onPageLoad(userAnswersId, CheckMode)
           .url
-
       result.head.actions.value.items.head.href mustBe expectedUrl
+      result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
+      result.head.actions.value.items.head.visuallyHiddenText.value must include(
+        msgs("sa1.taxableForeignIncomeDate.change.hidden")
+      )
     }
   }
 }

@@ -31,15 +31,15 @@ class TaxableForeignIncomeDateFormProvider @Inject() extends Mappings {
     val minimumDate = LocalDate.of(1753, 1, 3)
     Form(
       "value" -> localDate(
-        invalidKey = "sa1.taxableForeignIncomeDate.error.invalid",
-        allRequiredKey = "sa1.taxableForeignIncomeDate.error.required.all",
-        twoRequiredKey = "sa1.taxableForeignIncomeDate.error.required.two",
-        requiredKey = "sa1.taxableForeignIncomeDate.error.required",
+        invalidKey = "sa1.taxableForeignIncomeDate.date.error.invalid",
+        allRequiredKey = "sa1.taxableForeignIncomeDate.date.error.required",
+        twoRequiredKey = "sa1.taxableForeignIncomeDate.date.error.required.two",
+        requiredKey = "sa1.taxableForeignIncomeDate.date.error.requiredOne",
         numericOnly = true
       ).verifying(
         minDate(
           minimumDate,
-          "sa1.taxableForeignIncomeDate.error.mustBeAfterMinimum",
+          "sa1.taxableForeignIncomeDate.date.error.mustBeAfterMinimum",
           minimumDate.format(dateFormatter)
         )
       )
