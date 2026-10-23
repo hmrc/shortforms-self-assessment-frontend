@@ -173,8 +173,6 @@ class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSu
  */
 
 import controllers.MockAppControllerComponents
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
-import controllers.sa1.EnterNationalInsuranceNumberController
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor

@@ -173,3 +173,14 @@ sa1.dateUntaxedIncomeDirector.date.error.invalid = 	Date must be a real date
 sa1.dateUntaxedIncomeDirector.date.error.requiredOne = Date must include a {0}
 sa1.dateUntaxedIncomeDirector.date.error.requiredTwo = Date must include a {0} and a {1}
 sa1.dateUntaxedIncomeDirector.date.error.mustBeAfterMinimum = Date must be on or after {0}
+
+sa1.untaxedIncomeNotInPayeStartDate.title = When did you start getting untaxed income which was not collected through your PAYE tax code?
+sa1.untaxedIncomeNotInPayeStartDate.heading = When did you start getting untaxed income which was not collected through your PAYE tax code?
+sa1.untaxedIncomeNotInPayeStartDate.hint = For example, 19 3 2022
+sa1.untaxedIncomeNotInPayeStartDate.checkYourAnswersLabel = When did you start getting untaxed income which was not collected through your PAYE tax code?
+sa1.untaxedIncomeNotInPayeStartDate.error.required.all = Date must include a day, month and year
+sa1.untaxedIncomeNotInPayeStartDate.error.required.two = Date must include {0} and {1}
+sa1.untaxedIncomeNotInPayeStartDate.error.required = Date must include {0}
+sa1.untaxedIncomeNotInPayeStartDate.error.invalid = Date must be a real date
+sa1.untaxedIncomeNotInPayeStartDate.date.range.min = Date must be on or after 3 January 1753
+sa1.untaxedIncomeNotInPayeStartDate.change.hidden = When did you start getting untaxed income which was not collected through your PAYE tax code?
