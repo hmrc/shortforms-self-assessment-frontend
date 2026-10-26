@@ -17,7 +17,7 @@
 package controllers.sa1
 
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
-import forms.PreviousNameFormProvider
+import forms.sa1.PreviousNameFormProvider
 import models.{JourneyType, NormalMode, PreviousName, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
@@ -125,7 +125,7 @@ class EnterPreviousLastNameControllerSpec extends AnyWordSpec with Matchers with
       val result = controller.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.EnterPreviousLastNameController.onPageLoad(journeyId, NormalMode).url)
+      redirectLocation(result) mustBe Some(routes.DateOfBirthController.onPageLoad(journeyId, NormalMode).url)
 
       val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
