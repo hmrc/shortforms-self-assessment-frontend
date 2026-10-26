@@ -26,12 +26,12 @@ import play.api.test.Helpers.stubMessages
 import java.time.format.DateTimeFormatter
 
 class DateAnnualIncomeFormProviderSpec extends DateBehaviours {
-  
+
   private implicit val msgs: Messages = stubMessages()
-  private val formProvider = new DateAnnualIncomeFormProvider()
-  private val minimumDate = LocalDate.of(1753, 1, 3)
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  private val form = formProvider()(msgs)
+  private val formProvider            = new DateAnnualIncomeFormProvider()
+  private val minimumDate             = LocalDate.of(1753, 1, 3)
+  private val dateFormatter           = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private val form                    = formProvider()(msgs)
 
   private val minimumDateError = FormError(
     "value",
@@ -68,7 +68,7 @@ class DateAnnualIncomeFormProviderSpec extends DateBehaviours {
       }
 
       "must accept a date after the minimum date" in {
-        val date = minimumDate.plusDays(1)
+        val date   = minimumDate.plusDays(1)
         val result = form.bind(dateData(date))
 
         result.value.value mustBe date
@@ -79,8 +79,8 @@ class DateAnnualIncomeFormProviderSpec extends DateBehaviours {
 
   private def dateData(date: LocalDate): Map[String, String] =
     Map(
-      "value.day" -> date.getDayOfMonth.toString,
+      "value.day"   -> date.getDayOfMonth.toString,
       "value.month" -> date.getMonthValue.toString,
-      "value.year" -> date.getYear.toString
+      "value.year"  -> date.getYear.toString
     )
 }

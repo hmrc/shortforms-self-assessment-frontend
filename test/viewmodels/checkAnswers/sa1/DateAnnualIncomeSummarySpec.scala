@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.sa1
 
-
 import base.SpecBase
 import models.CheckMode
 import pages.sa1.DateAnnualIncomePage
@@ -27,7 +26,7 @@ import java.time.LocalDate
 class DateAnnualIncomeSummarySpec extends SpecBase {
 
   private val msgs = stubMessages()
-  
+
   "DateAnnualIncomeSummary" - {
 
     "must return no rows when the annual income date answer does not exist" in {

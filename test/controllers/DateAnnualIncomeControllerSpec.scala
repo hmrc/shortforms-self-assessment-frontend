@@ -42,11 +42,11 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
   private val validDate = LocalDate.of(1990, 5, 10)
 
   private val validDateData = Map(
-    "value.day" -> validDate.getDayOfMonth.toString,
+    "value.day"   -> validDate.getDayOfMonth.toString,
     "value.month" -> validDate.getMonthValue.toString,
-    "value.year" -> validDate.getYear.toString
+    "value.year"  -> validDate.getYear.toString
   )
-  
+
   "DateAnnualIncome Controller" - {
 
     "return OK when loading the page without a saved date" in new Setup {
@@ -76,9 +76,9 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
   "return BAD_REQUEST when the submitted date is invalid" in new Setup {
     val request: FakeRequest[AnyContentAsFormUrlEncoded] =
       FakeRequest(POST, "/").withFormUrlEncodedBody(
-        "value.day" -> "31",
+        "value.day"   -> "31",
         "value.month" -> "2",
-        "value.year" -> "2000"
+        "value.year"  -> "2000"
       )
 
     val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
@@ -90,7 +90,7 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
   "save the date and redirect after a valid submission" in new Setup {
     when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
     val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-      FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq *)
+      FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
     val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
@@ -105,13 +105,13 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
   }
 
   private class Setup(
-                       userAnswers: UserAnswers = emptyUserAnswers
-                     ) {
-    protected val mockView: DateAnnualIncomeView = mock
-    protected val mockContent = "DateAnnualIncomeView"
+    userAnswers: UserAnswers = emptyUserAnswers
+  ) {
+    protected val mockView: DateAnnualIncomeView       = mock
+    protected val mockContent                          = "DateAnnualIncomeView"
     protected val sessionRepository: SessionRepository = mock
-    private val formProvider = new DateAnnualIncomeFormProvider
-    
+    private val formProvider                           = new DateAnnualIncomeFormProvider
+
     when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
 

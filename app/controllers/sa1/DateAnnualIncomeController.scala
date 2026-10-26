@@ -27,35 +27,32 @@ import views.html.sa1.DateAnnualIncomeView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DateAnnualIncomeController @Inject()(
-                                        val controllerComponents: AppControllerComponents,
-                                        sessionRepository: SessionRepository,  
-                                        formProvider: DateAnnualIncomeFormProvider,                                        
-                                        view: DateAnnualIncomeView
-                                      )(implicit ec: ExecutionContext) extends AppController {
+class DateAnnualIncomeController @Inject() (
+  val controllerComponents: AppControllerComponents,
+  sessionRepository: SessionRepository,
+  formProvider: DateAnnualIncomeFormProvider,
+  view: DateAnnualIncomeView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) {
-    implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
 
-      val form = formProvider()
+    val form = formProvider()
 
-      val preparedForm = request.userAnswers.get(DateAnnualIncomePage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId, mode))
+    val preparedForm = request.userAnswers.get(DateAnnualIncomePage).fold(form)(form.fill)
+    Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async {
-    implicit request =>
-
-      formProvider()
-      .bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
+    formProvider()
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateAnnualIncomePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          }  yield Redirect(controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(journeyId, mode))
+          } yield Redirect(controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(journeyId, mode))
       )
   }
 }
