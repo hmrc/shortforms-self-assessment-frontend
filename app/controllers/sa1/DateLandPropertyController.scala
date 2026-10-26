@@ -17,19 +17,15 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import controllers.actions.*
 import forms.sa1.DateLandPropertyFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.sa1.DateLandPropertyPage
-import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.DateLandPropertyView
-
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class DateLandPropertyController @Inject() (
   val controllerComponents: AppControllerComponents,

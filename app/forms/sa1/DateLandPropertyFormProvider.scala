@@ -18,7 +18,6 @@ package forms.sa1
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms.*
 import play.api.i18n.Messages
 
 import java.time.LocalDate
