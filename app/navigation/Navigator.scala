@@ -21,7 +21,7 @@ import play.api.mvc.Call
 import controllers.routes
 import pages.*
 import models.*
-import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage}
+import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage, WhyTaxReturnPage}
 
 @Singleton
 class Navigator @Inject() () {
@@ -53,6 +53,16 @@ class Navigator @Inject() () {
           case _ => routes.IndexController.onPageLoad()
         }
 
+    case WhyTaxReturnPage =>
+      ua =>
+        ua.get(WhyTaxReturnPage) match {
+          case Some(reasons) if reasons.nonEmpty =>
+            // TODO: Redirect to the first date input page for the selected reason(s)
+            controllers.sa1.routes.WhyTaxReturnController.onPageLoad(ua.id, NormalMode)
+
+          case _ => routes.IndexController.onPageLoad()
+        }
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -62,6 +72,9 @@ class Navigator @Inject() () {
       ua => controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, CheckMode)
     case DoYouHaveANinoPage      =>
       ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, CheckMode)
+    case WhyTaxReturnPage        =>
+      // TODO: Redirect to the relevant date input page(s) for newly selected reason(s), otherwise Check your answers
+      ua => controllers.sa1.routes.WhyTaxReturnController.onPageLoad(ua.id, CheckMode)
     case _                       => ua => controllers.sa1.routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 

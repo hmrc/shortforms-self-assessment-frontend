@@ -10,7 +10,6 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
@@ -29,19 +28,23 @@ POST        /sa1/name/:journeyId                         controllers.sa1.NameCon
 GET         /sa1/name/change/:journeyId                  controllers.sa1.NameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/name/change/:journeyId                  controllers.sa1.NameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/date-of-birth/:journeyId                       controllers.sa1.DateOfBirthController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-of-birth/:journeyId                       controllers.sa1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-of-birth/change/:journeyId                controllers.sa1.DateOfBirthController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-of-birth/change/:journeyId                controllers.sa1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/previous-last-name/:journeyId                  controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = NormalMode)
+POST        /sa1/previous-last-name/:journeyId                  controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = NormalMode)
+GET         /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
+POST        /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)
 
 GET         /sa1/address/:journeyId                      controllers.sa1.AddressLookupController.start(journeyId: String)
 GET         /sa1/address/change/:journeyId               controllers.sa1.AddressLookupController.change(journeyId: String)
 GET         /sa1/address-callback/:journeyId             controllers.sa1.AddressLookupController.callback(journeyId: String, id: String ?= "")
 GET         /sa1/address-callback/change/:journeyId      controllers.sa1.AddressLookupController.callbackChange(journeyId: String, id: String ?= "")
 
-GET         /sa1/previous-last-name/:journeyId           controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = NormalMode)
-POST        /sa1/previous-last-name/:journeyId           controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = NormalMode)
-GET         /sa1/previous-last-name/change/:journeyId    controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
-POST        /sa1/previous-last-name/change/:journeyId    controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)
-
-GET         /sa1/enter-previous-last-name/:journeyId     controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST        /sa1/enter-previous-last-name/:journeyId     controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/enter-previous-last-name/change/:journeyId     controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/enter-previous-last-name/change/:journeyId     controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
@@ -69,5 +72,14 @@ POST       /sa1/enter-ni-number/:journeyId                        controllers.sa
 GET        /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
 POST       /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/date-untaxed-income-director/:journeyId                        controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-untaxed-income-director/:journeyId                        controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-untaxed-income-director/change/:journeyId                 controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-untaxed-income-director/change/:journeyId                 controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)

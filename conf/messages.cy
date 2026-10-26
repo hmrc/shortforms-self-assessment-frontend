@@ -1,4 +1,5 @@
 
+
 site.back = xxxxxxxxxxxxx
 site.remove = xxxxxxxxxxxxx
 site.change = xxxxxxxxxxxxx
@@ -143,3 +144,19 @@ sa1.address.line1.error.maxLength = XXXXX
 sa1.address.line2.error.maxLength = XXXXX
 sa1.address.line3.error.maxLength = XXXXX
 sa1.address.town.error.maxLength = XXXXX
+
+sa1.whyTaxReturn.title = xxxxxxxxxxxxx
+sa1.whyTaxReturn.heading = xxxxxxxxxxxxx
+sa1.whyTaxReturn.hint = xxxxxxxxxxxxx
+sa1.whyTaxReturn.companyDirector = xxxxxxxxxxxxx
+sa1.whyTaxReturn.ukPropertyIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.foreignIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.trustIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.incomeThresholds = xxxxxxxxxxxxx
+sa1.whyTaxReturn.untaxedIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.childBenefitCharge = xxxxxxxxxxxxx
+sa1.whyTaxReturn.capitalGainsTax = xxxxxxxxxxxxx
+sa1.whyTaxReturn.other = xxxxxxxxxxxxx
+sa1.whyTaxReturn.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.whyTaxReturn.error.required = xxxxxxxxxxxxx
+sa1.whyTaxReturn.change.hidden = xxxxxxxxxxxxx

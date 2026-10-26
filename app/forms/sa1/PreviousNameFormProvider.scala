@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms
+package forms.sa1
 
 import forms.mappings.Mappings
 import models.PreviousName
