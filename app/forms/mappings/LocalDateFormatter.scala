@@ -30,7 +30,7 @@ private[mappings] class LocalDateFormatter(
   requiredKey: String,
   args: Seq[String] = Seq.empty,
   numericOnly: Boolean = false
-)
+)(implicit messages: Messages)
     extends Formatter[LocalDate]
     with Formatters {
 
@@ -83,7 +83,7 @@ private[mappings] class LocalDateFormatter(
       .withFilter(_._2.isEmpty)
       .map(_._1)
       .toList
-      .map(field => s"date.error.$field")
+      .map(field => messages(s"date.error.$field"))
 
     fields.count(_._2.isDefined) match {
       case 3 =>

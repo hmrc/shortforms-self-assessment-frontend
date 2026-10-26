@@ -27,7 +27,7 @@ import javax.inject.Inject
 class TaxableForeignIncomeDateFormProvider @Inject() extends Mappings {
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-  def apply(): Form[LocalDate] =
+  def apply()(implicit messages: Messages): Form[LocalDate] =
     val minimumDate = LocalDate.of(1753, 1, 3)
     Form(
       "value" -> localDate(
