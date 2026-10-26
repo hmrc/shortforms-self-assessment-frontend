@@ -57,7 +57,7 @@ trait Mappings extends Formatters with Constraints {
     requiredKey: String,
     args: Seq[String] = Seq.empty,
     numericOnly: Boolean = false
-  )(implicit messages: Messages): FieldMapping[LocalDate] =
+  ): FieldMapping[LocalDate] =
     of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args, numericOnly))
 
   protected def currency(
