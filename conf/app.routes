@@ -78,3 +78,8 @@ GET         /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxR
 POST        /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST       /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
