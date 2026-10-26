@@ -39,9 +39,10 @@
 
     @formHelper(action = controllers.sa1.routes.TaxableForeignIncomeDateController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value.day")))
+        @if(form.hasErrors) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Map("value" -> s"value.$dateErrorTarget")))
         }
+
         @h1("sa1.taxableForeignIncomeDate.heading")
 
         <p class="govuk-body">
@@ -52,10 +53,6 @@
             "sa1.taxableForeignIncomeDate.b1",
             "sa1.taxableForeignIncomeDate.b2"
         ))
-
-        @if(form.hasErrors) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, Map("value" -> s"value.$dateErrorTarget")))
-        }
 
         @govukDateInput(
             DateViewModel(
