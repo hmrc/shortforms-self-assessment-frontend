@@ -134,3 +134,19 @@ sa1.dateLandPropertyUk.date.error.requiredOne = xxxxxxxxxxxxx
 sa1.dateLandPropertyUk.date.error.requiredTwo = xxxxxxxxxxxxx
 sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = xxxxxxxxxxxxx
 
+
+sa1.whyTaxReturn.title = xxxxxxxxxxxxx
+sa1.whyTaxReturn.heading = xxxxxxxxxxxxx
+sa1.whyTaxReturn.hint = xxxxxxxxxxxxx
+sa1.whyTaxReturn.companyDirector = xxxxxxxxxxxxx
+sa1.whyTaxReturn.ukPropertyIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.foreignIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.trustIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.incomeThresholds = xxxxxxxxxxxxx
+sa1.whyTaxReturn.untaxedIncome = xxxxxxxxxxxxx
+sa1.whyTaxReturn.childBenefitCharge = xxxxxxxxxxxxx
+sa1.whyTaxReturn.capitalGainsTax = xxxxxxxxxxxxx
+sa1.whyTaxReturn.other = xxxxxxxxxxxxx
+sa1.whyTaxReturn.checkYourAnswersLabel = xxxxxxxxxxxxx
+sa1.whyTaxReturn.error.required = xxxxxxxxxxxxx
+sa1.whyTaxReturn.change.hidden = xxxxxxxxxxxxx

@@ -60,11 +60,8 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: DateLandPropertyView           = mock[DateLandPropertyView]
 
-    private val controllerComponents    = stubMessagesControllerComponents()
-    private val identifierAction        = new FakeIdentifierAction(controllerComponents.parsers)
-    private lazy val dataRequiredAction = new SA1DataRequiredAction(new FakeDataRequiredAction(Some(userAnswers)))
-    private val formProvider            = new DateLandPropertyFormProvider()
-    private val navigator               = new Navigator()
+    private val formProvider = new DateLandPropertyFormProvider()
+    private val navigator    = new Navigator()
 
     protected lazy val controller = new DateLandPropertyController(
       new MockAppControllerComponents(userAnswers),

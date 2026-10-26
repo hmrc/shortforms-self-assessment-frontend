@@ -19,8 +19,9 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import models.*
+import models.sa1.WhyTaxReturn
 import pages.*
-import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage}
+import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage, WhyTaxReturnPage}
 
 class NavigatorSpec extends SpecBase {
 
@@ -92,6 +93,35 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(DoYouHaveANinoPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
         }
       }
+
+      "when Why tax return page" - {
+        // TODO: Redirect to the first date input page for the selected reason(s)
+        "must go from Why tax return page to the first date input page when reasons are selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.CompanyDirector, WhyTaxReturn.Other))
+            .success
+            .value
+
+          navigator.nextPage(
+            WhyTaxReturnPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.WhyTaxReturnController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from Why tax return page to Index when answer is empty" in {
+          navigator.nextPage(WhyTaxReturnPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController
+            .onPageLoad()
+        }
+
+        "must go from Why tax return page to Index when no reasons are selected" in {
+          val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, Set.empty[WhyTaxReturn]).success.value
+
+          navigator.nextPage(WhyTaxReturnPage, NormalMode, userAnswers) mustBe routes.IndexController
+            .onPageLoad()
+        }
+      }
     }
 
     "in Check mode" - {
@@ -116,6 +146,11 @@ class NavigatorSpec extends SpecBase {
           CheckMode,
           emptyUserAnswers
         ) mustBe controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+        navigator.nextPage(
+          WhyTaxReturnPage,
+          CheckMode,
+          emptyUserAnswers
+        ) mustBe controllers.sa1.routes.WhyTaxReturnController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
       }
     }
   }
