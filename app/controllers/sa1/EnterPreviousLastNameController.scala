@@ -17,7 +17,7 @@
 package controllers.sa1
 
 import controllers.actions.*
-import forms.PreviousNameFormProvider
+import forms.sa1.PreviousNameFormProvider
 import models.Mode
 import pages.sa1.PreviousLastNamePage
 import play.api.i18n.I18nSupport
@@ -57,9 +57,7 @@ class EnterPreviousLastNameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
               saved          <- sessionRepository.set(updatedAnswers)
-            } yield
-            // TODO: Redirect it to DOB Page once ready
-            Redirect(controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, mode))
+            } yield Redirect(controllers.sa1.routes.DateOfBirthController.onPageLoad(journeyId, mode))
         )
     }
 }
