@@ -33,14 +33,11 @@ class FakeDataRequiredAction(
     journeyId: String,
     journeyType: JourneyType
   ): ActionRefiner[IdentifierRequest, DataRequest] =
-    refine(journeyId, Some(journeyType))
-
-  override def apply(journeyId: String): ActionRefiner[IdentifierRequest, DataRequest] =
-    refine(journeyId, None)
+    refine(journeyId, journeyType)
 
   private def refine(
     journeyId: String,
-    journeyType: Option[JourneyType]
+    journeyType: JourneyType
   ): ActionRefiner[IdentifierRequest, DataRequest] =
     new ActionRefiner[IdentifierRequest, DataRequest] {
 
@@ -54,7 +51,7 @@ class FakeDataRequiredAction(
             case Some(answers)
                 if answers.id == journeyId &&
                   answers.userId == request.userId &&
-                  journeyType.forall(_ == answers.journeyType) =>
+                  answers.journeyType == journeyType =>
               Right(
                 new DataRequest(
                   request,

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa1
 
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
-import models.{JourneyType, NormalMode}
+import controllers.{AppController, AppControllerComponents}
+import models.NormalMode
 import pages.AddressPage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, Call}
@@ -35,6 +36,9 @@ class AddressLookupController @Inject() (
   sessionRepository: SessionRepository
 ) extends AppController
     with Logging {
+
+  private val landingPage: Call = routes.StartController.onPageLoad()
+
   def start(journeyId: String): Action[AnyContent] =
     initialise(journeyId, routes.AddressLookupController.callback(journeyId))
 
@@ -42,9 +46,9 @@ class AddressLookupController @Inject() (
     initialise(journeyId, routes.AddressLookupController.callbackChange(journeyId))
 
   private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
-    DataAction(journeyId).async { implicit request =>
-      connector.initialise(configuration(callback)).map(Redirect(_)).recover { case NonFatal(ex) =>
-        logger.error(s"Failed to initialise the ${request.userAnswers.journeyType} address lookup journey", ex)
+    SA1DataAction(journeyId).async { implicit request =>
+      connector.initialise(configuration(callback, landingPage)).map(Redirect(_)).recover { case NonFatal(ex) =>
+        logger.error("Failed to initialise the SA1 address lookup journey", ex)
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }
@@ -56,24 +60,21 @@ class AddressLookupController @Inject() (
     saveAddress(journeyId, id, changing = true)
 
   private def saveAddress(journeyId: String, id: String, changing: Boolean): Action[AnyContent] =
-    DataAction(journeyId).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       (for {
-        address        <- if (id.trim.nonEmpty) {
-                            connector.getAddress(id)
-                          } else {
-                            Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
-                          }
+        address        <- if (id.trim.nonEmpty) connector.getAddress(id)
+                          else Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
         updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressPage, address))
         saved          <- sessionRepository.set(updatedAnswers)
       } yield {
-        if (!saved) throw new IllegalStateException(s"${request.userAnswers.journeyType} address was not saved")
-        if (!changing && request.userAnswers.journeyType == JourneyType.SA1) {
-          Redirect( // TODO: change this to the nxt page "when did you move to this address" in the journey once it is implemented
-            controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode)
-          )
-        } else Redirect(controllers.sa1.routes.CheckYourAnswersController.onPageLoad(journeyId))
+        if (!saved) throw new IllegalStateException("SA1 address was not saved")
+        if (changing) Redirect(routes.CheckYourAnswersController.onPageLoad(journeyId))
+        else {
+          // TODO: redirect to the move-date page when it is implemented.
+          Redirect(routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode))
+        }
       }).recover { case NonFatal(ex) =>
-        logger.error(s"Failed to retrieve or save the confirmed ${request.userAnswers.journeyType} address", ex)
+        logger.error("Failed to retrieve or save the confirmed SA1 address", ex)
         Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }

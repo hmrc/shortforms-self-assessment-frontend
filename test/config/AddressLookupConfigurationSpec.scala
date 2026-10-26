@@ -23,21 +23,30 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 
 class AddressLookupConfigurationSpec extends SpecBase {
+  private val landingPage = controllers.sa1.routes.StartController.onPageLoad()
+
   "ALF configuration" - {
-    "must use absolute callbacks, standard country routing and no custom truncation limits" in new Setup {
+    "must use absolute callbacks, standard country routing and 35-character manual address limits" in new Setup {
       running(app) {
         implicit val request = FakeRequest()
-        val callback         = controllers.routes.AddressLookupController.callback(userAnswersId)
-        val configuration    = app.injector.instanceOf[AddressLookupConfiguration].apply(callback)
+        val callback         = controllers.sa1.routes.AddressLookupController.callback(userAnswersId)
+        val configuration    = app.injector.instanceOf[AddressLookupConfiguration].apply(callback, landingPage)
         (configuration \ "version").as[Int] mustBe 2
         val options          = (configuration \ "options").as[JsObject]
         (options \ "continueUrl").as[String] mustBe s"https://example.test${callback.url}"
+        (options \ "serviceHref").as[String] mustBe s"https://example.test${landingPage.url}"
         (options \ "ukMode").as[Boolean] mustBe false
-        (options \ "disableTranslations").as[Boolean] mustBe false
+        (options \ "disableTranslations").as[Boolean] mustBe true
         val manualEntry      = (options \ "manualAddressEntryConfig").as[JsObject]
         Seq("line1MaxLength", "line2MaxLength", "line3MaxLength", "townMaxLength").foreach { field =>
-          (manualEntry \ field).toOption mustBe None
+          (manualEntry \ field).as[Int] mustBe 35
         }
+        (manualEntry \ "maxLengthErrorMessages" \ "en").as[JsObject] mustBe play.api.libs.json.Json.obj(
+          "addressLine1" -> "Address line 1 must be 35 characters or less",
+          "addressLine2" -> "Address line 2 must be 35 characters or less",
+          "addressLine3" -> "Address line 3 must be 35 characters or less",
+          "town"         -> "Town or city must be 35 characters or less"
+        )
         (manualEntry \ "showOrganisationName").as[Boolean] mustBe false
         (manualEntry \ "mandatoryFields").as[JsObject] mustBe play.api.libs.json.Json.obj(
           "addressLine1" -> true,
@@ -73,10 +82,13 @@ class AddressLookupConfigurationSpec extends SpecBase {
         implicit val request = FakeRequest()
         val configuration    = app.injector
           .instanceOf[AddressLookupConfiguration]
-          .apply(controllers.routes.AddressLookupController.callback(userAnswersId))
+          .apply(
+            controllers.sa1.routes.AddressLookupController.callback(userAnswersId),
+            landingPage
+          )
         val labels           = (configuration \ "labels" \ "en").as[JsObject]
         val expectedHeadings = Map(
-          "countryPickerLabels" -> "What is the country or territory of your address?",
+          "countryPickerLabels" -> "What is the country or territory of your home address?",
           "lookupPageLabels"    -> "Search for your address",
           "editPageLabels"      -> "What is your address?",
           "selectPageLabels"    -> "Choose your address",
@@ -116,26 +128,24 @@ class AddressLookupConfigurationSpec extends SpecBase {
       }
     }
 
-    "must respect the translation feature flag" in new SetupWithoutTranslations {
+    "must provide only English labels while translations are disabled" in new Setup {
       running(app) {
         implicit val request = FakeRequest()
         val config           = app.injector
           .instanceOf[AddressLookupConfiguration]
-          .apply(controllers.routes.AddressLookupController.callback(userAnswersId))
+          .apply(
+            controllers.sa1.routes.AddressLookupController.callback(userAnswersId),
+            landingPage
+          )
         (config \ "options" \ "disableTranslations").as[Boolean] mustBe true
+        (config \ "labels" \ "cy").toOption mustBe None
       }
     }
   }
 
   trait Setup {
-    def translationsEnabled: Boolean = true
-
     lazy val app: Application = applicationBuilder()
-      .configure("host" -> "https://example.test", "features.welsh-translation" -> translationsEnabled)
+      .configure("host" -> "https://example.test")
       .build()
-  }
-
-  trait SetupWithoutTranslations extends Setup {
-    override def translationsEnabled: Boolean = false
   }
 }

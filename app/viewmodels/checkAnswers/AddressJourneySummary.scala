@@ -31,14 +31,14 @@ object AddressJourneySummary {
         Seq(if (index == 0) HtmlFormat.empty else HtmlFormat.raw("<br>"), HtmlFormat.escape(line))
       })
       SummaryListRowViewModel(
-        KeyViewModel(Text(messages("address.label"))),
+        KeyViewModel(Text(messages("sa1.address.label"))),
         ValueViewModel(HtmlContent(addressHtml)),
         Seq(
           ActionItemViewModel(
             Text(messages("site.change")),
-            controllers.routes.AddressLookupController.change(answers.id).url
+            controllers.sa1.routes.AddressLookupController.change(answers.id).url
           )
-            .withVisuallyHiddenText(messages("address.label"))
+            .withVisuallyHiddenText(messages("sa1.address.label"))
         )
       )
     }

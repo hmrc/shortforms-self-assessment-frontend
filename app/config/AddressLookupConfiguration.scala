@@ -26,13 +26,13 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messagesApi: MessagesApi) {
 
-  def apply(callback: Call)(implicit request: RequestHeader): JsObject = {
+  def apply(callback: Call, landingPage: Call)(implicit request: RequestHeader): JsObject = {
     def appLabels(language: String): JsObject = Json.obj(
       "appLevelLabels" -> Json.obj("navTitle" -> messagesApi("service.name")(Lang(language)))
     )
 
     def labels(language: String): JsObject = {
-      def message(key: String): String = messagesApi(s"address.$key")(Lang(language))
+      def message(key: String): String = messagesApi(s"sa1.address.$key")(Lang(language))
 
       def visuallyHidden(text: String): String =
         s"""<span class="govuk-visually-hidden">${HtmlFormat.escape(text)}</span>"""
@@ -79,14 +79,14 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
       "version" -> 2,
       "options" -> Json.obj(
         "continueUrl"              -> s"${appConfig.host}${callback.url}",
-        "serviceHref"              -> s"${appConfig.host}${controllers.routes.IndexController.onPageLoad().url}",
+        "serviceHref"              -> s"${appConfig.host}${landingPage.url}",
         "signOutHref"              -> s"${appConfig.host}${controllers.auth.routes.AuthController.signOut().url}",
         "phaseFeedbackLink"        -> appConfig.feedbackUrl,
         "deskProServiceName"       -> appConfig.appName,
         "showPhaseBanner"          -> false,
         "includeHMRCBranding"      -> false,
         "showBackButtons"          -> true,
-        "disableTranslations"      -> !appConfig.languageTranslationEnabled,
+        "disableTranslations"      -> true,
         "ukMode"                   -> false,
         "pageHeadingStyle"         -> "govuk-heading-l",
         "confirmPageConfig"        -> Json.obj(
@@ -97,8 +97,26 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
         ),
         "selectPageConfig"         -> Json.obj("showSearchAgainLink" -> false, "showNoneOfTheseOption" -> false),
         "manualAddressEntryConfig" -> Json.obj(
-          "showOrganisationName" -> false,
-          "mandatoryFields"      -> Json.obj(
+          "showOrganisationName"   -> false,
+          "line1MaxLength"         -> 35,
+          "line2MaxLength"         -> 35,
+          "line3MaxLength"         -> 35,
+          "townMaxLength"          -> 35,
+          "maxLengthErrorMessages" -> Json.obj(
+            "en" -> Json.obj(
+              "addressLine1" -> messagesApi("sa1.address.line1.error.maxLength")(Lang("en")),
+              "addressLine2" -> messagesApi("sa1.address.line2.error.maxLength")(Lang("en")),
+              "addressLine3" -> messagesApi("sa1.address.line3.error.maxLength")(Lang("en")),
+              "town"         -> messagesApi("sa1.address.town.error.maxLength")(Lang("en"))
+            ),
+            "cy" -> Json.obj(
+              "addressLine1" -> messagesApi("sa1.address.line1.error.maxLength")(Lang("cy")),
+              "addressLine2" -> messagesApi("sa1.address.line2.error.maxLength")(Lang("cy")),
+              "addressLine3" -> messagesApi("sa1.address.line3.error.maxLength")(Lang("cy")),
+              "town"         -> messagesApi("sa1.address.town.error.maxLength")(Lang("cy"))
+            )
+          ),
+          "mandatoryFields"        -> Json.obj(
             "addressLine1" -> true,
             "addressLine2" -> false,
             "addressLine3" -> false,
@@ -111,7 +129,7 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
           "timeoutUrl"    -> s"${appConfig.host}${controllers.auth.routes.AuthController.signOutNoSurvey().url}"
         )
       ),
-      "labels"  -> Json.obj("en" -> labels("en"), "cy" -> labels("cy"))
+      "labels"  -> Json.obj("en" -> labels("en"))
     )
   }
 }

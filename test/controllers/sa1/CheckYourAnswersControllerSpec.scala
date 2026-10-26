@@ -64,7 +64,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       addressHtml must include("United Kingdom")
       addressHtml must not include "998877665544"
       addressRow.actions.value.items.map(_.href) mustBe
-        Seq(controllers.routes.AddressLookupController.change(userAnswersId).url)
+        Seq(routes.AddressLookupController.change(userAnswersId).url)
     }
 
     "must include the name row before the address row with its change link" in new SetupWithNameAndAddress {
@@ -76,7 +76,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       rows.head.actions.value.items.map(_.href) mustBe
         Seq(routes.NameController.onPageLoad(userAnswersId, CheckMode).url)
       rows(1).actions.value.items.map(_.href) mustBe
-        Seq(controllers.routes.AddressLookupController.change(userAnswersId).url)
+        Seq(routes.AddressLookupController.change(userAnswersId).url)
     }
   }
 
