@@ -16,7 +16,7 @@
 
 package views.sa1
 
-import forms.PreviousNameFormProvider
+import forms.sa1.PreviousNameFormProvider
 import models.{NormalMode, PreviousName}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers
