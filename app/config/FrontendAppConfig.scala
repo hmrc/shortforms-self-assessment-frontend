@@ -17,17 +17,17 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.{Configuration, Environment, Mode}
 import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration, env: Environment) {
 
   private def loadConfig(key: String) =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 
-  val host: String    = configuration.get[String]("host")
+  val host: String    = if (env.mode == Mode.Prod) "" else "http://localhost:10081"
   val appName: String = configuration.get[String]("appName")
 
   private val contactHost                  = configuration.get[String]("contact-frontend.host")

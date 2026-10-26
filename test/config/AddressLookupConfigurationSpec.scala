@@ -18,6 +18,7 @@ package config
 
 import base.SpecBase
 import play.api.Application
+import play.api.Mode
 import play.api.libs.json.{JsObject, JsValue}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
@@ -33,8 +34,8 @@ class AddressLookupConfigurationSpec extends SpecBase {
         val configuration    = app.injector.instanceOf[AddressLookupConfiguration].apply(callback, landingPage)
         (configuration \ "version").as[Int] mustBe 2
         val options          = (configuration \ "options").as[JsObject]
-        (options \ "continueUrl").as[String] mustBe s"https://example.test${callback.url}"
-        (options \ "serviceHref").as[String] mustBe s"https://example.test${landingPage.url}"
+        (options \ "continueUrl").as[String] mustBe s"http://localhost:10081${callback.url}"
+        (options \ "serviceHref").as[String] mustBe s"http://localhost:10081${landingPage.url}"
         (options \ "ukMode").as[Boolean] mustBe false
         (options \ "disableTranslations").as[Boolean] mustBe true
         val manualEntry      = (options \ "manualAddressEntryConfig").as[JsObject]
@@ -57,7 +58,7 @@ class AddressLookupConfigurationSpec extends SpecBase {
         )
         (options \ "timeoutConfig" \ "timeoutAmount").as[Int] mustBe 900
         (options \ "signOutHref").as[String] mustBe
-          s"https://example.test${controllers.auth.routes.AuthController.signOut().url}"
+          s"http://localhost:10081${_root_.controllers.auth.routes.AuthController.signOut().url}"
         (configuration \ "labels" \ "en" \ "appLevelLabels" \ "navTitle").as[String] mustBe
           messages(app)("service.name")
         (options \ "showBackButtons").as[Boolean] mustBe true
@@ -74,6 +75,20 @@ class AddressLookupConfigurationSpec extends SpecBase {
           "showSearchAgainLink"   -> false,
           "showNoneOfTheseOption" -> false
         )
+      }
+    }
+
+    "must use relative ALF URLs in production mode" in {
+      val app = applicationBuilder().in(Mode.Prod).build()
+      running(app) {
+        implicit val request = FakeRequest()
+        val callback         = controllers.sa1.routes.AddressLookupController.callback(userAnswersId)
+        val options          = (
+          app.injector.instanceOf[AddressLookupConfiguration].apply(callback, landingPage) \ "options"
+        ).as[JsObject]
+
+        (options \ "continueUrl").as[String] mustBe callback.url
+        (options \ "serviceHref").as[String] mustBe landingPage.url
       }
     }
 
@@ -145,7 +160,6 @@ class AddressLookupConfigurationSpec extends SpecBase {
 
   trait Setup {
     lazy val app: Application = applicationBuilder()
-      .configure("host" -> "https://example.test")
       .build()
   }
 }

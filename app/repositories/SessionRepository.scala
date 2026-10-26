@@ -91,17 +91,6 @@ class SessionRepository @Inject() (
       }
     }
 
-  def get(journeyId: String, userId: String): Future[Option[UserAnswers]] =
-    Mdc.preservingMdc {
-      collection
-        .findOneAndUpdate(
-          filter = Filters.and(Filters.equal("_id", journeyId), Filters.equal("userId", userId)),
-          update = Updates.set("lastUpdated", Instant.now(clock)),
-          options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-        )
-        .headOption()
-    }
-
   def set(answers: UserAnswers): Future[Boolean] = {
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
     val filter         =

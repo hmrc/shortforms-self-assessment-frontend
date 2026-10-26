@@ -17,87 +17,80 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.*
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
-import org.scalatest.BeforeAndAfterAll
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import play.api.test.Helpers.running
+import uk.gov.hmrc.http.test.WireMockSupport
 import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 
-class AddressLookupConnectorSpec extends SpecBase with BeforeAndAfterAll {
-  private val server                     = new WireMockServer(wireMockConfig().dynamicPort())
-  implicit private val hc: HeaderCarrier = HeaderCarrier()
+class AddressLookupConnectorISpec extends SpecBase with GuiceOneAppPerSuite with WireMockSupport {
 
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    server.start()
-  }
-
-  override def afterAll(): Unit =
-    try server.stop()
-    finally super.afterAll()
-
-  private def withConnector(test: AddressLookupConnector => Unit): Unit = {
-    server.resetAll()
-    val app = applicationBuilder()
-      .configure(
-        "microservice.services.address-lookup-frontend.port" -> server.port()
-      )
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .configure("microservice.services.address-lookup-frontend.port" -> wireMockPort)
       .build()
-    running(app) {
-      test(app.injector.instanceOf[AddressLookupConnector])
-    }
-  }
+
+  implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
+
+  private lazy val connector = app.injector.instanceOf[AddressLookupConnector]
 
   "ALF connector" - {
-    "must fail explicitly if ALF omits its Location header" in withConnector { connector =>
-      server.stubFor(post(urlEqualTo("/api/v2/init")).willReturn(aResponse().withStatus(202)))
+    "must fail explicitly if ALF omits its Location header" in {
+      stubFor(post(urlEqualTo("/api/v2/init")).willReturn(aResponse().withStatus(202)))
+
       connector.initialise(Json.obj()).failed.futureValue mustBe a[IllegalStateException]
     }
 
     Seq(200, 400, 500).foreach { status =>
-      s"must reject an unexpected $status initialisation response" in withConnector { connector =>
-        server.stubFor(
+      s"must reject an unexpected $status initialisation response" in {
+        stubFor(
           post(urlEqualTo("/api/v2/init"))
             .willReturn(aResponse().withStatus(status).withHeader("Location", "http://localhost:9028/not-accepted"))
         )
+
         connector.initialise(Json.obj()).failed.futureValue mustBe a[UpstreamErrorResponse]
       }
     }
 
-    "must retrieve the confirmed address using an encoded query parameter, preserving the UPRN and town" in withConnector {
-      connector =>
-        val id     = "id with & symbols"
-        server.stubFor(
-          get(urlPathEqualTo("/api/v2/confirmed"))
-            .withQueryParam("id", equalTo(id))
-            .willReturn(
-              okJson(
-                Json
-                  .obj(
-                    "auditRef" -> "audit-ref",
-                    "uprn"     -> 123456789L,
-                    "address"  -> Json
-                      .obj("lines" -> Seq("A long address line that must never be truncated"), "town" -> "Town")
+    "must retrieve the confirmed address using an encoded query parameter, preserving the UPRN and town" in {
+      val id = "id with & symbols"
+      stubFor(
+        get(urlPathEqualTo("/api/v2/confirmed"))
+          .withQueryParam("id", equalTo(id))
+          .willReturn(
+            okJson(
+              Json
+                .obj(
+                  "auditRef" -> "audit-ref",
+                  "uprn"     -> 123456789L,
+                  "address"  -> Json.obj(
+                    "lines" -> Seq("A long address line that must never be truncated"),
+                    "town"  -> "Town"
                   )
-                  .toString
-              )
+                )
+                .toString
             )
-        )
-        val result = connector.getAddress(id).futureValue
-        result.uprn mustBe Some(123456789L)
-        result.address.town mustBe Some("Town")
-        result.address.lines.head mustBe "A long address line that must never be truncated"
+          )
+      )
+
+      val result = connector.getAddress(id).futureValue
+
+      result.uprn mustBe Some(123456789L)
+      result.address.town mustBe Some("Town")
+      result.address.lines.head mustBe "A long address line that must never be truncated"
     }
 
-    "must propagate confirmed-address retrieval failures" in withConnector { connector =>
-      server.stubFor(get(urlPathEqualTo("/api/v2/confirmed")).willReturn(aResponse().withStatus(404)))
+    "must propagate confirmed-address retrieval failures" in {
+      stubFor(get(urlPathEqualTo("/api/v2/confirmed")).willReturn(aResponse().withStatus(404)))
+
       connector.getAddress("missing").failed.futureValue mustBe a[UpstreamErrorResponse]
     }
 
-    "must fail if the confirmed address response cannot be decoded" in withConnector { connector =>
-      server.stubFor(get(urlPathEqualTo("/api/v2/confirmed")).willReturn(okJson("""{"address":false}""")))
+    "must fail if the confirmed address response cannot be decoded" in {
+      stubFor(get(urlPathEqualTo("/api/v2/confirmed")).willReturn(okJson("""{"address":false}""")))
+
       connector.getAddress("invalid").failed.futureValue mustBe a[Exception]
     }
   }
