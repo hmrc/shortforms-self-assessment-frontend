@@ -19,76 +19,70 @@ package controllers.identityVerification
 import base.SpecBase
 import connectors.IvConnector
 import controllers.MockAppControllerComponents
+import handlers.ErrorHandler
 import models.identityVerification.IvResultType
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import views.html.ErrorTemplate
-import org.mockito.ArgumentMatchers.any
+import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.ErrorTemplate
 
 import scala.concurrent.Future
 
-class IvControllerSpec extends SpecBase {
+class IvControllerSpec extends SpecBase with Results {
 
   "Iv Controller" - {
     ".handleIvFailure" - {
-      "must redirect to IV TechnicalIssue page when journey result is TechnicalIssue" in new Setup {
+      "must show IV TechnicalIssue page when journey result is TechnicalIssue" in new Setup {
         when(mockIvConnector.getJourneyStatus(any[String])(any[HeaderCarrier]))
           .thenReturn(Future.successful(IvResultType.TechnicalIssue))
 
         private val result = ivController.handleIvFailure(Some(testJourneyId))(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/self-assessment-forms/identity-verification/technical-issue")
+        status(result) mustBe OK
+        verify(mockView).apply(
+          eqTo("idVerification.technicalIssue.title"),
+          eqTo("idVerification.technicalIssue.heading"),
+          eqTo("idVerification.technicalIssue.message")
+        )(any, any)
       }
 
-      "must redirect to IV Other Result page when journey result is not TechnicalIssue" in new Setup {
+      "must show IV Other Result page when journey result is not TechnicalIssue" in new Setup {
         when(mockIvConnector.getJourneyStatus(any[String])(any[HeaderCarrier]))
           .thenReturn(Future.successful(IvResultType.OtherIssue))
 
         private val result = ivController.handleIvFailure(Some(testJourneyId))(FakeRequest())
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/self-assessment-forms/identity-verification/other-result")
-      }
-
-      "must redirect to Iv Other Result page when journeyId is not supplied" in new Setup {
-        private val result =
-          ivController.handleIvFailure(None)(FakeRequest())
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/self-assessment-forms/identity-verification/other-result")
-      }
-    }
-
-    ".ivTechnicalIssue" - {
-      "must return OK and display the IV TechnicalIssue page" in new Setup {
-        private val result = ivController.ivTechnicalIssue()(FakeRequest())
-
         status(result) mustBe OK
-        contentAsString(result) mustEqual mockContent
+        verify(mockView).apply(
+          eqTo("idVerification.otherIssue.title"),
+          eqTo("idVerification.otherIssue.heading"),
+          eqTo("idVerification.otherIssue.message")
+        )(any, any)
+      }
+
+      "must respond 400 Bad Request when journeyId is not supplied" in new Setup {
+        when(mockErrorHandler.onClientError(any, any, any)) thenReturn Future.successful(BadRequest("No journey ID"))
+
+        private val result = ivController.handleIvFailure(None)(FakeRequest())
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustBe "No journey ID"
       }
     }
-
-    ".ivOtherResult" - {
-      "must return OK and display the IV Other Result page" in new Setup {
-        private val result = ivController.ivOtherResult()(FakeRequest())
-
-        status(result) mustBe OK
-        contentAsString(result) mustEqual mockContent
-      }
-    }
-
   }
 
   private class Setup {
-    private val mockView: ErrorTemplate = mock[ErrorTemplate]
-    protected val mockContent           = "ErrorTemplate"
+    protected val mockView: ErrorTemplate = mock
+    private val mockContent               = "ErrorTemplate"
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
+
+    protected val mockErrorHandler: ErrorHandler = mock
 
     protected val testJourneyId: String = "testJourneyId"
 
@@ -97,7 +91,8 @@ class IvControllerSpec extends SpecBase {
     protected val ivController = new IvController(
       new MockAppControllerComponents(),
       mockIvConnector,
-      mockView
+      mockView,
+      mockErrorHandler
     )
   }
 }

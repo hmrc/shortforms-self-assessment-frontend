@@ -32,7 +32,7 @@ import scala.util.Failure
 class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClientV2)(implicit ec: ExecutionContext)
     extends Logging {
 
-  private val baseUrl        = appConfig.identityVerificationΒaseUrl
+  private val baseUrl        = appConfig.identityVerificationBaseUrl
   private val expectedOrigin = "shortform"
 
   def getJourneyStatus(journeyId: String)(implicit hc: HeaderCarrier): Future[IvResultType] =
@@ -47,7 +47,8 @@ class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClien
             )
 
             Future.failed(
-              new UpstreamErrorResponse("Identity Verification result not found.",
+              new UpstreamErrorResponse(
+                "Identity Verification result not found.",
                 statusCode = NOT_FOUND,
                 reportAs = NOT_FOUND,
                 headers = Map.empty
@@ -61,11 +62,10 @@ class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClien
           logger.error(s"[IvConnector][getJourneyStatus] journeyId=$journeyId", error)
           Future.failed(error)
       }
-    .andThen {
-      case Failure(e) =>
+      .andThen { case Failure(e) =>
         logger.error(
           s"Failed to retrieve IV journey status for journeyId=$journeyId",
           e
         )
-    }
+      }
 }

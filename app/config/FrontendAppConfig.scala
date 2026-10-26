@@ -62,6 +62,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   val agentEnrolments: Seq[String]                 = configuration.get[Seq[String]]("agent-restricted.enrolments")
   val requiredConfidenceLevel: Int                 = configuration.get[Int]("requiredConfidenceLevel")
 
-  val identityVerificationΒaseUrl = configuration.get[Service]("microservice.services.identity-verification").baseUrl
+  val identityVerificationBaseUrl: String =
+    configuration.get[Service]("microservice.services.identity-verification").baseUrl
 
 }

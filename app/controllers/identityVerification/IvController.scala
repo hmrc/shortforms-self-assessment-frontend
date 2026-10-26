@@ -16,52 +16,43 @@
 
 package controllers.identityVerification
 
-import connectors.IvConnector
 import com.google.inject.{Inject, Singleton}
+import connectors.IvConnector
 import controllers.{AppController, AppControllerComponents}
+import handlers.ErrorHandler
 import models.identityVerification.IvResultType.TechnicalIssue
 import play.api.mvc.{Action, AnyContent}
 import views.html.ErrorTemplate
-
-import scala.concurrent.Future
 
 @Singleton
 class IvController @Inject() (
   val controllerComponents: AppControllerComponents,
   ivConnector: IvConnector,
-  errorTemplate: ErrorTemplate
+  errorTemplate: ErrorTemplate,
+  errorHandler: ErrorHandler
 ) extends AppController {
 
   def handleIvFailure(journeyId: Option[String]): Action[AnyContent] = Action.async { implicit request =>
-    journeyId.fold(
-      Future.successful(
-        Redirect(controllers.identityVerification.routes.IvController.ivOtherResult())
-      )
-    ) { id =>
-      ivConnector.getJourneyStatus(id).map {
-        case TechnicalIssue => Redirect(controllers.identityVerification.routes.IvController.ivTechnicalIssue())
-        case _              => Redirect(controllers.identityVerification.routes.IvController.ivOtherResult())
-      }
-    }
-  }
-
-  def ivTechnicalIssue(): Action[AnyContent] = Action { implicit request =>
-    Ok(
-      errorTemplate(
-        "Identity Verification Technical Issue",
-        "IV Technical Issue",
-        "This is a technical issue with Identity Verification"
-      )
-    )
-  }
-
-  def ivOtherResult(): Action[AnyContent] = Action { implicit request =>
-    Ok(
-      errorTemplate(
-        "Identity Verification Other Issue",
-        "IV Other Issue",
-        "This is an issue with Identity Verification"
-      )
-    )
+    journeyId match
+      case None     => errorHandler.onClientError(request, BAD_REQUEST)
+      case Some(id) =>
+        ivConnector.getJourneyStatus(id).map {
+          case TechnicalIssue =>
+            Ok(
+              errorTemplate(
+                "idVerification.technicalIssue.title",
+                "idVerification.technicalIssue.heading",
+                "idVerification.technicalIssue.message"
+              )
+            )
+          case _              =>
+            Ok(
+              errorTemplate(
+                "idVerification.otherIssue.title",
+                "idVerification.otherIssue.heading",
+                "idVerification.otherIssue.message"
+              )
+            )
+        }
   }
 }

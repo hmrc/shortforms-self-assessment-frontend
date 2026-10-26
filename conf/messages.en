@@ -54,6 +54,14 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
+idVerification.technicalIssue.title   = Identity Verification Technical Issue
+idVerification.technicalIssue.heading = IV Technical Issue
+idVerification.technicalIssue.message = This is a technical issue with Identity Verification
+
+idVerification.otherIssue.title   = Identity Verification Other Issue"
+idVerification.otherIssue.heading = IV Other Issue"
+idVerification.otherIssue.message = This is an issue with Identity Verification
+
 sa1.start.title = Register for Self Assessment
 sa1.start.heading = Register for Self Assessment
 sa1.start.intro = This service allows you to register for Self Assessment if you need to send a tax return, but are not self-employed. You may need to send a tax return if you:
