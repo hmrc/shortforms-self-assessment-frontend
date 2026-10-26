@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa1
 
+import controllers.MockAppControllerComponents
 import controllers.actions.FakeIdentifierAction
 import controllers.sa1.ContactDetailsController
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.TryValues
 import org.scalatest.matchers.must.Matchers
@@ -36,7 +38,6 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.ContactDetailsView
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 
 import scala.concurrent.{ExecutionContext, Future}
 
