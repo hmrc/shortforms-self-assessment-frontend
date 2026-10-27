@@ -16,6 +16,8 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
+GET         /identity-verification/upliftFailure         controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
+
 GET         /sa1                                         controllers.IndexController.startSA1()
 GET         /cwf1st                                      controllers.IndexController.startCWF1ST()
 GET         /cease-trading                               controllers.IndexController.startCeaseTrading()
@@ -63,10 +65,6 @@ POST        /sa1/no-ni-number/:journeyId                        controllers.sa1.
 GET         /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET        /enter-ni-number/:journeyId                         controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /enter-ni-number/:journeyId                        controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
-POST       /enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 GET        /sa1/enter-ni-number/:journeyId                         controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST       /sa1/enter-ni-number/:journeyId                        controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
@@ -91,5 +89,20 @@ GET         /sa1/date-land-property-uk/:journeyId               controllers.sa1.
 POST        /sa1/date-land-property-uk/:journeyId               controllers.sa1.DateLandPropertyController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/date-land-property-uk/change/:journeyId        controllers.sa1.DateLandPropertyController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-land-property-uk/change/:journeyId        controllers.sa1.DateLandPropertyController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/move-address/:journeyId                    controllers.sa1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/move-address/:journeyId                    controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/date-trust-settlement/:journeyId                        controllers.sa1.TrustSettlementDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-trust-settlement/:journeyId                        controllers.sa1.TrustSettlementDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST       /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)

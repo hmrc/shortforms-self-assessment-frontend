@@ -1,0 +1,62 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.NormalMode
+@import java.time.LocalDate
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukDateInput: GovukDateInput,
+    govukErrorSummary: GovukErrorSummary,
+    govukButton: GovukButton
+)
+
+@(form: Form[LocalDate], journeyId: String)(implicit request: Request[?], messages: Messages)
+
+@dateErrorTarget = @{
+    Seq("day", "month", "year")
+    .find(component => form("trustSettlementDate").error.exists(_.args.contains(messages(s"date.error.$component"))))
+    .getOrElse("day")
+}
+
+@layout(
+     pageTitle = title(form, "sa1.trustSettlementDate.title")
+) {
+    @formHelper(
+        action = controllers.sa1.routes.TrustSettlementDateController.onSubmit(journeyId, NormalMode)
+    ) {
+        @if(form.hasErrors) {
+            @govukErrorSummary(ErrorSummaryViewModel(form, Map("trustSettlementDate" -> s"trustSettlementDate.$dateErrorTarget")))
+        }
+
+        @govukDateInput(
+            DateViewModel(
+                field = form("trustSettlementDate"),
+                legend = Legend(
+                    content = Text(messages("sa1.trustSettlementDate.heading")),
+                    classes = "govuk-fieldset__legend--l",
+                    isPageHeading = true
+                )
+                ).withHint(
+                    Hint(content = Text(messages("sa1.trustSettlementDate.hint")))
+            )
+        )
+
+        @govukButton(ButtonViewModel(messages("site.continue")))
+    }
+}

@@ -48,6 +48,14 @@ signedOut.guidance = xxxxxxxxxxxxx
 unauthorised.title = xxxxxxxxxxxxx
 unauthorised.heading = xxxxxxxxxxxxx
 
+idVerification.technicalIssue.title   = xxxxxxxx
+idVerification.technicalIssue.heading = xxxxxxxx
+idVerification.technicalIssue.message = xxxxxxxx
+
+idVerification.otherIssue.title   = xxxxxxxx
+idVerification.otherIssue.heading = xxxxxxxx
+idVerification.otherIssue.message = xxxxxxxx
+
 sa1.start.title = xxxxxxxxxxxxx
 sa1.start.heading = xxxxxxxxxxxxx
 sa1.start.intro = xxxxxxxxxxxxx

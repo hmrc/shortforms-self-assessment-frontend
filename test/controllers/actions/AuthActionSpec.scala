@@ -128,7 +128,7 @@ class AuthActionSpec extends SpecBase {
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest(GET, routes.IndexController.onPageLoad().url))
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value.contains("mdtp/uplift?origin=shortforms&confidenceLevel=250")
+          redirectLocation(result).value.contains("mdtp/uplift?origin=shortform&confidenceLevel=250")
         }
       }
     }

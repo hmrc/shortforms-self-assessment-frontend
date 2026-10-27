@@ -22,7 +22,6 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
-import play.api.test.Helpers.running
 import views.html.sa1.AddPreviousLastNameView
 
 class AddPreviousLastNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
