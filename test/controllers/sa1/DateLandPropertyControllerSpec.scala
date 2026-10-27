@@ -18,16 +18,12 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.DateLandPropertyFormProvider
-import models.{CheckMode, JourneyType, NormalMode, UserAnswers}
+import models.{JourneyType, NormalMode, UserAnswers}
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.TryValues
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.DateLandPropertyPage
 import play.api.data.Form
@@ -40,7 +36,7 @@ import repositories.SessionRepository
 import views.html.sa1.DateLandPropertyView
 
 import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   private implicit val ec: ExecutionContext = ExecutionContext.global
@@ -67,7 +63,6 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       formProvider,
-      navigator,
       view
     )
 
@@ -111,18 +106,6 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe mockViewContent
-    }
-
-    "redirect to check your answers in check mode when the form is valid" in new Setup {
-      when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-        FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
-
-      val result = controller.onSubmit(journeyId, CheckMode)(request)
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.CheckYourAnswersController.onPageLoad(journeyId).url)
     }
   }
 }
