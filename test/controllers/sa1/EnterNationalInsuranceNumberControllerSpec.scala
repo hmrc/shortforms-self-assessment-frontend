@@ -17,7 +17,6 @@
 package controllers.sa1
 
 import controllers.MockAppControllerComponents
-import controllers.sa1.EnterNationalInsuranceNumberController
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor

@@ -17,8 +17,6 @@
 package controllers.sa1
 
 import controllers.MockAppControllerComponents
-import controllers.actions.FakeIdentifierAction
-import controllers.sa1.ContactDetailsController
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
