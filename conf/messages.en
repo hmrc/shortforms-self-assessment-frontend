@@ -215,3 +215,15 @@ sa1.taxableForeignIncomeDate.change.hidden = Taxable foreign income date
 sa1.taxableForeignIncomeDate.p1 = Taxable foreign income can be:
 sa1.taxableForeignIncomeDate.b1 = taxable foreign dividends of £300 or more
 sa1.taxableForeignIncomeDate.b2 = any amount of other taxable foreign income
+
+sa1.dateLandPropertyUk.title = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.heading = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.hint = For example, 19 3 2022
+sa1.dateLandPropertyUk.checkYourAnswersLabel = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.change.hidden = When did you start getting income from land and property in the UK?
+sa1.dateLandPropertyUk.date.error.required = Enter the date you started getting income from land and property in the UK
+sa1.dateLandPropertyUk.date.error.invalid = Date must be a real date
+sa1.dateLandPropertyUk.date.error.requiredOne = Date must include a {0}
+sa1.dateLandPropertyUk.date.error.requiredTwo = Date must include a {0} and a {1}
+sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = Date must be on or after {0}
+
