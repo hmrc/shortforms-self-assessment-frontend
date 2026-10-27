@@ -51,7 +51,7 @@ class MoveAddressFormProviderSpec extends DateBehaviours {
       dateField(
         form,
         "moveAddressDate",
-        datesBetween(LocalDate.of(1900, 1, 1), maximumDate)
+        datesBetween(minimumDate, maximumDate)
       )
 
       dateFieldWithMax(

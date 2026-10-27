@@ -247,3 +247,14 @@ sa1.dateLandPropertyUk.date.error.requiredOne = Date must include a {0}
 sa1.dateLandPropertyUk.date.error.requiredTwo = Date must include a {0} and a {1}
 sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = Date must be on or after {0}
 
+sa1.trustSettlementDate.title = When did you start getting income from a trust or settlement?
+sa1.trustSettlementDate.heading = When did you start getting income from a trust or settlement?
+sa1.trustSettlementDate.checkYourAnswersLabel = When did you start getting income from a trust or settlement?
+sa1.trustSettlementDate.change.hidden = When did you start getting income from a trust or settlement?
+sa1.trustSettlementDate.hint = For example, 19 3 2022
+sa1.trustSettlementDate.error.required = Enter the date you started getting income from a trust or settlement
+sa1.trustSettlementDate.error.invalid = 	Date must be a real date
+sa1.trustSettlementDate.error.requiredOne = Date must include a {0}
+sa1.trustSettlementDate.error.requiredTwo = Date must include a {0} and a {1}
+sa1.trustSettlementDate.error.mustBeAfterMinimum = Date must be on or after {0}
+
