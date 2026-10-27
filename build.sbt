@@ -7,6 +7,8 @@ lazy val appName: String = "shortforms-self-assessment-frontend"
 
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 onLoad in Global ~= (_ andThen ("git config core.hooksPath hooks" :: _))
 

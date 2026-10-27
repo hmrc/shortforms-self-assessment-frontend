@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Running scalafmt check..."
+echo "Running scalafix and scalafmt check..."
 
 git diff --quiet && git diff --cached --quiet
 HAS_CHANGES=$?  # 0 = no changes, 1 = changes
@@ -9,7 +9,7 @@ if [ $HAS_CHANGES -ne 0 ]; then
   git stash
 fi
 
-sbt scalafmtCheckAll
+sbt scalafixAll scalafmtCheckAll
 if [ $? -ne 0 ]; then
   echo "scalafmt check failed. Please run 'sbt scalafmtAll' to format your code before pushing."
 
