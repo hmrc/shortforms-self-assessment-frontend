@@ -87,4 +87,9 @@ POST       /sa1/date-taxable-foreign-income/:journeyId                  controll
 GET        /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST       /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/date-land-property-uk/:journeyId               controllers.sa1.DateLandPropertyController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-land-property-uk/:journeyId               controllers.sa1.DateLandPropertyController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-land-property-uk/change/:journeyId        controllers.sa1.DateLandPropertyController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-land-property-uk/change/:journeyId        controllers.sa1.DateLandPropertyController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
