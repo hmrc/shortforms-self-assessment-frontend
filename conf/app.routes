@@ -70,10 +70,10 @@ POST       /sa1/enter-ni-number/:journeyId                        controllers.sa
 GET        /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
 POST       /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET         /sa1/date-untaxed-income-director/:journeyId                        controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST        /sa1/date-untaxed-income-director/:journeyId                        controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET         /sa1/date-untaxed-income-director/change/:journeyId                 controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST        /sa1/date-untaxed-income-director/change/:journeyId                 controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET         /sa1/date-untaxed-income-director/:journeyId                            controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-untaxed-income-director/:journeyId                            controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-untaxed-income-director/change/:journeyId                     controllers.sa1.DateUntaxedIncomeDirectorController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-untaxed-income-director/change/:journeyId                     controllers.sa1.DateUntaxedIncomeDirectorController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = NormalMode)
@@ -104,5 +104,10 @@ GET        /sa1/date-annual-income/:journeyId                  controllers.sa1.D
 POST       /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST       /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/date-untaxed-income-PAYE/:journeyId                                controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-untaxed-income-PAYE/:journeyId                                controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)

@@ -1,0 +1,133 @@
+{
+  "version": 2,
+  "options": {
+    "continueUrl": "http://localhost:10081/self-assessment-forms/sa1/address-callback/replace-with-journey-id",
+    "serviceHref": "http://localhost:10081/self-assessment-forms/sa1/start",
+    "signOutHref": "http://localhost:10081/self-assessment-forms/account/sign-out-survey",
+    "phaseFeedbackLink": "http://localhost:9250/contact/beta-feedback?service=shortforms-self-assessment-frontend&backUrl=http://localhost:10081/self-assessment-forms/sa1/start",
+    "deskProServiceName": "shortforms-self-assessment-frontend",
+    "showPhaseBanner": false,
+    "includeHMRCBranding": false,
+    "showBackButtons": true,
+    "disableTranslations": true,
+    "ukMode": false,
+    "pageHeadingStyle": "govuk-heading-l",
+    "confirmPageConfig": {
+      "showChangeLink": true,
+      "showSearchAgainLink": false,
+      "showSubHeadingAndInfo": false,
+      "showConfirmChangeText": false
+    },
+    "selectPageConfig": {
+      "showSearchAgainLink": false,
+      "showNoneOfTheseOption": false
+    },
+    "manualAddressEntryConfig": {
+      "showOrganisationName": false,
+      "line1MaxLength": 35,
+      "line2MaxLength": 35,
+      "line3MaxLength": 35,
+      "townMaxLength": 35,
+      "maxLengthErrorMessages": {
+        "en": {
+          "addressLine1": "Address line 1 must be 35 characters or less",
+          "addressLine2": "Address line 2 must be 35 characters or less",
+          "addressLine3": "Address line 3 must be 35 characters or less",
+          "town": "Town or city must be 35 characters or less"
+        },
+        "cy": {
+          "addressLine1": "XXXXX",
+          "addressLine2": "XXXXX",
+          "addressLine3": "XXXXX",
+          "town": "XXXXX"
+        }
+      },
+      "mandatoryFields": {
+        "addressLine1": true,
+        "addressLine2": false,
+        "addressLine3": false,
+        "town": true,
+        "postcode": true
+      }
+    },
+    "timeoutConfig": {
+      "timeoutAmount": 900,
+      "timeoutUrl": "http://localhost:10081/self-assessment-forms/account/sign-out"
+    }
+  },
+  "labels": {
+    "en": {
+      "appLevelLabels": {
+        "navTitle": "Registering for Self Assessment"
+      },
+      "countryPickerLabels": {
+        "title": "What is the country or territory of your home address?",
+        "heading": "What is the country or territory of your home address?",
+        "submitLabel": "Continue",
+        "countryLabel": "<span class=\"govuk-visually-hidden\">Country or territory</span>"
+      },
+      "lookupPageLabels": {
+        "title": "Search for your address",
+        "heading": "Search for your address",
+        "submitLabel": "Continue",
+        "filterLabel": "Property name and number (optional)",
+        "postcodeLabel": "Postcode",
+        "manualAddressLinkText": "Enter your address manually"
+      },
+      "selectPageLabels": {
+        "title": "Choose your address",
+        "heading": "Choose your address",
+        "submitLabel": "Continue",
+        "editAddressLinkText": "Enter your address manually"
+      },
+      "editPageLabels": {
+        "title": "What is your address?",
+        "heading": "What is your address?",
+        "submitLabel": "Continue",
+        "line1Label": "Address line 1",
+        "line2Label": "Address line 2",
+        "line3Label": "Address line 3",
+        "townLabel": "Town or city",
+        "postcodeLabel": "Postcode",
+        "countryLabel": "Country"
+      },
+      "confirmPageLabels": {
+        "title": "Review your address",
+        "heading": "Review your address",
+        "submitLabel": "Continue",
+        "changeLinkText": "Edit this address manually"
+      },
+      "international": {
+        "lookupPageLabels": {
+          "title": "Search for your address",
+          "heading": "Search for your address",
+          "submitLabel": "Continue",
+          "manualAddressLinkText": "Enter your address manually"
+        },
+        "selectPageLabels": {
+          "title": "Choose your address",
+          "heading": "Choose your address",
+          "submitLabel": "Continue",
+          "editAddressLinkText": "Enter your address manually"
+        },
+        "editPageLabels": {
+          "title": "What is your address?",
+          "heading": "What is your address?",
+          "submitLabel": "Continue",
+          "line1Label": "Address line 1",
+          "line2Label": "Address line 2",
+          "line3Label": "Address line 3",
+          "townLabel": "Town or city",
+          "postcodeLabel": "Postcode",
+          "countryLabel": "Country"
+        },
+        "confirmPageLabels": {
+          "title": "Review your address",
+          "heading": "Review your address",
+          "submitLabel": "Continue",
+          "changeLinkText": "Edit this address manually"
+        }
+      }
+    }
+  }
+}
