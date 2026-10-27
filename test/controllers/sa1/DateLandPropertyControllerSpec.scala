@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.DateLandPropertyFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
-import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -28,7 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.DateLandPropertyPage
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -36,29 +35,20 @@ import repositories.SessionRepository
 import views.html.sa1.DateLandPropertyView
 
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
-  private implicit val ec: ExecutionContext = ExecutionContext.global
-
   private val journeyId       = "test-journey-id"
   private val userId          = "test-user-id"
   private val date            = LocalDate.of(2022, 3, 19)
   private val mockViewContent = "test view"
-  private val validFormData   = Map(
-    "dateLandPropertyUk.day"   -> "19",
-    "dateLandPropertyUk.month" -> "3",
-    "dateLandPropertyUk.year"  -> "2022"
-  )
 
   private class Setup {
-    protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
-    protected val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: DateLandPropertyView           = mock[DateLandPropertyView]
+    protected def userAnswers: UserAnswers           = UserAnswers(journeyId, userId, JourneyType.SA1)
+    private val sessionRepository: SessionRepository = mock[SessionRepository]
+    protected val view: DateLandPropertyView         = mock[DateLandPropertyView]
 
-    private val formProvider = new DateLandPropertyFormProvider()
-    private val navigator    = new Navigator()
-
+    private val formProvider      = new DateLandPropertyFormProvider()
     protected lazy val controller = new DateLandPropertyController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
@@ -73,7 +63,7 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   "DateLandPropertyController" - {
 
     "return OK when loading the page" in new Setup {
-      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
+      val result: Future[Result] = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe mockViewContent
@@ -83,13 +73,13 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
       override protected def userAnswers: UserAnswers =
         UserAnswers(journeyId, userId, JourneyType.SA1).set(DateLandPropertyPage, date).success.value
 
-      val result = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
+      val result: Future[Result] = controller.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
       status(result) mustBe OK
       val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
       verify(view).apply(captor.capture(), eqTo(journeyId), eqTo(NormalMode))(any[Request[?]], any[Messages])
 
-      val populatedForm = captor.getValue
+      val populatedForm: Form[LocalDate] = captor.getValue
       populatedForm("dateLandPropertyUk.day").value mustBe Some("19")
       populatedForm("dateLandPropertyUk.month").value mustBe Some("3")
       populatedForm("dateLandPropertyUk.year").value mustBe Some("2022")
@@ -102,7 +92,7 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
         "dateLandPropertyUk.year"  -> "2022"
       )
 
-      val result = controller.onSubmit(journeyId, NormalMode)(request)
+      val result: Future[Result] = controller.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe mockViewContent
