@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa1
 
 import base.SpecBase
-import controllers.sa1.DateAnnualIncomeController
+import controllers.MockAppControllerComponents
 import forms.sa1.DateAnnualIncomeFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.DateAnnualIncomePage
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.DateAnnualIncomeView
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
-import play.api.data.Form
-import play.twirl.api.Html
 
 import java.time.LocalDate
 import scala.concurrent.Future

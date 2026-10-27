@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.sa1
 
-import controllers.sa1.ContactDetailsController
+import controllers.MockAppControllerComponents
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
