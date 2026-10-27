@@ -10,8 +10,6 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers/:journeyId               controllers.CheckYourAnswersController.onPageLoad(journeyId: String)
-
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
@@ -41,6 +39,11 @@ GET         /sa1/previous-last-name/:journeyId                  controllers.sa1.
 POST        /sa1/previous-last-name/:journeyId                  controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = NormalMode)
 GET         /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
 POST        /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)
+
+GET         /sa1/address/:journeyId                      controllers.sa1.AddressLookupController.start(journeyId: String)
+GET         /sa1/address/change/:journeyId               controllers.sa1.AddressLookupController.change(journeyId: String)
+GET         /sa1/address-callback/:journeyId             controllers.sa1.AddressLookupController.callback(journeyId: String, id: String ?= "")
+GET         /sa1/address-callback/change/:journeyId      controllers.sa1.AddressLookupController.callbackChange(journeyId: String, id: String ?= "")
 
 GET         /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
@@ -106,3 +109,5 @@ GET         /sa1/date-untaxed-income-PAYE/:journeyId                            
 POST        /sa1/date-untaxed-income-PAYE/:journeyId                                controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)

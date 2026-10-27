@@ -139,6 +139,27 @@ sa1.doYouHaveANino.checkYourAnswersLabel = Do you have a National Insurance numb
 sa1.doYouHaveANino.error.required = Select yes if you have a National Insurance number
 sa1.doYouHaveANino.change.hidden = Do you have a National Insurance number?
 
+sa1.address.label = Address
+sa1.address.countryPicker.title = What is the country or territory of your home address?
+sa1.address.countryPicker.label = Country or territory
+sa1.address.lookup.title = Search for your address
+sa1.address.lookup.filter = Property name and number (optional)
+sa1.address.edit.title = What is your address?
+sa1.address.select.title = Choose your address
+sa1.address.confirm.title = Review your address
+sa1.address.enterManually = Enter your address manually
+sa1.address.editManually = Edit this address manually
+sa1.address.line1 = Address line 1
+sa1.address.line2 = Address line 2
+sa1.address.line3 = Address line 3
+sa1.address.town = Town or city
+sa1.address.postcode = Postcode
+sa1.address.country = Country
+sa1.address.line1.error.maxLength = Address line 1 must be 35 characters or less
+sa1.address.line2.error.maxLength = Address line 2 must be 35 characters or less
+sa1.address.line3.error.maxLength = Address line 3 must be 35 characters or less
+sa1.address.town.error.maxLength = Town or city must be 35 characters or less
+
 sa1.contactDetails.title = What are your contact details?
 sa1.contactDetails.heading = What are your contact details?
 sa1.contactDetails.emailAddress.subHeading = Email address

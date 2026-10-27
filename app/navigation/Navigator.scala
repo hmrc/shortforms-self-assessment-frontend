@@ -75,7 +75,7 @@ class Navigator @Inject() () {
     case WhyTaxReturnPage        =>
       // TODO: Redirect to the relevant date input page(s) for newly selected reason(s), otherwise Check your answers
       ua => controllers.sa1.routes.WhyTaxReturnController.onPageLoad(ua.id, CheckMode)
-    case _                       => ua => routes.CheckYourAnswersController.onPageLoad(ua.id)
+    case _                       => ua => controllers.sa1.routes.CheckYourAnswersController.onPageLoad(ua.id)
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

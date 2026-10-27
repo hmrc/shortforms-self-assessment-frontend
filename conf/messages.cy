@@ -142,6 +142,27 @@ sa1.dateLandPropertyUk.date.error.requiredOne = xxxxxxxxxxxxx
 sa1.dateLandPropertyUk.date.error.requiredTwo = xxxxxxxxxxxxx
 sa1.dateLandPropertyUk.date.error.mustBeAfterMinimum = xxxxxxxxxxxxx
 
+sa1.address.label = xxxxxxxxxxxxx
+service.name = XXXXX
+sa1.address.countryPicker.title = XXXXX
+sa1.address.countryPicker.label = XXXXX
+sa1.address.lookup.title = XXXXX
+sa1.address.lookup.filter = XXXXX
+sa1.address.edit.title = XXXXX
+sa1.address.select.title = XXXXX
+sa1.address.confirm.title = XXXXX
+sa1.address.enterManually = XXXXX
+sa1.address.editManually = XXXXX
+sa1.address.line1 = XXXXX
+sa1.address.line2 = XXXXX
+sa1.address.line3 = XXXXX
+sa1.address.town = XXXXX
+sa1.address.postcode = XXXXX
+sa1.address.country = XXXXX
+sa1.address.line1.error.maxLength = XXXXX
+sa1.address.line2.error.maxLength = XXXXX
+sa1.address.line3.error.maxLength = XXXXX
+sa1.address.town.error.maxLength = XXXXX
 
 sa1.whyTaxReturn.title = xxxxxxxxxxxxx
 sa1.whyTaxReturn.heading = xxxxxxxxxxxxx

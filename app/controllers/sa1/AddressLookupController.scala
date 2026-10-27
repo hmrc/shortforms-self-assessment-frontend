@@ -1,0 +1,81 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.sa1
+
+import config.AddressLookupConfiguration
+import connectors.AddressLookupConnector
+import controllers.{AppController, AppControllerComponents}
+import models.NormalMode
+import pages.AddressPage
+import play.api.Logging
+import play.api.mvc.{Action, AnyContent, Call}
+import repositories.SessionRepository
+
+import javax.inject.Inject
+import scala.concurrent.Future
+import scala.util.control.NonFatal
+
+class AddressLookupController @Inject() (
+  val controllerComponents: AppControllerComponents,
+  connector: AddressLookupConnector,
+  configuration: AddressLookupConfiguration,
+  sessionRepository: SessionRepository
+) extends AppController
+    with Logging {
+
+  private val landingPage: Call = routes.StartController.onPageLoad()
+
+  def start(journeyId: String): Action[AnyContent] =
+    initialise(journeyId, routes.AddressLookupController.callback(journeyId))
+
+  def change(journeyId: String): Action[AnyContent] =
+    initialise(journeyId, routes.AddressLookupController.callbackChange(journeyId))
+
+  private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
+    SA1DataAction(journeyId).async { implicit request =>
+      connector.initialise(configuration(callback, landingPage)).map(Redirect(_)).recover { case NonFatal(ex) =>
+        logger.error("Failed to initialise the SA1 address lookup journey", ex)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
+    }
+
+  def callback(journeyId: String, id: String): Action[AnyContent] =
+    saveAddress(journeyId, id, changing = false)
+
+  def callbackChange(journeyId: String, id: String): Action[AnyContent] =
+    saveAddress(journeyId, id, changing = true)
+
+  private def saveAddress(journeyId: String, id: String, changing: Boolean): Action[AnyContent] =
+    SA1DataAction(journeyId).async { implicit request =>
+      (for {
+        address        <- if (id.trim.nonEmpty) connector.getAddress(id)
+                          else Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressPage, address))
+        saved          <- sessionRepository.set(updatedAnswers)
+      } yield {
+        if (!saved) throw new IllegalStateException("SA1 address was not saved")
+        if (changing) Redirect(routes.CheckYourAnswersController.onPageLoad(journeyId))
+        else {
+          // TODO: redirect to the move-date page when it is implemented.
+          Redirect(routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode))
+        }
+      }).recover { case NonFatal(ex) =>
+        logger.error("Failed to retrieve or save the confirmed SA1 address", ex)
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
+    }
+}

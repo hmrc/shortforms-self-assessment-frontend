@@ -19,6 +19,7 @@ package repositories
 import config.FrontendAppConfig
 import models.JourneyType.SA1
 import models.UserAnswers
+import models.address.{AddressDetails, ConfirmedAddress, Country}
 import org.mockito.Mockito.when
 import org.mongodb.scala.model.Filters
 import org.scalactic.source.Position
@@ -28,6 +29,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.MDC
+import pages.AddressPage
 import play.api.libs.json.Json
 import uk.gov.hmrc.mdc.MdcExecutionContext
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
