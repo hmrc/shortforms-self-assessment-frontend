@@ -62,10 +62,6 @@ POST        /sa1/no-ni-number/:journeyId                        controllers.sa1.
 GET         /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/no-ni-number/change/:journeyId                 controllers.sa1.NoNinoReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET        /enter-ni-number/:journeyId                         controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /enter-ni-number/:journeyId                        controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
-POST       /enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 GET        /sa1/enter-ni-number/:journeyId                         controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST       /sa1/enter-ni-number/:journeyId                        controllers.sa1.EnterNationalInsuranceNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /sa1/enter-ni-number/change/:journeyId                  controllers.sa1.EnterNationalInsuranceNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
