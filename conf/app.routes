@@ -10,8 +10,6 @@ GET         /language/:lang                              controllers.LanguageSwi
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers/:journeyId               controllers.CheckYourAnswersController.onPageLoad(journeyId: String)
-
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut()
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad()
