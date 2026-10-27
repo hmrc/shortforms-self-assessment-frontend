@@ -20,7 +20,6 @@ import base.SpecBase
 import models.CheckMode
 import pages.sa1.EnterNationalInsuranceNumberPage
 import play.api.test.Helpers.stubMessages
-import viewmodels.checkAnswers.sa1.EnterNationalInsuranceNumberSummary
 
 class EnterNationalInsuranceNumberSummarySpec extends SpecBase {
 

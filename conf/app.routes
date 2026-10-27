@@ -93,3 +93,9 @@ GET         /sa1/move-address/:journeyId                    controllers.sa1.Move
 POST        /sa1/move-address/:journeyId                    controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/move-address/change/:journeyId             controllers.sa1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /sa1/date-trust-settlement/:journeyId                        controllers.sa1.TrustSettlementDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-trust-settlement/:journeyId                        controllers.sa1.TrustSettlementDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+

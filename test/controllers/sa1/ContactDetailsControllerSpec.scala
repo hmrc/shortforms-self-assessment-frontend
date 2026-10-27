@@ -62,7 +62,6 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
 
   private trait Setup {
     protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
-    private val components                 = new MockAppControllerComponents(userAnswers)
 
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: ContactDetailsView             = mock[ContactDetailsView]
