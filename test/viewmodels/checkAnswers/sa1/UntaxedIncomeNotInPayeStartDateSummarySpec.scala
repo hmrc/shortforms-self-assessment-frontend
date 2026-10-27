@@ -20,7 +20,6 @@ import base.SpecBase
 import models.CheckMode
 import pages.sa1.UntaxedIncomeNotInPayeStartDatePage
 import play.api.i18n.Messages
-import play.api.test.Helpers.running
 
 import java.time.LocalDate
 
@@ -32,31 +31,22 @@ class UntaxedIncomeNotInPayeStartDateSummarySpec extends SpecBase {
     "when untaxed income not in PAYE start date is present" - {
 
       "must return a row with the date and change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val userAnswers = emptyUserAnswers
+          .set(UntaxedIncomeNotInPayeStartDatePage, LocalDate.of(2000, 10, 26))
+          .success
+          .value
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        val result = UntaxedIncomeNotInPayeStartDateSummary.row(userAnswers).value
 
-          val userAnswers = emptyUserAnswers
-            .set(UntaxedIncomeNotInPayeStartDatePage, LocalDate.of(2000, 10, 26))
-            .success
-            .value
+        result.key.content.asHtml.toString() mustEqual "sa1.untaxedIncomeNotInPayeStartDate.checkYourAnswersLabel"
 
-          val result = UntaxedIncomeNotInPayeStartDateSummary.row(userAnswers).value
-
-          result.key.content.asHtml.toString() mustEqual msgs(
-            "sa1.untaxedIncomeNotInPayeStartDate.checkYourAnswersLabel"
-          )
-          result.value.content.asHtml.toString() mustEqual msgs("26 October 2000")
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController
-            .onPageLoad(userAnswers.id, CheckMode)
-            .url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs(
-            "sa1.untaxedIncomeNotInPayeStartDate.change.hidden"
-          )
-        }
+        result.value.content.asHtml.toString() mustEqual "26 October 2000"
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController
+          .onPageLoad(userAnswers.id, CheckMode)
+          .url
+        result.actions.get.items.head.content.asHtml.toString() must include("site.change")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual "sa1.untaxedIncomeNotInPayeStartDate.change.hidden"
       }
     }
 
