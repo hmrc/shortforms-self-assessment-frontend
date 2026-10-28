@@ -16,7 +16,6 @@
 
 @import viewmodels.InputWidth._
 @import views.html.components._
-@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -24,8 +23,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    caption: Caption,
-    h1:h1
+    h1: h1
 )
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)

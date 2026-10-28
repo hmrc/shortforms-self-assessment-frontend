@@ -27,7 +27,7 @@ import views.html.sa1.AddPreviousLastNameView
 class AddPreviousLastNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
   private val addPreviousLastNameFormProvider = new AddPreviousLastNameFormProvider()
-  protected val form                          = addPreviousLastNameFormProvider()
+  private val form                            = addPreviousLastNameFormProvider()
 
   "AddPreviousLastNameView" - {
 

@@ -78,7 +78,7 @@ class AuthenticatedIdentifierAction @Inject() (
 
           case (AffinityGroup.Individual, _, _) | (AffinityGroup.Organisation, _, _) =>
             logger.info(
-              s"[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level below required confidential level"
+              "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level below required confidential level"
             )
             throw InsufficientConfidenceLevel(s"Confidence level below ${config.requiredConfidenceLevel}")
 
@@ -103,7 +103,7 @@ class AuthenticatedIdentifierAction @Inject() (
         "failureURL"      -> Seq(loggedFailureUrl)
       )
       logger.info(
-        s"[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level. " +
+        "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level. " +
           s"Redirecting to ivUplift service with successful URL: + $loggedCompletionUrl and failure ULR: $loggedFailureUrl"
       )
 
