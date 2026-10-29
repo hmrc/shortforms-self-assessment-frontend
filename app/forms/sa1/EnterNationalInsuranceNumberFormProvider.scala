@@ -30,5 +30,6 @@ class EnterNationalInsuranceNumberFormProvider @Inject() extends Mappings {
       "value" -> text("sa1.enterNationalInsuranceNumber.error.required")
         .verifying(maxLength(nationalInsuranceNumberLength, "sa1.enterNationalInsuranceNumber.error.length"))
         .verifying(regexp(formNumberRegex, "sa1.enterNationalInsuranceNumber.error.invalid"))
+      // "value" -> Forms.of[Nino]
     )
 }
