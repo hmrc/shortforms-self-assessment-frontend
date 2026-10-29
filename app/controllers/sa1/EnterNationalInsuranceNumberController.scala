@@ -57,7 +57,7 @@ class EnterNationalInsuranceNumberController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.trim()))
               _              <- sessionRepository.set(updatedAnswers)
             } yield request.nino match {
               case Some(nino) if nino.trim() == value.trim() =>
