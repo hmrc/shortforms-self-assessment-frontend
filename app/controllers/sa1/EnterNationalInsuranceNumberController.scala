@@ -57,14 +57,15 @@ class EnterNationalInsuranceNumberController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.trim()))
+              updatedAnswers <-
+                Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
               _              <- sessionRepository.set(updatedAnswers)
             } yield request.nino match {
-              case Some(nino) if nino.trim() == value.trim() =>
+              case Some(nino) if nino.replaceAll("\\s", "") == value.replaceAll("\\s", "") =>
                 Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
-              case None                                      =>
+              case None                                                                    =>
                 Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
-              case _                                         =>
+              case _                                                                       =>
                 BadRequest(
                   view(
                     form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),

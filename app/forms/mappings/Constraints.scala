@@ -128,4 +128,21 @@ trait Constraints {
         Invalid(errorKey, CurrencyFormatter.currencyFormat(maximum))
       }
     }
+
+  protected def maxLengthNino(maximum: Int, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.replaceAll("\\s", "").length <= maximum =>
+        Valid
+      case _                                                  =>
+        Invalid(errorKey, maximum)
+    }
+
+  protected def regexpNinO(regex: String, errorKey: String): Constraint[String] =
+    Constraint {
+      case str if str.replaceAll("\\s", "").matches(regex) =>
+        Valid
+      case _                                               =>
+        Invalid(errorKey, regex)
+    }
+
 }

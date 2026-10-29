@@ -22,13 +22,13 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class EnterNationalInsuranceNumberFormProvider @Inject() extends Mappings {
-  private val nationalInsuranceNumberLength = 9
-  private val formNumberRegex               = "^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$"
+  private val maxLength   = 9
+  private val RegexFormat = "^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$"
 
   def apply(): Form[String] =
     Form(
       "value" -> text("sa1.enterNationalInsuranceNumber.error.required")
-        .verifying(maxLength(nationalInsuranceNumberLength, "sa1.enterNationalInsuranceNumber.error.length"))
-        .verifying(regexp(formNumberRegex, "sa1.enterNationalInsuranceNumber.error.invalid"))
+        .verifying(maxLengthNino(maxLength, "sa1.enterNationalInsuranceNumber.error.length"))
+        .verifying(regexpNinO(RegexFormat, "sa1.enterNationalInsuranceNumber.error.invalid"))
     )
 }

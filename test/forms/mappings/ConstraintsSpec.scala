@@ -216,4 +216,47 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       result mustEqual Invalid("error.max", CurrencyFormatter.currencyFormat(1))
     }
   }
+
+  "Nino" - {
+
+    "maxLengthNino" - {
+
+      "must return Valid for a Nino shorter than the allowed length" in {
+        val result = maxLengthNino(9, "sa1.enterNationalInsuranceNumber.error.length")("a" * 8)
+        result mustEqual Valid
+      }
+
+      "must return Valid for a Nino equal to the allowed length" in {
+        val result = maxLengthNino(9, "sa1.enterNationalInsuranceNumber.error.length")("a" * 9)
+        result mustEqual Valid
+      }
+
+      "must return Invalid for a Nino longer than the allowed length" in {
+        val result = maxLengthNino(10, "sa1.enterNationalInsuranceNumber.error.length")("a" * 11)
+        result mustEqual Invalid("sa1.enterNationalInsuranceNumber.error.length", 10)
+      }
+    }
+
+    "regexpNino" - {
+      "must return Valid for an input Nino that matches the expression" in {
+        val result =
+          regexpNinO("""^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$""", "sa1.enterNationalInsuranceNumber.error.invalid")(
+            "QQ 12 34 56 C"
+          )
+        result mustEqual Valid
+      }
+
+      "must return Invalid for an input Nino that does not match the expression" in {
+        val result =
+          regexpNinO("""^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$""", "sa1.enterNationalInsuranceNumber.error.invalid")(
+            "QQQ 12 34 56"
+          )
+        result mustEqual Invalid(
+          "sa1.enterNationalInsuranceNumber.error.invalid",
+          """^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$"""
+        )
+      }
+    }
+
+  }
 }
