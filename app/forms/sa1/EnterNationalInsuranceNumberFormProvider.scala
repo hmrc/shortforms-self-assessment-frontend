@@ -23,8 +23,7 @@ import javax.inject.Inject
 
 class EnterNationalInsuranceNumberFormProvider @Inject() extends Mappings {
   private val nationalInsuranceNumberLength = 9
-  private val formNumberRegex               =
-    "^[ABCEGHJKLMNOPRSTWXYZabceghjklmnoprstwxyz][ABCEGHJKLMNPRSTWXYZabceghjklmnprstwxyz][0-9]{6}[ABCDabcd ]*$"
+  private val formNumberRegex               = "^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$"
 
   def apply(): Form[String] =
     Form(
