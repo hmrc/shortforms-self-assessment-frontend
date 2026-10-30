@@ -18,7 +18,8 @@ package controllers.sa1
 
 import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
 import forms.sa1.PreviousNameFormProvider
-import models.{JourneyType, NormalMode, PreviousName, UserAnswers}
+import models.{JourneyType, NormalMode, UserAnswers}
+import models.sa1.PreviousName
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
