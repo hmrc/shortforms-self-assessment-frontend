@@ -20,11 +20,11 @@ import base.SpecBase
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
 import controllers.MockAppControllerComponents
-import models.{NormalMode, UserAnswers}
 import models.address.{AddressDetails, ConfirmedAddress, Country}
+import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, verifyNoInteractions, when}
-import org.mockito.ArgumentCaptor
 import pages.AddressPage
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Call, RequestHeader, Result}
@@ -42,14 +42,14 @@ class AddressLookupControllerSpec extends SpecBase {
       val actionName = if (changing) "change" else "start"
 
       s"$actionName must initialise ALF with the correct callback and SA1 landing page" in new SetupWithSavedAddress {
-        val result = startJourney(changing)
+        private val result = startJourney(changing)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe alfUrl
-        val callback =
+        private val callback =
           if (changing) routes.AddressLookupController.callbackChange(userAnswersId)
           else routes.AddressLookupController.callback(userAnswersId)
-        verify(mockConfiguration).apply(eqTo(callback), eqTo(landingPage))(any[RequestHeader])
+        verify(mockConfiguration).apply(eqTo("service.sa1.name"), eqTo(callback), eqTo(landingPage))(any[RequestHeader])
         verify(mockConnector).initialise(eqTo(configuration))(any[HeaderCarrier])
         verifyNoInteractions(mockSessionRepository)
       }
@@ -58,7 +58,7 @@ class AddressLookupControllerSpec extends SpecBase {
         when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier]))
           .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-        val result = startJourney(changing)
+        private val result = startJourney(changing)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe recoveryUrl
@@ -70,15 +70,15 @@ class AddressLookupControllerSpec extends SpecBase {
 
       callbackName - {
         "must save the full address and UPRN before continuing" in new Setup {
-          val result = confirmAddress(changing)
+          private val result = confirmAddress(changing)
 
           status(result) mustBe SEE_OTHER
-          val destination =
+          private val destination =
             if (changing) routes.CheckYourAnswersController.onPageLoad(userAnswersId)
             else routes.AddPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
           redirectLocation(result).value mustBe destination.url
           verify(mockConnector).getAddress(eqTo("alf-id"))(any[HeaderCarrier])
-          val saved       = capturedAnswers()
+          private val saved       = capturedAnswers()
           saved.get(AddressPage).value mustBe confirmed
           saved.id mustBe userAnswersId
           saved.userId mustBe testUserId
@@ -97,7 +97,7 @@ class AddressLookupControllerSpec extends SpecBase {
 
         Seq("", " ").foreach { missingId =>
           s"must recover without calling ALF or saving when the ID is '$missingId'" in new Setup {
-            val result = confirmAddress(changing, missingId)
+            private val result = confirmAddress(changing, missingId)
 
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe recoveryUrl
@@ -147,7 +147,7 @@ class AddressLookupControllerSpec extends SpecBase {
     val mockConnector: AddressLookupConnector         = mock(classOf[AddressLookupConnector])
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
 
-    when(mockConfiguration.apply(any[Call], any[Call])(any[RequestHeader])).thenReturn(configuration)
+    when(mockConfiguration.apply(any[String], any[Call], any[Call])(any[RequestHeader])).thenReturn(configuration)
     when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier])).thenReturn(Future.successful(alfUrl))
     when(mockConnector.getAddress(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(confirmed))
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
