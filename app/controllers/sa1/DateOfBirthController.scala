@@ -52,8 +52,7 @@ class DateOfBirthController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, dateOfBirth))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield
-            Redirect(controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode).url)
         )
     }
 }
