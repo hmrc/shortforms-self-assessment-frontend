@@ -40,8 +40,6 @@ import scala.concurrent.Future
 
 class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with MockitoSugar {
 
-  private implicit val messages: Messages = stubMessages()
-
   private val validAnswer: LocalDate = LocalDate.of(2020, 5, 10)
 
   "UntaxedIncomeNotInPayeStartDate Controller" - {
@@ -119,8 +117,6 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
       .thenReturn(Html(mockContent))
 
     private val formProvider = new UntaxedIncomeNotInPayeStartDateFormProvider()
-
-    protected def form = formProvider()
 
     lazy val untaxedIncomeNotInPayeStartDateRoute =
       controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController.onPageLoad(userAnswersId, NormalMode).url

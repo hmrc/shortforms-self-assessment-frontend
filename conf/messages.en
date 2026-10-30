@@ -306,6 +306,18 @@ sa1.untaxedIncomeNotInPayeStartDate.error.invalid = Date must be a real date
 sa1.untaxedIncomeNotInPayeStartDate.date.range.min = Date must be on or after 3 January 1753
 sa1.untaxedIncomeNotInPayeStartDate.change.hidden = When did you start getting untaxed income which was not collected through your PAYE tax code?
 
+sa1.dateCapitalGainsTax.title = What is the last day of the tax year in which you owe Capital Gains Tax?
+sa1.dateCapitalGainsTax.heading = What is the last day of the tax year in which you owe Capital Gains Tax?
+sa1.dateCapitalGainsTax.hint.line1 = A tax year runs from 6 April to 5 April the following year.
+sa1.dateCapitalGainsTax.hint.line2 = For example, for the 2025 to 2026 tax year, enter 5 4 2026.
+sa1.dateCapitalGainsTax.checkYourAnswersLabel = What is the last day of the tax year in which you owe Capital Gains Tax?
+sa1.dateCapitalGainsTax.error.required.all = Enter the last day of the tax year in which you owe Capital Gains Tax
+sa1.dateCapitalGainsTax.error.required.two = Date must include {0} and {1}
+sa1.dateCapitalGainsTax.error.required = Date must include a {0}
+sa1.dateCapitalGainsTax.error.invalid = Date must be a real date
+sa1.dateCapitalGainsTax.change.hidden = What is the last day of the tax year in which you owe Capital Gains Tax?
+sa1.dateCapitalGainsTax.date.range.min = Date must be on or after 3 January 1753
+
 sa1.otherReason.title = Other reason
 sa1.otherReason.heading = Other reason
 sa1.otherReason.reason.label = What is your reason for registering for Self Assessment?

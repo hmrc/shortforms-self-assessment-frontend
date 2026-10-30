@@ -80,10 +80,10 @@ POST        /sa1/why-tax-return/:journeyId               controllers.sa1.WhyTaxR
 GET         /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/why-tax-return/change/:journeyId        controllers.sa1.WhyTaxReturnController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET        /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST       /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET         /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-taxable-foreign-income/:journeyId                  controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-taxable-foreign-income/change/:journeyId                        controllers.sa1.TaxableForeignIncomeDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/date-land-property-uk/:journeyId               controllers.sa1.DateLandPropertyController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/date-land-property-uk/:journeyId               controllers.sa1.DateLandPropertyController.onSubmit(journeyId: String, mode: Mode = NormalMode)
@@ -100,10 +100,10 @@ POST        /sa1/date-trust-settlement/:journeyId                        control
 GET         /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-trust-settlement/change/:journeyId                 controllers.sa1.TrustSettlementDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET        /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST       /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET         /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-annual-income/:journeyId                  controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-annual-income/change/:journeyId                        controllers.sa1.DateAnnualIncomeController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/date-untaxed-income-PAYE/:journeyId                                controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/date-untaxed-income-PAYE/:journeyId                                controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
@@ -116,3 +116,8 @@ GET         /sa1/date-other-reason/change/:journeyId                         con
 POST        /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
+
+GET         /sa1/date-capital-gains-tax/:journeyId                  controllers.sa1.DateCapitalGainsTaxController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-capital-gains-tax/:journeyId                  controllers.sa1.DateCapitalGainsTaxController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-capital-gains-tax/change/:journeyId           controllers.sa1.DateCapitalGainsTaxController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-capital-gains-tax/change/:journeyId           controllers.sa1.DateCapitalGainsTaxController.onSubmit(journeyId: String, mode: Mode = CheckMode)
