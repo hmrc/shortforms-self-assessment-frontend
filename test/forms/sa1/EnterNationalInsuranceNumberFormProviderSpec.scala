@@ -55,7 +55,8 @@ class EnterNationalInsuranceNumberFormProviderSpec extends StringFieldBehaviours
       val nino   = "NM772208BB"
       val result = form.bind(Map(fieldName -> nino))
 
-      result.errors must contain only FormError(fieldName, lengthKey, Seq(maxLength))
+      result.errors must contain only (FormError(fieldName, lengthKey, Seq(maxLength)),
+      FormError(fieldName, regexInvalid, Seq("^[A-Za-z]{2}[0-9]{6}[A-Za-z ]?$")))
     }
   }
 }
