@@ -24,21 +24,23 @@ import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object HighIncomeChildBenefitDateSummary  {
+object HighIncomeChildBenefitDateSummary {
 
   def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HighIncomeChildBenefitDatePage).map {
-      answer =>
+    answers.get(HighIncomeChildBenefitDatePage).map { answer =>
 
-        implicit val lang: Lang = messages.lang
+      implicit val lang: Lang = messages.lang
 
-        SummaryListRowViewModel(
-          key     = "highIncomeChildBenefitDate.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.format(dateTimeFormat())),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, CheckMode).url)
-              .withVisuallyHiddenText(messages("highIncomeChildBenefitDate.change.hidden"))
+      SummaryListRowViewModel(
+        key = "highIncomeChildBenefitDate.checkYourAnswersLabel",
+        value = ValueViewModel(answer.format(dateTimeFormat())),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, CheckMode).url
           )
+            .withVisuallyHiddenText(messages("highIncomeChildBenefitDate.change.hidden"))
         )
+      )
     }
 }
