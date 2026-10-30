@@ -16,39 +16,34 @@
 
 package controllers.sa1
 
-import controllers.actions.*
+import controllers.{AppController, AppControllerComponents}
 import forms.sa1.PreviousNameFormProvider
 import models.Mode
 import pages.sa1.PreviousLastNamePage
-import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.EnterPreviousLastNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnterPreviousLastNameController @Inject() (
-  override val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  sa1DataRequiredAction: SA1DataRequiredAction,
+  override val controllerComponents: AppControllerComponents,
   formProvider: PreviousNameFormProvider,
   sessionRepository: SessionRepository,
   view: EnterPreviousLastNameView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+    SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
       Ok(view(preparedForm, journeyId))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(

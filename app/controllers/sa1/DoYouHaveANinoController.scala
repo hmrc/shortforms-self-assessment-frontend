@@ -16,15 +16,13 @@
 
 package controllers.sa1
 
-import controllers.actions.*
+import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DoYouHaveANinoFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.sa1.DoYouHaveANinoPage
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.DoYouHaveANinoView
 
 import javax.inject.Inject
@@ -33,19 +31,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class DoYouHaveANinoController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Navigator,
-  identify: IdentifierAction,
-  sa1DataRequiredAction: SA1DataRequiredAction,
   formProvider: DoYouHaveANinoFormProvider,
-  val controllerComponents: MessagesControllerComponents,
+  val controllerComponents: AppControllerComponents,
   view: DoYouHaveANinoView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends AppController {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+    SA1DataAction(journeyId) { implicit request =>
 
       val preparedForm = request.userAnswers.get(DoYouHaveANinoPage) match {
         case None        => form
@@ -56,7 +51,7 @@ class DoYouHaveANinoController @Inject() (
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
