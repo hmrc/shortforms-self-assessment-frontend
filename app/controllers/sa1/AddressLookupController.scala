@@ -70,8 +70,7 @@ class AddressLookupController @Inject() (
         if (!saved) throw new IllegalStateException("SA1 address was not saved")
         if (changing) Redirect(routes.CheckYourAnswersController.onPageLoad(journeyId))
         else {
-          // TODO: redirect to the move-date page when it is implemented.
-          Redirect(routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode))
+          Redirect(routes.MoveAddressController.onPageLoad(journeyId, NormalMode))
         }
       }).recover { case NonFatal(ex) =>
         logger.error("Failed to retrieve or save the confirmed SA1 address", ex)

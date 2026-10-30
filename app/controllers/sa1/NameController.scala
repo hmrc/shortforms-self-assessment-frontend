@@ -58,7 +58,7 @@ class NameController @Inject() (
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
-              routes.NameController.onPageLoad(journeyId, NormalMode)
+              routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode)
             ) // TODO redirect to next page when implemented
         )
     }

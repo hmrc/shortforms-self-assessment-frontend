@@ -62,9 +62,9 @@ class EnterNationalInsuranceNumberController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield request.nino match {
               case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
-                Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
+                Redirect(controllers.sa1.routes.WhyTaxReturnController.onPageLoad(journeyId, mode))
               case None                                                                                   =>
-                Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
+                Redirect(controllers.sa1.routes.WhyTaxReturnController.onPageLoad(journeyId, mode))
               case _                                                                                      =>
                 BadRequest(
                   view(

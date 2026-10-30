@@ -60,8 +60,8 @@ class ContactDetailsController @Inject() (
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactDetailsPage, value))
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(
-              controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode)
-            ) // TODO - redirect to next page without navigator post new route is defined
+              controllers.sa1.routes.AddressLookupController.start(journeyId)
+            )
         )
     }
 }

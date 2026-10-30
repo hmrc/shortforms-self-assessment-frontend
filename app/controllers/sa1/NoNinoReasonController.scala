@@ -53,8 +53,7 @@ class NoNinoReasonController @Inject() (
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NoNinoReasonPage, noNinoReason))
               _              <- sessionRepository.set(updatedAnswers)
             } yield
-            // TODO: Redirect to Why Tax return page once ready
-            Redirect(controllers.sa1.routes.NoNinoReasonController.onPageLoad(journeyId, mode).url)
+            Redirect(controllers.sa1.routes.WhyTaxReturnController.onPageLoad(journeyId, mode).url)
         )
     }
 }
