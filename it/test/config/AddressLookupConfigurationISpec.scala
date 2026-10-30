@@ -26,7 +26,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
   private val landingPage = controllers.sa1.routes.StartController.onPageLoad()
 
   private val configProviderUnderTest = app.injector.instanceOf[AddressLookupConfiguration]
-  private val configUnderTest         = configProviderUnderTest(callback, landingPage)
+  private val configUnderTest         = configProviderUnderTest("service.sa1.name", callback, landingPage)
 
   private given Request[?] = FakeRequest()
 
@@ -60,7 +60,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
       (options \ "signOutHref").as[String] mustBe
         s"http://localhost:10081${_root_.controllers.auth.routes.AuthController.signOut().url}"
       (configUnderTest \ "labels" \ "en" \ "appLevelLabels" \ "navTitle").as[String] mustBe
-        messages(app)("service.name")
+        "Registering for Self Assessment"
       (options \ "showBackButtons").as[Boolean] mustBe true
       (options \ "showPhaseBanner").as[Boolean] mustBe false
       (options \ "includeHMRCBranding").as[Boolean] mustBe false

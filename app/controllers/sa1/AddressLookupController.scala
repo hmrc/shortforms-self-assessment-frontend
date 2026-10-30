@@ -47,10 +47,15 @@ class AddressLookupController @Inject() (
 
   private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
-      connector.initialise(configuration(callback, landingPage)).map(Redirect(_)).recover { case NonFatal(ex) =>
-        logger.error("Failed to initialise the SA1 address lookup journey", ex)
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+      val addressLookupConfig = configuration("service.sa1.name", callback, landingPage)
+
+      connector
+        .initialise(addressLookupConfig)
+        .map(Redirect(_))
+        .recover { case NonFatal(ex) =>
+          logger.error("Failed to initialise the SA1 address lookup journey", ex)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   def callback(journeyId: String, id: String): Action[AnyContent] =
