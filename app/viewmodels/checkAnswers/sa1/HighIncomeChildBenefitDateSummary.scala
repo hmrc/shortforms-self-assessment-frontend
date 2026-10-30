@@ -20,26 +20,27 @@ import models.{CheckMode, UserAnswers}
 import pages.sa1.HighIncomeChildBenefitDatePage
 import play.api.i18n.{Lang, Messages}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
+import java.time.format.DateTimeFormatter
+
 object HighIncomeChildBenefitDateSummary {
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-  def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(HighIncomeChildBenefitDatePage).map { answer =>
-
-      implicit val lang: Lang = messages.lang
-
-      SummaryListRowViewModel(
-        key = "highIncomeChildBenefitDate.checkYourAnswersLabel",
-        value = ValueViewModel(answer.format(dateTimeFormat())),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, CheckMode).url
+  def rows(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    answers.get(HighIncomeChildBenefitDatePage).toSeq.flatMap { answer =>
+      Seq(
+        SummaryListRowViewModel(
+          key = "sa1.highIncomeChildBenefitDate.checkYourAnswersLabel",
+          value = ValueViewModel(answer.format(dateFormatter)),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, CheckMode).url
+            )
+              .withVisuallyHiddenText(messages("sa1.highIncomeChildBenefitDate.change.hidden"))
           )
-            .withVisuallyHiddenText(messages("highIncomeChildBenefitDate.change.hidden"))
         )
       )
     }

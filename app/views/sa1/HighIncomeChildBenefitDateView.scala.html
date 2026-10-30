@@ -24,8 +24,7 @@
     govukButton: GovukButton,
     bulletList: BulletList,
     h1:h1,
-    p: Paragraph,
-    linkWithParagraph: linkWithParagraph
+    p: Paragraph
 )
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -35,7 +34,6 @@
     .find(component => form("value").error.exists(_.args.contains(messages(s"date.error.$component"))))
     .getOrElse("day")
 }
-
 
 @layout(pageTitle = title(form, messages("sa1.highIncomeChildBenefitDate.title"))) {
 
@@ -60,7 +58,6 @@
                 </a>
                 @messages("sa1.highIncomeChildBenefitDate.b1.suffix")
             </li>
-
             <li>
                 @messages("sa1.highIncomeChildBenefitDate.b2")
             </li>
@@ -73,8 +70,7 @@
         @govukDateInput(
             DateViewModel(
             field  = form("value"),
-            legend = LegendViewModel(messages("sa1.highIncomeChildBenefitDate.subHeading")).asPageSubHeading()
-            )
+            legend = LegendViewModel(messages("sa1.highIncomeChildBenefitDate.subHeading")).asPageSubHeading())
             .withHint(HintViewModel(messages("sa1.highIncomeChildBenefitDate.hint")))
             )
 

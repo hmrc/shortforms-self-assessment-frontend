@@ -16,26 +16,71 @@
 
 package forms
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import forms.behaviours.DateBehaviours
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
+import play.api.data.FormError
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 
+import java.time.format.DateTimeFormatter
+
 class HighIncomeChildBenefitDateFormProviderSpec extends DateBehaviours {
 
-  private implicit val messages: Messages = stubMessages()
-  private val form                        = new HighIncomeChildBenefitDateFormProvider()()
+  private implicit val msgs: Messages = stubMessages()
+  private val formProvider            = new HighIncomeChildBenefitDateFormProvider()
+  private val minimumDate             = LocalDate.of(1753, 1, 3)
+  private val dateFormatter           = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private val form                    = formProvider()(msgs)
 
-  ".value" - {
+  private val minimumDateError = FormError(
+    "value",
+    "sa1.highIncomeChildBenefitDate.date.error.mustBeAfterMinimum",
+    Seq(minimumDate.format(dateFormatter))
+  )
 
-    val validData = datesBetween(
-      min = LocalDate.of(2000, 1, 1),
-      max = LocalDate.now(ZoneOffset.UTC)
-    )
+  "HighIncomeChildBenefitDateFormProvider" - {
 
-    behave like dateField(form, "value", validData)
+    "HighIncomeChildBenefitDate" - {
+      dateField(
+        form,
+        "value",
+        datesBetween(minimumDate, LocalDate.now())
+      )
 
-    behave like mandatoryDateField(form, "value", "highIncomeChildBenefitDate.error.required.all")
+      mandatoryDateField(
+        form,
+        "value",
+        "sa1.highIncomeChildBenefitDate.date.error.required"
+      )
+
+      "must reject a date before the minimum date" in {
+        val result = form.bind(dateData(minimumDate.minusDays(1)))
+
+        result.errors must contain(minimumDateError)
+      }
+
+      "must accept the minimum date" in {
+        val result = form.bind(dateData(minimumDate))
+
+        result.value.value mustBe minimumDate
+        result.errors mustBe empty
+      }
+
+      "must accept a date after the minimum date" in {
+        val date   = minimumDate.plusDays(1)
+        val result = form.bind(dateData(date))
+
+        result.value.value mustBe date
+        result.errors mustBe empty
+      }
+    }
   }
+
+  private def dateData(date: LocalDate): Map[String, String] =
+    Map(
+      "value.day"   -> date.getDayOfMonth.toString,
+      "value.month" -> date.getMonthValue.toString,
+      "value.year"  -> date.getYear.toString
+    )
 }

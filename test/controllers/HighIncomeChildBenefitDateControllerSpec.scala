@@ -16,20 +16,22 @@
 
 package controllers
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import base.SpecBase
+import controllers.sa1.HighIncomeChildBenefitDateController
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
-import models.{JourneyType, NormalMode, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
+import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.HighIncomeChildBenefitDatePage
+import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.inject.bind
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.HighIncomeChildBenefitDateView
 
@@ -37,138 +39,87 @@ import scala.concurrent.Future
 
 class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSugar {
 
-  private implicit val messages: Messages = stubMessages()
+  private val validDate = LocalDate.of(1990, 5, 10)
 
-  private val formProvider = new HighIncomeChildBenefitDateFormProvider()
-  private def form         = formProvider()
-  private val journeyId    = "Test Josruney Id"
-  private val userId       = "Test user Id"
-
-  def onwardRoute = Call("GET", "/foo")
-
-  val validAnswer = LocalDate.now(ZoneOffset.UTC)
-
-  lazy val highIncomeChildBenefitDateRoute =
-    controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, NormalMode).url
-
-  override val emptyUserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
-
-  def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, highIncomeChildBenefitDateRoute)
-
-  def postRequest(): FakeRequest[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, highIncomeChildBenefitDateRoute)
-      .withFormUrlEncodedBody(
-        "value.day"   -> validAnswer.getDayOfMonth.toString,
-        "value.month" -> validAnswer.getMonthValue.toString,
-        "value.year"  -> validAnswer.getYear.toString
-      )
+  private val validDateData = Map(
+    "value.day"   -> validDate.getDayOfMonth.toString,
+    "value.month" -> validDate.getMonthValue.toString,
+    "value.year"  -> validDate.getYear.toString
+  )
 
   "HighIncomeChildBenefitDate Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK when loading the page without a saved date" in new Setup {
+      val result: Future[Result] = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val result = route(application, getRequest()).value
-
-        val view = application.injector.instanceOf[HighIncomeChildBenefitDateView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, journeyId, NormalMode)(
-          getRequest(),
-          messages(application)
-        ).toString
-      }
+      status(result) mustBe OK
+      contentAsString(result) mustBe mockContent
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "pre-populate the form when a date has already been saved" in
+      new Setup(emptyUserAnswers.set(HighIncomeChildBenefitDatePage, validDate).success.value) {
+        val result: Future[Result] = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
-      val userAnswers = emptyUserAnswers.set(HighIncomeChildBenefitDatePage, validAnswer).success.value
+        status(result) mustBe OK
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
+        verify(mockView).apply(captor.capture(), any[String], any)(any[Request[?]], any[Messages])
 
-      running(application) {
-        val view = application.injector.instanceOf[HighIncomeChildBenefitDateView]
+        val populatedForm: Form[LocalDate] = captor.getValue
 
-        val result = route(application, getRequest()).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), journeyId, NormalMode)(
-          getRequest(),
-          messages(application)
-        ).toString
+        populatedForm("value.day").value mustBe Some("10")
+        populatedForm("value.month").value mustBe Some("5")
+        populatedForm("value.year").value mustBe Some("1990")
       }
-    }
+  }
 
-    "must redirect to the next page when valid data is submitted" in {
+  "return BAD_REQUEST when the submitted date is invalid" in new Setup {
+    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+      FakeRequest(POST, "/").withFormUrlEncodedBody(
+        "value.day"   -> "31",
+        "value.month" -> "2",
+        "value.year"  -> "2000"
+      )
 
-      val mockSessionRepository = mock[SessionRepository]
+    val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+    status(result) mustBe BAD_REQUEST
+    contentAsString(result) mustBe mockContent
+  }
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+  "save the date and redirect after a valid submission" in new Setup {
+    when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+      FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
-      running(application) {
-        val result = route(application, postRequest()).value
+    val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
+    status(result) mustBe SEE_OTHER
+    redirectLocation(result) mustBe Some(
+      controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(userAnswersId, NormalMode).url
+    ) // TODO make change with wiring ticket
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(sessionRepository).set(captor.capture())
+    captor.getValue.get(HighIncomeChildBenefitDatePage) mustBe Some(validDate)
+  }
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+  private class Setup(
+    userAnswers: UserAnswers = emptyUserAnswers
+  ) {
+    protected val mockView: HighIncomeChildBenefitDateView = mock
+    protected val mockContent                              = "HighIncomeChildBenefitDateView"
+    protected val sessionRepository: SessionRepository     = mock
+    private val formProvider                               = new HighIncomeChildBenefitDateFormProvider
 
-      val request =
-        FakeRequest(POST, highIncomeChildBenefitDateRoute)
-          .withFormUrlEncodedBody(("value", "invalid value"))
+    when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
+      .thenReturn(Html(mockContent))
 
-      running(application) {
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[HighIncomeChildBenefitDateView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, journeyId, NormalMode)(
-          request,
-          messages(application)
-        ).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, getRequest()).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, postRequest()).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    protected lazy val controllerUnderTest = new HighIncomeChildBenefitDateController(
+      new MockAppControllerComponents(userAnswers),
+      sessionRepository,
+      formProvider,
+      mockView
+    )
   }
 }

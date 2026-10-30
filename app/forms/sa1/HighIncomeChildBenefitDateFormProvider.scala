@@ -21,17 +21,27 @@ import play.api.data.Form
 import play.api.i18n.Messages
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class HighIncomeChildBenefitDateFormProvider @Inject() extends Mappings {
+  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
+    val minimumDate = LocalDate.of(1753, 1, 3)
     Form(
       "value" -> localDate(
-        invalidKey = "highIncomeChildBenefitDate.error.invalid",
-        allRequiredKey = "highIncomeChildBenefitDate.error.required.all",
-        twoRequiredKey = "highIncomeChildBenefitDate.error.required.two",
-        requiredKey = "highIncomeChildBenefitDate.error.required"
+        invalidKey = "sa1.highIncomeChildBenefitDate.date.error.invalid",
+        allRequiredKey = "sa1.highIncomeChildBenefitDate.date.error.required",
+        twoRequiredKey = "sa1.highIncomeChildBenefitDate.date.error.required.two",
+        requiredKey = "sa1.highIncomeChildBenefitDate.date.error.requiredOne",
+        numericOnly = true
+      ).verifying(
+        minDate(
+          minimumDate,
+          "sa1.highIncomeChildBenefitDate.date.error.mustBeAfterMinimum",
+          minimumDate.format(dateFormatter)
+        )
       )
     )
 }
