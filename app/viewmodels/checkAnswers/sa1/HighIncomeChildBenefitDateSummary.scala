@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.sa1
 
 import models.{CheckMode, UserAnswers}
 import pages.sa1.HighIncomeChildBenefitDatePage
-import play.api.i18n.{Lang, Messages}
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
