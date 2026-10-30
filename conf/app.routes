@@ -121,3 +121,8 @@ GET         /sa1/date-capital-gains-tax/:journeyId                  controllers.
 POST        /sa1/date-capital-gains-tax/:journeyId                  controllers.sa1.DateCapitalGainsTaxController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /sa1/date-capital-gains-tax/change/:journeyId           controllers.sa1.DateCapitalGainsTaxController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-capital-gains-tax/change/:journeyId           controllers.sa1.DateCapitalGainsTaxController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /sa1/date-high-income-child-benefit/:journeyId                               controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = NormalMode)
+POST       /sa1/date-high-income-child-benefit/:journeyId                               controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = NormalMode)
+GET        /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = CheckMode)
+POST       /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = CheckMode)
