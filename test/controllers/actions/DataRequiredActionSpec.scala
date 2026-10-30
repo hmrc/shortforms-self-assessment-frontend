@@ -19,11 +19,12 @@ package controllers.actions
 import base.SpecBase
 import models.JourneyType.SA1
 import models.UserAnswers
-import models.requests.IdentifierRequest
-import org.mockito.ArgumentMatchers.eq as eqTo
-import org.mockito.Mockito.{mock, verify, when}
-import play.api.i18n.MessagesApi
+import models.requests.{DataRequest, IdentifierRequest}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{verify, when}
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
+import play.api.mvc.ActionRefiner
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -33,7 +34,7 @@ import views.html.ErrorTemplate
 import java.time.Instant
 import scala.concurrent.Future
 
-class DataRequiredActionSpec extends SpecBase {
+class DataRequiredActionSpec extends SpecBase with MockitoSugar {
 
   private val journeyId = "test-journey-id"
   private val userId    = "test-user-id"
@@ -47,26 +48,15 @@ class DataRequiredActionSpec extends SpecBase {
     lastUpdated = Instant.parse("2026-10-12T10:00:00Z")
   )
 
-  private val identifierRequest =
-    IdentifierRequest(FakeRequest(GET, "/"), userId, nino)
-
-  private lazy val app           = applicationBuilder().build()
-  private lazy val errorTemplate = app.injector.instanceOf[ErrorTemplate]
-  private lazy val messagesApi   = app.injector.instanceOf[MessagesApi]
+  private val identifierRequest = IdentifierRequest(FakeRequest(), userId, nino)
 
   "DataRequiredActionImpl" - {
 
-    "must provide DataRequest when the journey exists for the user" in {
-      val repository = mock(classOf[SessionRepository])
-
+    "must provide DataRequest when the journey exists for the user" in new Setup {
       when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
         .thenReturn(Future.successful(Some(userAnswers)))
 
-      val action =
-        new DataRequiredActionImpl(repository, errorTemplate, messagesApi)(ec)
-          .apply(journeyId, SA1)
-
-      val result = action.invokeBlock(
+      private val result = actionUnderTest.invokeBlock(
         identifierRequest,
         request => Future.successful(Ok(request.userAnswers.id))
       )
@@ -77,26 +67,30 @@ class DataRequiredActionSpec extends SpecBase {
       verify(repository).get(journeyId, userId, SA1)
     }
 
-    "must return Not Found when the journey does not exist" in {
-      val repository = mock(classOf[SessionRepository])
-
+    "must return Not Found when the journey does not exist" in new Setup {
       when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
         .thenReturn(Future.successful(None))
 
-      val action =
-        new DataRequiredActionImpl(repository, errorTemplate, messagesApi)(ec)
-          .apply(journeyId, SA1)
-
-      val result = action.invokeBlock(
+      private val result = actionUnderTest.invokeBlock(
         identifierRequest,
         _ => Future.successful(Ok)
       )
 
       status(result) mustEqual NOT_FOUND
-
-      contentAsString(result) must include("Page not found")
+      contentAsString(result) mustEqual mockErrorContent
 
       verify(repository).get(journeyId, userId, SA1)
     }
+  }
+
+  private class Setup {
+    protected val repository: SessionRepository = mock
+
+    private val mockErrorTemplate: ErrorTemplate = mock
+    protected val mockErrorContent               = "Error"
+    when(mockErrorTemplate.apply(any, any, any)(any, any)) thenReturn play.twirl.api.Html(mockErrorContent)
+
+    protected val actionUnderTest: ActionRefiner[IdentifierRequest, DataRequest] =
+      new DataRequiredActionImpl(repository, mockErrorTemplate, stubMessagesApi()).apply(journeyId, SA1)
   }
 }
