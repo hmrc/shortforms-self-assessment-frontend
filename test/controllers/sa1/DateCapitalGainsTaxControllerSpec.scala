@@ -45,9 +45,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
   "DateCapitalGainsTax Controller" - {
     "onPageLoad" - {
       "must return OK and the correct view for a GET" in new Setup {
-        val request = FakeRequest(GET, dateCapitalGainsTaxRoute)
-
-        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(request)
+        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual mockContent
@@ -56,9 +54,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
       "must populate the view correctly on a GET when the question has previously been answered" in new Setup(
         emptyUserAnswers.set(DateCapitalGainsTaxPage, validAnswer).success.value
       ) {
-        val request = FakeRequest(GET, dateCapitalGainsTaxRoute)
-
-        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(request)
+        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
         status(result) mustEqual OK
 
@@ -76,7 +72,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
       "must redirect to the next page when valid data is submitted" in new Setup {
         when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
 
-        val request = FakeRequest(POST, dateCapitalGainsTaxRoute)
+        val request = FakeRequest()
           .withFormUrlEncodedBody(
             "value.day"   -> validAnswer.getDayOfMonth.toString,
             "value.month" -> validAnswer.getMonthValue.toString,
@@ -97,7 +93,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in new Setup {
-        val request = FakeRequest(POST, dateCapitalGainsTaxRoute)
+        val request = FakeRequest()
           .withFormUrlEncodedBody(("value", "invalid value"))
 
         val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
@@ -114,8 +110,6 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                              = "DateCapitalGainsTaxView"
     protected val mockSessionRepository: SessionRepository = mock
     private val formProvider                               = new DateCapitalGainsTaxFormProvider
-    lazy protected val dateCapitalGainsTaxRoute            =
-      controllers.sa1.routes.DateCapitalGainsTaxController.onPageLoad(userAnswersId, NormalMode).url
 
     when(mockView.apply(any[String], any[Form[LocalDate]], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
