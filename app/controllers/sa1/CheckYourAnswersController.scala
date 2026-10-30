@@ -17,28 +17,22 @@
 package controllers.sa1
 
 import com.google.inject.Inject
-import controllers.actions.{IdentifierAction, SA1DataRequiredAction}
+import controllers.{AppController, AppControllerComponents}
 import models.CheckMode
 import pages.sa1.NamePage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.mvc.{Action, AnyContent}
 import viewmodels.checkAnswers.AddressJourneySummary
 import viewmodels.checkAnswers.sa1.NameSummary
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  requireData: SA1DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
+  val controllerComponents: AppControllerComponents,
   view: CheckYourAnswersView
-) extends FrontendBaseController
-    with I18nSupport {
+) extends AppController {
 
   def onPageLoad(journeyId: String): Action[AnyContent] =
-    (identify andThen requireData(journeyId)) { implicit request =>
+    SA1DataAction(journeyId) { implicit request =>
       val nameRows = request.userAnswers.get(NamePage).map(NameSummary.row(_, journeyId, CheckMode)).toSeq
       val rows     = nameRows ++ AddressJourneySummary.rows(request.userAnswers)
 

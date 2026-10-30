@@ -17,12 +17,10 @@
 package controllers.sa1
 
 import base.SpecBase
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
+import controllers.MockAppControllerComponents
 import forms.sa1.NameFormProvider
 import models.sa1.Name
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import org.apache.pekko.stream.Materializer
-import org.apache.pekko.stream.testkit.NoMaterializer
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, never, verify, when}
@@ -40,27 +38,31 @@ import scala.concurrent.Future
 
 class NameControllerSpec extends SpecBase {
 
-  implicit val mat: Materializer = NoMaterializer
-
   "NameController" - {
 
     "must return OK and render the view with an empty form for a GET" in new Setup {
-      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual stubContent
       capturedForm().value mustBe None
     }
 
-    "must populate the view with the saved name on a GET when the question has been answered" in new SetupWithSavedName {
-      val result = controller.onPageLoad(userAnswersId, NormalMode)(FakeRequest(GET, "/"))
+    "must populate the view with the saved name on a GET when the question has been answered" in new Setup {
+      override val givenUserAnswers: UserAnswers =
+        emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       capturedForm().value mustBe Some(Name("Jane", "Doe"))
     }
 
-    "must render the view in check mode for a GET in check mode" in new SetupWithSavedName {
-      val result = controller.onPageLoad(userAnswersId, CheckMode)(FakeRequest(GET, "/"))
+    "must render the view in check mode for a GET in check mode" in new Setup {
+      override val givenUserAnswers: UserAnswers =
+        emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, CheckMode)(FakeRequest())
 
       status(result) mustEqual OK
       verify(stubView).apply(any[Form[Name]], eqTo(userAnswersId), eqTo[Mode](CheckMode))(
@@ -70,23 +72,23 @@ class NameControllerSpec extends SpecBase {
     }
 
     "must save the name and redirect to the next page when valid data is submitted" in new Setup {
-      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
+      private val request = FakeRequest().withFormUrlEncodedBody(validData.toSeq*)
 
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual
         controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
 
-      val savedAnswers: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      private val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(mockSessionRepository).set(savedAnswers.capture())
       savedAnswers.getValue.get(NamePage) mustBe Some(Name("Jane", "Doe"))
     }
 
     "must save the name and redirect when valid data is submitted in check mode" in new Setup {
-      val request = FakeRequest(POST, "/").withFormUrlEncodedBody(validData.toSeq*)
+      private val request = FakeRequest().withFormUrlEncodedBody(validData.toSeq*)
 
-      val result = controller.onSubmit(userAnswersId, CheckMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, CheckMode)(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual
@@ -95,9 +97,9 @@ class NameControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and show errors when invalid data is submitted" in new Setup {
-      val request = FakeRequest(POST, "/").withFormUrlEncodedBody("firstName" -> "", "lastName" -> "Doe")
+      private val request = FakeRequest().withFormUrlEncodedBody("firstName" -> "", "lastName" -> "Doe")
 
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual stubContent
@@ -107,7 +109,7 @@ class NameControllerSpec extends SpecBase {
   }
 
   trait Setup {
-    def userAnswers: Option[UserAnswers] = Some(emptyUserAnswers)
+    protected val givenUserAnswers: UserAnswers = emptyUserAnswers
 
     val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
@@ -117,13 +119,10 @@ class NameControllerSpec extends SpecBase {
     when(stubView.apply(any[Form[Name]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(stubContent))
 
-    val controller = new NameController(
-      stubMessagesApi(),
+    protected lazy val controllerUnderTest = new NameController(
       mockSessionRepository,
-      new FakeIdentifierAction(stubPlayBodyParsers(mat)),
-      new SA1DataRequiredAction(new FakeDataRequiredAction(userAnswers)),
       new NameFormProvider(),
-      stubMessagesControllerComponents(),
+      new MockAppControllerComponents(givenUserAnswers),
       stubView
     )
 
@@ -134,14 +133,5 @@ class NameControllerSpec extends SpecBase {
       verify(stubView).apply(formCaptor.capture(), any[String], any[Mode])(any[Request[?]], any[Messages])
       formCaptor.getValue
     }
-  }
-
-  trait SetupWithSavedName extends Setup {
-    override def userAnswers: Option[UserAnswers] =
-      Some(emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value)
-  }
-
-  trait SetupWithoutUserAnswers extends Setup {
-    override def userAnswers: Option[UserAnswers] = None
   }
 }

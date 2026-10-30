@@ -17,17 +17,17 @@
 package controllers.sa1
 
 import base.SpecBase
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
+import controllers.MockAppControllerComponents
 import forms.sa1.AddPreviousLastNameFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.Navigator
-import org.apache.pekko.actor.ActorSystem
+import navigation.FakeNavigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.sa1.AddPreviousLastNamePage
-import play.api.mvc.{Call, Result}
+import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -40,15 +40,11 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val addPreviousLastNameRoute =
-    controllers.sa1.routes.AddPreviousLastNameController.onPageLoad("test-journey-id", NormalMode).url
-
   "AddPreviousLastName Controller" - {
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(GET, addPreviousLastNameRoute)
 
-      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual mockContent
@@ -62,9 +58,8 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, true).success.value
-      val request                  = FakeRequest(GET, addPreviousLastNameRoute)
 
-      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual mockContent
@@ -78,15 +73,12 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(POST, addPreviousLastNameRoute)
-        .withFormUrlEncodedBody(("value", "true"))
+      private val request          = FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
       when(mockSessionRepository.set(any[UserAnswers]))
         .thenReturn(Future.successful(true))
 
-      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
-
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
@@ -96,12 +88,10 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  =
-        FakeRequest(POST, addPreviousLastNameRoute)
-          .withFormUrlEncodedBody(("value", ""))
-      val boundForm                = form.bind(Map("value" -> ""))
+      private val request          = FakeRequest().withFormUrlEncodedBody(("value", ""))
+      private val boundForm        = form.bind(Map("value" -> ""))
 
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual mockContent
@@ -115,31 +105,22 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
   }
 
   abstract private class Setup {
-    implicit val actorSystem: ActorSystem                  = ActorSystem("test")
     protected val userAnswers: UserAnswers
-    private lazy val identifierAction                      =
-      new FakeIdentifierAction(stubPlayBodyParsers())
-    private lazy val dataRequiredAction                    =
-      new SA1DataRequiredAction(
-        new FakeDataRequiredAction(Some(userAnswers))
-      )
+
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockNavigator: Navigator                 = mock[Navigator]
-    protected val mockView                                 = mock[AddPreviousLastNameView]
+    protected val mockView: AddPreviousLastNameView        = mock
     protected val mockContent                              = "AddPreviousLastName"
     private val addPreviousLastNameFormProvider            = new AddPreviousLastNameFormProvider()
-    protected val form                                     = addPreviousLastNameFormProvider()
+    protected val form: Form[Boolean]                      = addPreviousLastNameFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controller: AddPreviousLastNameController = new AddPreviousLastNameController(
+    protected lazy val controllerUnderTest = new AddPreviousLastNameController(
       mockSessionRepository,
-      mockNavigator,
-      identifierAction,
-      dataRequiredAction,
+      new FakeNavigator(onwardRoute),
       addPreviousLastNameFormProvider,
-      stubMessagesControllerComponents(),
+      new MockAppControllerComponents(userAnswers),
       mockView
     )
   }

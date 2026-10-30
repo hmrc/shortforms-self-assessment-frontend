@@ -16,35 +16,29 @@
 
 package controllers.sa1
 
-import controllers.actions.{IdentifierAction, SA1DataRequiredAction}
+import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NameFormProvider
 import models.{Mode, NormalMode}
 import pages.sa1.NamePage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.sa1.NameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameController @Inject() (
-  override val messagesApi: MessagesApi,
   sessionRepository: SessionRepository,
-  identify: IdentifierAction,
-  sa1DataRequiredAction: SA1DataRequiredAction,
   formProvider: NameFormProvider,
-  val controllerComponents: MessagesControllerComponents,
+  val controllerComponents: AppControllerComponents,
   view: NameView
 )(implicit ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends AppController {
 
   private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)) { implicit request =>
+    SA1DataAction(journeyId) { implicit request =>
       val preparedForm = request.userAnswers.get(NamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -54,7 +48,7 @@ class NameController @Inject() (
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    (identify andThen sa1DataRequiredAction(journeyId)).async { implicit request =>
+    SA1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

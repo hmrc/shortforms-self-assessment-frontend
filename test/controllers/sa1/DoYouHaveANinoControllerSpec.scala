@@ -17,17 +17,17 @@
 package controllers.sa1
 
 import base.SpecBase
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction, SA1DataRequiredAction}
+import controllers.MockAppControllerComponents
 import forms.sa1.DoYouHaveANinoFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.Navigator
-import org.apache.pekko.actor.ActorSystem
+import navigation.FakeNavigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.sa1.DoYouHaveANinoPage
-import play.api.mvc.{Call, Result}
+import play.api.data.Form
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -40,16 +40,10 @@ class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val doYouHaveANinoRoute =
-    controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(userAnswersId, NormalMode).url
-
   "DoYouHaveANino Controller" - {
 
     "must return OK and the correct view for a GET" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(GET, doYouHaveANinoRoute)
-
-      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual mockContent
@@ -62,10 +56,9 @@ class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, true).success.value
-      val request                  = FakeRequest(GET, doYouHaveANinoRoute)
+      override val userAnswers: UserAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, true).success.value
 
-      val result: Future[Result] = controller.onPageLoad(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
       contentAsString(result) mustEqual mockContent
@@ -78,16 +71,12 @@ class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to the next page when valid data is submitted" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(POST, doYouHaveANinoRoute)
-        .withFormUrlEncodedBody(("value", "true"))
+      private val request = FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
       when(mockSessionRepository.set(any[UserAnswers]))
         .thenReturn(Future.successful(true))
 
-      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
-
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual onwardRoute.url
@@ -96,12 +85,10 @@ class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers
-      val request                  = FakeRequest(POST, doYouHaveANinoRoute)
-        .withFormUrlEncodedBody(("value", ""))
-      val boundForm                = form.bind(Map("value" -> ""))
+      private val request   = FakeRequest().withFormUrlEncodedBody(("value", ""))
+      private val boundForm = form.bind(Map("value" -> ""))
 
-      val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual BAD_REQUEST
       contentAsString(result) mustEqual mockContent
@@ -115,32 +102,22 @@ class DoYouHaveANinoControllerSpec extends SpecBase with MockitoSugar {
   }
 
   abstract private class Setup {
-    implicit val actorSystem: ActorSystem                  = ActorSystem("test")
-    protected val userAnswers: UserAnswers
-    private val bodyParsers                                = stubPlayBodyParsers()
-    private lazy val identifierAction                      =
-      new FakeIdentifierAction(bodyParsers)
-    private lazy val dataRequiredAction                    =
-      new SA1DataRequiredAction(
-        new FakeDataRequiredAction(Some(userAnswers))
-      )
+    protected val userAnswers: UserAnswers = emptyUserAnswers
+
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockNavigator: Navigator                 = mock[Navigator]
     protected val mockView: DoYouHaveANinoView             = mock[DoYouHaveANinoView]
     protected val mockContent                              = "DoYouHaveANino"
     private val doYouHaveANinoFormProvider                 = new DoYouHaveANinoFormProvider()
-    protected val form                                     = doYouHaveANinoFormProvider()
+    protected val form: Form[Boolean]                      = doYouHaveANinoFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controller: DoYouHaveANinoController = new DoYouHaveANinoController(
+    protected lazy val controllerUnderTest: DoYouHaveANinoController = new DoYouHaveANinoController(
       mockSessionRepository,
-      mockNavigator,
-      identifierAction,
-      dataRequiredAction,
+      new FakeNavigator(onwardRoute),
       doYouHaveANinoFormProvider,
-      stubMessagesControllerComponents(),
+      new MockAppControllerComponents(userAnswers),
       mockView
     )
   }

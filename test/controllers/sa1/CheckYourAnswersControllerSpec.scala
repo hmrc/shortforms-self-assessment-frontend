@@ -18,7 +18,6 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import controllers.actions.SA1DataRequiredAction
 import models.address.{AddressDetails, ConfirmedAddress, Country}
 import models.sa1.Name
 import models.{CheckMode, UserAnswers}
@@ -41,7 +40,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
   "SA1 Check Your Answers Controller" - {
 
     "must render the view with an empty summary list when nothing has been answered" in new Setup {
-      val result = controller.onPageLoad(userAnswersId)(FakeRequest(GET, "/"))
+      private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe stubContent
@@ -49,13 +48,13 @@ class CheckYourAnswersControllerSpec extends SpecBase {
     }
 
     "must include the escaped full address with its ALF change link" in new SetupWithSavedAddress {
-      val result = controller.onPageLoad(userAnswersId)(FakeRequest(GET, "/"))
+      private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
-      val rows = capturedList().rows
+      private val rows = capturedList().rows
       rows must have size 1
-      val addressRow  = rows.head
-      val addressHtml = addressRow.value.content.asInstanceOf[HtmlContent].value.toString
+      private val addressRow  = rows.head
+      private val addressHtml = addressRow.value.content.asInstanceOf[HtmlContent].value.toString
       addressHtml must include("&lt;script&gt;")
       addressHtml must not include "<script>alert"
       addressHtml must include("A very long address line that is not truncated")
@@ -68,10 +67,10 @@ class CheckYourAnswersControllerSpec extends SpecBase {
     }
 
     "must include the name row before the address row with its change link" in new SetupWithNameAndAddress {
-      val result = controller.onPageLoad(userAnswersId)(FakeRequest(GET, "/"))
+      private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
-      val rows = capturedList().rows
+      private val rows = capturedList().rows
       rows must have size 2
       rows.head.actions.value.items.map(_.href) mustBe
         Seq(routes.NameController.onPageLoad(userAnswersId, CheckMode).url)
@@ -98,13 +97,8 @@ class CheckYourAnswersControllerSpec extends SpecBase {
     val stubView: CheckYourAnswersView = mock(classOf[CheckYourAnswersView])
     when(stubView.apply(any[SummaryList])(any[Request[?]], any[Messages])).thenReturn(Html(stubContent))
 
-    val components = new MockAppControllerComponents(userAnswers)
-
     val controller = new CheckYourAnswersController(
-      components.messagesApi,
-      components.identify,
-      new SA1DataRequiredAction(components.getData),
-      components,
+      new MockAppControllerComponents(userAnswers),
       stubView
     )
 
