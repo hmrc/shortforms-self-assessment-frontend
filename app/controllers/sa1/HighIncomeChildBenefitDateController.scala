@@ -27,29 +27,26 @@ import views.html.sa1.HighIncomeChildBenefitDateView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HighIncomeChildBenefitDateController @Inject()(
-                                        val controllerComponents: AppControllerComponents,
-                                        sessionRepository: SessionRepository,
-                                        formProvider: HighIncomeChildBenefitDateFormProvider,
-                                        view: HighIncomeChildBenefitDateView
-                                      )(implicit ec: ExecutionContext) extends AppController {
+class HighIncomeChildBenefitDateController @Inject() (
+  val controllerComponents: AppControllerComponents,
+  sessionRepository: SessionRepository,
+  formProvider: HighIncomeChildBenefitDateFormProvider,
+  view: HighIncomeChildBenefitDateView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) {
-    implicit request =>
-          val form = formProvider()
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+    val form = formProvider()
 
-          val preparedForm = request.userAnswers.get(HighIncomeChildBenefitDatePage).fold(form)(form.fill)
-          Ok(view(preparedForm, journeyId, mode))
-      }
+    val preparedForm = request.userAnswers.get(HighIncomeChildBenefitDatePage).fold(form)(form.fill)
+    Ok(view(preparedForm, journeyId, mode))
+  }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async {
-    implicit request =>
-
-      formProvider()
-        .bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
+    formProvider()
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HighIncomeChildBenefitDatePage, value))
