@@ -17,7 +17,8 @@
 package viewmodels.checkAnswers.sa1
 
 import base.SpecBase
-import models.{CheckMode, PreviousName}
+import models.CheckMode
+import models.sa1.PreviousName
 import pages.sa1.PreviousLastNamePage
 import java.time.LocalDate
 import play.api.test.Helpers.stubMessages

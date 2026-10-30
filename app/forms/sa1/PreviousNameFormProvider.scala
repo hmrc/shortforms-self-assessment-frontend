@@ -17,7 +17,7 @@
 package forms.sa1
 
 import forms.mappings.Mappings
-import models.PreviousName
+import models.sa1.PreviousName
 import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.i18n.Messages

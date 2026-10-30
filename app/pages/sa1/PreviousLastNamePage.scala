@@ -16,7 +16,7 @@
 
 package pages.sa1
 
-import models.PreviousName
+import models.sa1.PreviousName
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

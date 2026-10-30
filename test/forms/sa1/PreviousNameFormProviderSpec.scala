@@ -17,7 +17,7 @@
 package forms.sa1
 
 import base.SpecBase
-import models.PreviousName
+import models.sa1.PreviousName
 import play.api.data.FormError
 
 import java.time.LocalDate

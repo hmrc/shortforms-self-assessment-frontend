@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package pages.sa1
 
-import play.api.libs.json.{Json, OFormat}
+import models.sa1.OtherReason
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import java.time.LocalDate
+case object OtherReasonPage extends QuestionPage[OtherReason] {
 
-final case class PreviousName(
-  previousLastName: String,
-  lastNameChangeDate: LocalDate
-)
+  override def path: JsPath = JsPath \ toString
 
-object PreviousName {
-  implicit val format: OFormat[PreviousName] = Json.format[PreviousName]
+  override def toString: String = "otherReason"
 }

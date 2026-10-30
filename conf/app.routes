@@ -110,4 +110,9 @@ POST        /sa1/date-untaxed-income-PAYE/:journeyId                            
 GET         /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-untaxed-income-PAYE/change/:journeyId                         controllers.sa1.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /sa1/date-other-reason/:journeyId                                controllers.sa1.OtherReasonController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /sa1/date-other-reason/:journeyId                                controllers.sa1.OtherReasonController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
