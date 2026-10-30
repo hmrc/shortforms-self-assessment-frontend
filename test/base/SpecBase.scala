@@ -16,7 +16,6 @@
 
 package base
 
-import controllers.actions.*
 import models.{JourneyType, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -24,8 +23,6 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 
 import scala.concurrent.ExecutionContext
@@ -46,13 +43,4 @@ trait SpecBase
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
-
-  protected def applicationBuilder(
-    userAnswers: Option[UserAnswers] = None
-  ): GuiceApplicationBuilder =
-    new GuiceApplicationBuilder()
-      .overrides(
-        bind[DataRequiredAction].toInstance(new FakeDataRequiredAction(userAnswers)),
-        bind[IdentifierAction].to[FakeIdentifierAction]
-      )
 }
