@@ -23,7 +23,7 @@ import play.api.test.Helpers.stubMessages
 
 import java.time.LocalDate
 
-class HighIncomeChildBenefitDateSummarySpec extends SpecBase{
+class HighIncomeChildBenefitDateSummarySpec extends SpecBase {
 
   private val msgs = stubMessages()
 
@@ -43,16 +43,16 @@ class HighIncomeChildBenefitDateSummarySpec extends SpecBase{
           .value
 
       val result = HighIncomeChildBenefitDateSummary.rows(userAnswersId, userAnswers)(msgs)
-      result must have size 1
+      result                             must have size 1
       result.head.value.content.toString must include("19 March 2022")
-      result.head.key.content.toString must include(msgs("sa1.highIncomeChildBenefitDate.checkYourAnswersLabel"))
+      result.head.key.content.toString   must include(msgs("sa1.highIncomeChildBenefitDate.checkYourAnswersLabel"))
 
       val expectedUrl =
         controllers.sa1.routes.HighIncomeChildBenefitDateController
           .onPageLoad(userAnswersId, CheckMode)
           .url
       result.head.actions.value.items.head.href mustBe expectedUrl
-      result.head.actions.value.items.head.content.toString must include(msgs("site.change"))
+      result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
       result.head.actions.value.items.head.visuallyHiddenText.value must include(
         msgs("sa1.highIncomeChildBenefitDate.change.hidden")
       )
