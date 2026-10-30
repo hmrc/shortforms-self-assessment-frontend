@@ -116,3 +116,8 @@ GET         /sa1/date-other-reason/change/:journeyId                         con
 POST        /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
+
+GET        /sa1/date-high-income-child-benefit/:journeyId                               controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = NormalMode)
+POST       /sa1/date-high-income-child-benefit/:journeyId                               controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = NormalMode)
+GET        /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = CheckMode)
+POST       /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = CheckMode)

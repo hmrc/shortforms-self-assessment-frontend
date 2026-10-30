@@ -322,3 +322,27 @@ sa1.otherReason.reason.checkYourAnswersLabel = What is your reason for registeri
 sa1.otherReason.date.checkYourAnswersLabel = When did the reason start?
 sa1.otherReason.reason.change.hidden = What is your reason for registering for Self Assessment?
 sa1.otherReason.date.change.hidden = When did the reason start?
+
+sa1.highIncomeChildBenefitDate.title = High Income Child Benefit Charge
+sa1.highIncomeChildBenefitDate.heading = High Income Child Benefit Charge
+sa1.highIncomeChildBenefitDate.subHeading = What is start date of your High Income Child Benefit Charge?
+sa1.highIncomeChildBenefitDate.hint = For example, 19 3 2022
+sa1.highIncomeChildBenefitDate.checkYourAnswersLabel = High Income Child Benefit Charge
+sa1.highIncomeChildBenefitDate.date.error.required.two = Date must include a {0} and a {1}
+sa1.highIncomeChildBenefitDate.date.error.required = Enter the start date of your High Income Child Benefit Charge
+sa1.highIncomeChildBenefitDate.date.error.requiredOne = Date must include a {0}
+sa1.highIncomeChildBenefitDate.date.error.invalid = Date must be a real date
+sa1.highIncomeChildBenefitDate.date.error.mustBeAfterMinimum = Date must be on or after {0}
+sa1.highIncomeChildBenefitDate.change.hidden = High Income Child Benefit Charge
+sa1.highIncomeChildBenefitDate.p1 = The start date of your High Income Child Benefit Charge will be the later of:
+sa1.highIncomeChildBenefitDate.p2 = The threshold is currently £60,000. For tax years 2023 to 2024 and earlier it was £50,000.
+sa1.highIncomeChildBenefitDate.p3 = A tax year runs from 6 April to 5 April the following year. For example, for the 2025 to 2026 tax year, enter 5 4 2026.
+sa1.highIncomeChildBenefitDate.b1.prefix = the last day of the tax year in which your income for
+ sa1.highIncomeChildBenefitDate.b1.suffix = went over the threshold
+sa1.highIncomeChildBenefitDate.b1.link = https://www.gov.uk/child-benefit-tax-calculator
+sa1.highIncomeChildBenefitDate.b1.linkText = Child Benefit purposes (opens in a new tab)
+sa1.highIncomeChildBenefitDate.b2 = the date your child benefit payments started
+
+
+
+
