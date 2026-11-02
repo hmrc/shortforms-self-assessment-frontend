@@ -40,7 +40,7 @@ class AuthActionISpec extends ISpecBase with MockitoSugar {
     .overrides(bind[AuthConnector] toInstance mockAuthConnector)
     .build()
 
-  private lazy val appConfig = app.injector.instanceOf[FrontendAppConfig]
+  private lazy val appConfig       = app.injector.instanceOf[FrontendAppConfig]
   private lazy val actionUnderTest = app.injector.instanceOf[IdentifierAction]
 
   object Harness {
