@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.MoveAddressFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.MoveAddressPage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
@@ -32,6 +33,7 @@ class MoveAddressController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: MoveAddressFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: MoveAddressView
 ) extends AppController
     with Logging {
@@ -40,7 +42,7 @@ class MoveAddressController @Inject() (
     SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(MoveAddressPage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -48,12 +50,12 @@ class MoveAddressController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           moveAddressDate =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(MoveAddressPage, moveAddressDate))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(navigator.nextPage(MoveAddressPage, mode, updatedAnswers))
         )
     }
 }

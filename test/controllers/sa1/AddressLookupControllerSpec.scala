@@ -75,10 +75,11 @@ class AddressLookupControllerSpec extends SpecBase {
           status(result) mustBe SEE_OTHER
           val destination =
             if (changing) routes.CheckYourAnswersController.onPageLoad(userAnswersId)
-            else routes.AddPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
+            else routes.MoveAddressController.onPageLoad(userAnswersId, NormalMode)
+
           redirectLocation(result).value mustBe destination.url
           verify(mockConnector).getAddress(eqTo("alf-id"))(any[HeaderCarrier])
-          val saved       = capturedAnswers()
+          val saved = capturedAnswers()
           saved.get(AddressPage).value mustBe confirmed
           saved.id mustBe userAnswersId
           saved.userId mustBe testUserId

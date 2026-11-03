@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.sa1
 
 import models.{CheckMode, UserAnswers}
-import pages.sa1.EnterNationalInsuranceNumberPage
+import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,18 +26,29 @@ import viewmodels.implicits.*
 
 object EnterNationalInsuranceNumberSummary {
 
-  def row(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(EnterNationalInsuranceNumberPage).map { answer =>
-      SummaryListRowViewModel(
-        key = "sa1.enterNationalInsuranceNumber.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(DoYouHaveANinoPage) match {
+      case Some(true) =>
+        val nino       = answers.get(EnterNationalInsuranceNumberPage)
+        val isProvided = nino.isDefined
+
+        Some(
+          SummaryListRowViewModel(
+            key = "sa1.enterNationalInsuranceNumber.checkYourAnswersLabel",
+            value = ValueViewModel(
+              HtmlFormat.escape(nino.getOrElse(messages("site.notProvided"))).toString
+            ),
+            actions = Seq(
+              ActionItemViewModel(
+                if (isProvided) "site.change" else "site.add",
+                controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(answers.id, CheckMode).url
+              ).withVisuallyHiddenText(
+                messages("sa1.enterNationalInsuranceNumber.change.hidden")
+              )
+            )
           )
-            .withVisuallyHiddenText(messages("sa1.enterNationalInsuranceNumber.change.hidden"))
         )
-      )
+
+      case _ => None
     }
 }

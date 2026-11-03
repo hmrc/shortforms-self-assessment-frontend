@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.NormalMode
+@import models.Mode
 @import models.sa1.PreviousName
 
 @this(
@@ -27,7 +27,7 @@
     govukInput: GovukInput
 )
 
-@(form: Form[PreviousName], journeyId: String)(implicit request: Request[?], messages: Messages)
+@(form: Form[PreviousName], journeyId: String, mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @dateErrorTarget = @{
     Seq("day", "month", "year")
@@ -39,7 +39,7 @@
      pageTitle = title(form, title = "sa1.enterPreviousLastName.title", serviceName = "service.sa1.name"),
      serviceName = Some(messages("service.sa1.name"))
 ) {
-    @formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode)) {
+    @formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId, mode)) {
         @if(form.hasErrors) {
            @govukErrorSummary(ErrorSummaryViewModel(form, Map("lastNameChangeDate" -> s"lastNameChangeDate.$dateErrorTarget")))
         }

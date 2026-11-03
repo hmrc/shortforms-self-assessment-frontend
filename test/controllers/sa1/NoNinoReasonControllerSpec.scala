@@ -19,7 +19,7 @@ package controllers.sa1
 import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.NoNinoReasonFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -35,6 +35,7 @@ import repositories.SessionRepository
 import views.html.sa1.NoNinoReasonView
 
 import scala.concurrent.Future
+import navigation.Navigator
 
 class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
 
@@ -58,7 +59,8 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         val captor: ArgumentCaptor[Form[String]] = ArgumentCaptor.forClass(classOf[Form[String]])
-        verify(mockView).apply(captor.capture(), eqTo(userAnswersId))(any[Request[?]], any[Messages])
+        verify(mockView)
+          .apply(captor.capture(), eqTo(userAnswersId), eqTo[Mode](NormalMode))(any[Request[?]], any[Messages])
 
         val populatedForm: Form[String] = captor.getValue
         populatedForm("value").value mustBe Some(noNinoReason)
@@ -79,6 +81,9 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
 
       "must save the submitted data and redirect when the form is valid" in new Setup {
         when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
+        when(
+          navigator.nextPage(eqTo(NoNinoReasonPage), eqTo(NormalMode), any[UserAnswers])
+        ).thenReturn(controllers.routes.IndexController.onPageLoad())
 
         val request: FakeRequest[AnyContentAsFormUrlEncoded] =
           FakeRequest(POST, "/").withFormUrlEncodedBody("value" -> noNinoReason)
@@ -86,13 +91,16 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
         val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          routes.NoNinoReasonController.onPageLoad(userAnswersId, NormalMode).url
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
 
         val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
 
         verify(sessionRepository).set(captor.capture())
         captor.getValue.get(NoNinoReasonPage) mustBe Some(noNinoReason)
+
+        val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(navigator).nextPage(eqTo(NoNinoReasonPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+        navigatorAnswersCaptor.getValue.get(NoNinoReasonPage) mustBe Some(noNinoReason)
       }
     }
   }
@@ -102,8 +110,10 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
   ) {
     protected val mockContent                = "NoNinoReasonView"
     protected val mockView: NoNinoReasonView = mock
+    protected val navigator: Navigator       = mock
 
-    when(mockView.apply(any[Form[String]], any[String])(any[Request[?]], any[Messages])).thenReturn(Html(mockContent))
+    when(mockView.apply(any[Form[String]], any[String], any[Mode])(any[Request[?]], any[Messages]))
+      .thenReturn(Html(mockContent))
 
     protected val sessionRepository: SessionRepository = mock
     private val formProvider                           = new NoNinoReasonFormProvider()
@@ -112,6 +122,7 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       formProvider,
       sessionRepository,
+      navigator,
       mockView
     )
   }

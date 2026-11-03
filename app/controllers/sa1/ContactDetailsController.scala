@@ -20,6 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.ContactDetailsFormProvider
 import models.Mode
 import models.sa1.ContactDetails
+import navigation.Navigator
 import pages.sa1.ContactDetailsPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
@@ -33,6 +34,7 @@ class ContactDetailsController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: ContactDetailsFormProvider,
+  navigator: Navigator,
   view: ContactDetailsView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -59,9 +61,7 @@ class ContactDetailsController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(ContactDetailsPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(
-              controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, mode)
-            ) // TODO - redirect to next page without navigator post new route is defined
+            } yield Redirect(navigator.nextPage(ContactDetailsPage, mode, updatedAnswers))
         )
     }
 }

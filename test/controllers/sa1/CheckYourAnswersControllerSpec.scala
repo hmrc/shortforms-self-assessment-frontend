@@ -39,22 +39,31 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
   "SA1 Check Your Answers Controller" - {
 
-    "must render the view with an empty summary list when nothing has been answered" in new Setup {
+    "must render the view with empty summary lists when nothing has been answered" in new Setup {
       private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe stubContent
-      capturedList().rows mustBe empty
+
+      private val (personalDetails, applicationDetails) = capturedSummaries()
+
+      personalDetails.rows mustBe empty
+      applicationDetails.rows mustBe empty
     }
 
     "must include the escaped full address with its ALF change link" in new SetupWithSavedAddress {
       private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
-      private val rows = capturedList().rows
+
+      private val (personalDetails, _) = capturedSummaries()
+      private val rows                 = personalDetails.rows
+
       rows must have size 1
+
       private val addressRow  = rows.head
       private val addressHtml = addressRow.value.content.asInstanceOf[HtmlContent].value.toString
+
       addressHtml must include("&lt;script&gt;")
       addressHtml must not include "<script>alert"
       addressHtml must include("A very long address line that is not truncated")
@@ -62,26 +71,43 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       addressHtml must include("AA1 1AA")
       addressHtml must include("United Kingdom")
       addressHtml must not include "998877665544"
+
       addressRow.actions.value.items.map(_.href) mustBe
         Seq(routes.AddressLookupController.change(userAnswersId).url)
     }
 
-    "must include the name row before the address row with its change link" in new SetupWithNameAndAddress {
+    "must include the name row before the address row with their change links" in new SetupWithNameAndAddress {
       private val result = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
-      private val rows = capturedList().rows
-      rows must have size 2
+
+      private val (personalDetails, _) = capturedSummaries()
+      private val rows                 = personalDetails.rows
+
+      rows must have size 3
+
       rows.head.actions.value.items.map(_.href) mustBe
         Seq(routes.NameController.onPageLoad(userAnswersId, CheckMode).url)
+
       rows(1).actions.value.items.map(_.href) mustBe
+        Seq(routes.NameController.onPageLoad(userAnswersId, CheckMode).url)
+
+      rows(2).actions.value.items.map(_.href) mustBe
         Seq(routes.AddressLookupController.change(userAnswersId).url)
+    }
+
+    "must redirect to Check Your Answers when submitted" in new Setup {
+      private val result = controller.onSubmit(userAnswersId)(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+
+      redirectLocation(result) mustBe
+        Some(routes.CheckYourAnswersController.onPageLoad(userAnswersId).url)
     }
   }
 
   trait Setup {
-    def userAnswers: UserAnswers = emptyUserAnswers
-
+    def userAnswers: UserAnswers           = emptyUserAnswers
     val confirmedAddress: ConfirmedAddress = ConfirmedAddress(
       AddressDetails(
         Seq("<script>alert('address')</script>", "A very long address line that is not truncated"),
@@ -95,17 +121,35 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     val stubContent: String            = "Check your answers view"
     val stubView: CheckYourAnswersView = mock(classOf[CheckYourAnswersView])
-    when(stubView.apply(any[SummaryList])(any[Request[?]], any[Messages])).thenReturn(Html(stubContent))
+
+    when(
+      stubView.apply(
+        any[String],
+        any[SummaryList],
+        any[SummaryList]
+      )(any[Request[?]], any[Messages])
+    ).thenReturn(Html(stubContent))
 
     val controller = new CheckYourAnswersController(
       new MockAppControllerComponents(userAnswers),
       stubView
     )
 
-    def capturedList(): SummaryList = {
-      val captor: ArgumentCaptor[SummaryList] = ArgumentCaptor.forClass(classOf[SummaryList])
-      verify(stubView).apply(captor.capture())(any[Request[?]], any[Messages])
-      captor.getValue
+    def capturedSummaries(): (SummaryList, SummaryList) = {
+      val personalDetailsCaptor = ArgumentCaptor.forClass(classOf[SummaryList])
+
+      val applicationDetailsCaptor = ArgumentCaptor.forClass(classOf[SummaryList])
+
+      verify(stubView).apply(
+        any[String],
+        personalDetailsCaptor.capture(),
+        applicationDetailsCaptor.capture()
+      )(any[Request[?]], any[Messages])
+
+      (
+        personalDetailsCaptor.getValue,
+        applicationDetailsCaptor.getValue
+      )
     }
   }
 

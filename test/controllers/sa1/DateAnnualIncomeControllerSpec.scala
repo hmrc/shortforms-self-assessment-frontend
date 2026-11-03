@@ -36,6 +36,8 @@ import views.html.sa1.DateAnnualIncomeView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
+import org.mockito.ArgumentMatchers.eq as eqTo
 
 class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
 
@@ -89,19 +91,25 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
 
   "save the date and redirect after a valid submission" in new Setup {
     when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    when(
+      navigator.nextPage(eqTo(DateAnnualIncomePage), eqTo(NormalMode), any[UserAnswers])
+    ).thenReturn(controllers.routes.IndexController.onPageLoad())
+
     val request: FakeRequest[AnyContentAsFormUrlEncoded] =
       FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
     val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(
-      controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(userAnswersId, NormalMode).url
-    )
+    redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
     val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
     verify(sessionRepository).set(captor.capture())
     captor.getValue.get(DateAnnualIncomePage) mustBe Some(validDate)
+
+    val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(navigator).nextPage(eqTo(DateAnnualIncomePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+    navigatorAnswersCaptor.getValue.get(DateAnnualIncomePage) mustBe Some(validDate)
   }
 
   private class Setup(
@@ -111,6 +119,7 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                          = "DateAnnualIncomeView"
     protected val sessionRepository: SessionRepository = mock
     private val formProvider                           = new DateAnnualIncomeFormProvider
+    protected val navigator: Navigator                 = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
@@ -119,6 +128,7 @@ class DateAnnualIncomeControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       formProvider,
+      navigator,
       mockView
     )
   }

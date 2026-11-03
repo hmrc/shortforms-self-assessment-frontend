@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateAnnualIncomeFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.DateAnnualIncomePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class DateAnnualIncomeController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateAnnualIncomeFormProvider,
+  navigator: Navigator,
   view: DateAnnualIncomeView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -52,7 +54,7 @@ class DateAnnualIncomeController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateAnnualIncomePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(journeyId, mode))
+          } yield Redirect(navigator.nextPage(DateAnnualIncomePage, mode, updatedAnswers))
       )
   }
 }

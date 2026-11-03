@@ -24,6 +24,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import play.api.test.Helpers.stubMessages
 import views.html.sa1.DateOfBirthView
+import models.NormalMode
 
 import java.time.LocalDate
 
@@ -39,7 +40,7 @@ class DateOfBirthViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerS
 
     "render the page title and heading" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.title() must include(msgs("sa1.dateOfBirth.title"))
       doc.select("h1").size() mustBe 1
@@ -48,7 +49,7 @@ class DateOfBirthViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerS
 
     "render the date hint and input fields" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select("#dateOfBirth-hint").text() mustBe
         msgs("sa1.dateOfBirth.hint")
@@ -67,7 +68,7 @@ class DateOfBirthViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerS
         )
       )
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(".govuk-error-summary").size() mustBe 1
       doc.select(".govuk-error-summary__title").text() mustBe
@@ -78,7 +79,7 @@ class DateOfBirthViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerS
       val date = LocalDate.of(1990, 5, 10)
       val form = formProvider()(msgs).fill(date)
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select("input[id='dateOfBirth.day']").attr("value") mustBe "10"
       doc.select("input[id='dateOfBirth.month']").attr("value") mustBe "5"
@@ -87,7 +88,7 @@ class DateOfBirthViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerS
 
     "render the Continue button and correct form action" in {
       val form        = formProvider()(msgs)
-      val doc         = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc         = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
       val formElement = doc.select("form")
 
       formElement.size() mustBe 1

@@ -42,7 +42,7 @@ class EnterPreviousLastNameViewSpec extends AnyWordSpec with Matchers with Guice
     "must display the correct content" in {
       val form = formProvider()(msgs)
 
-      val doc = Jsoup.parse(view(form, userAnswersId)(request, msgs).toString)
+      val doc = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).toString)
 
       doc.title() must include(msgs("sa1.enterPreviousLastName.title"))
 
@@ -70,7 +70,7 @@ class EnterPreviousLastNameViewSpec extends AnyWordSpec with Matchers with Guice
         )
       )
 
-      val doc = Jsoup.parse(view(form, userAnswersId)(request, msgs).toString)
+      val doc = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).toString)
 
       doc.select(".govuk-error-summary").size mustBe 1
       doc.select(".govuk-error-summary__title").text() mustBe msgs("error.summary.title")
@@ -84,7 +84,7 @@ class EnterPreviousLastNameViewSpec extends AnyWordSpec with Matchers with Guice
         )
       )
 
-      val doc = Jsoup.parse(view(form, userAnswersId)(request, msgs).toString)
+      val doc = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).toString)
 
       doc.select("#previousLastName").attr("value") mustBe "John Doe"
       doc.select("input[id='lastNameChangeDate.day']").attr("value") mustBe "10"

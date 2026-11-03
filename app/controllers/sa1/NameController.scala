@@ -18,7 +18,8 @@ package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NameFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
+import navigation.Navigator
 import pages.sa1.NamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class NameController @Inject() (
   sessionRepository: SessionRepository,
   formProvider: NameFormProvider,
   val controllerComponents: AppControllerComponents,
+  navigator: Navigator,
   view: NameView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -57,9 +59,7 @@ class NameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(
-              routes.NameController.onPageLoad(journeyId, NormalMode)
-            ) // TODO redirect to next page when implemented
+            } yield Redirect(navigator.nextPage(NamePage, mode, updatedAnswers))
         )
     }
 }

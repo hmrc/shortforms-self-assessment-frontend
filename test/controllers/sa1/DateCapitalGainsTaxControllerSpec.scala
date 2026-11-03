@@ -37,6 +37,7 @@ import views.html.sa1.DateCapitalGainsTaxView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
 
@@ -71,32 +72,35 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
     "onSubmit" - {
       "must redirect to the next page when valid data is submitted" in new Setup {
         when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
-
-        val request = FakeRequest()
+        when(
+          navigator.nextPage(eqTo(DateCapitalGainsTaxPage), eqTo(NormalMode), any[UserAnswers])
+        ).thenReturn(controllers.routes.IndexController.onPageLoad())
+        private val request = FakeRequest()
           .withFormUrlEncodedBody(
             "value.day"   -> validAnswer.getDayOfMonth.toString,
             "value.month" -> validAnswer.getMonthValue.toString,
             "value.year"  -> validAnswer.getYear.toString
           )
 
-        val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+        private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        // TODO: Redirect to next page
-        redirectLocation(result).value mustEqual controllers.sa1.routes.DateCapitalGainsTaxController
-          .onPageLoad(userAnswersId, NormalMode)
-          .url
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
 
         val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(captor.capture())
         captor.getValue.get(DateCapitalGainsTaxPage) mustBe Some(validAnswer)
+
+        val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(navigator).nextPage(eqTo(DateCapitalGainsTaxPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+        navigatorAnswersCaptor.getValue.get(DateCapitalGainsTaxPage) mustBe Some(validAnswer)
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in new Setup {
-        val request = FakeRequest()
+        private val request = FakeRequest()
           .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+        private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual BAD_REQUEST
       }
@@ -110,6 +114,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                              = "DateCapitalGainsTaxView"
     protected val mockSessionRepository: SessionRepository = mock
     private val formProvider                               = new DateCapitalGainsTaxFormProvider
+    protected val navigator: Navigator                     = mock
 
     when(mockView.apply(any[String], any[Form[LocalDate]], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
@@ -118,6 +123,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       mockSessionRepository,
       formProvider,
+      navigator,
       mockView
     )
   }

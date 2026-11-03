@@ -115,7 +115,8 @@ POST        /sa1/date-other-reason/:journeyId                                con
 GET         /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /sa1/date-other-reason/change/:journeyId                         controllers.sa1.OtherReasonController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET         /sa1/check-your-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
+GET         /sa1/check-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onPageLoad(journeyId: String)
+POST        /sa1/check-answers/:journeyId           controllers.sa1.CheckYourAnswersController.onSubmit(journeyId: String)
 
 GET         /sa1/date-capital-gains-tax/:journeyId                  controllers.sa1.DateCapitalGainsTaxController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/date-capital-gains-tax/:journeyId                  controllers.sa1.DateCapitalGainsTaxController.onSubmit(journeyId: String, mode: Mode = NormalMode)

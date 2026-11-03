@@ -19,9 +19,11 @@ package navigation
 import base.SpecBase
 import controllers.routes
 import models.*
-import models.sa1.WhyTaxReturn
+import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
-import pages.sa1.{AddPreviousLastNamePage, DoYouHaveANinoPage, WhyTaxReturnPage}
+import pages.sa1.*
+
+import java.time.LocalDate
 
 class NavigatorSpec extends SpecBase {
 
@@ -48,15 +50,11 @@ class NavigatorSpec extends SpecBase {
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
-        // TODO DTR-8691: Redirect to Enter DOB page
         "must go from add previous last name page to date of birth page when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(AddPreviousLastNamePage, false).success.value
-          navigator.nextPage(
-            AddPreviousLastNamePage,
-            NormalMode,
-            userAnswers
-          ) mustBe controllers.sa1.routes.AddPreviousLastNameController
-            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+
+          navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe
+            controllers.sa1.routes.DateOfBirthController.onPageLoad(userAnswersId, NormalMode)
         }
 
         "must go from add previous last name page to Index when answer is empty" in {
@@ -67,15 +65,11 @@ class NavigatorSpec extends SpecBase {
       }
 
       "when Do you have a Nino page" - {
-        // TODO DTR-8726: Redirect to Enter NI number page
         "must go from Do you have a Nino page to Enter Nino number page when answer is 'yes'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveANinoPage, true).success.value
-          navigator.nextPage(
-            DoYouHaveANinoPage,
-            NormalMode,
-            userAnswers
-          ) mustBe controllers.sa1.routes.DoYouHaveANinoController
-            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+
+          navigator.nextPage(DoYouHaveANinoPage, NormalMode, userAnswers) mustBe
+            controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(userAnswersId, NormalMode)
         }
 
         "must go from Do you have a Nino page to Enter reason(s) for no Nino number page when answer is 'no'" in {
@@ -88,73 +82,273 @@ class NavigatorSpec extends SpecBase {
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
-        "must go from add previous last name page to Index when answer is empty" in {
+        "must go from DoYouHaveANinoPage to Index when answer is empty" in {
           val userAnswers = emptyUserAnswers
           navigator.nextPage(DoYouHaveANinoPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
         }
       }
 
       "when Why tax return page" - {
-        // TODO: Redirect to the first date input page for the selected reason(s)
-        "must go from Why tax return page to the first date input page when reasons are selected" in {
+        "must go to the first selected reason date page" in {
           val userAnswers = emptyUserAnswers
-            .set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.CompanyDirector, WhyTaxReturn.Other))
+            .set(WhyTaxReturnPage, Set(WhyTaxReturn.CompanyDirector, WhyTaxReturn.Other))
+            .success
+            .value
+
+          navigator.nextPage(WhyTaxReturnPage, NormalMode, userAnswers) mustBe
+            controllers.sa1.routes.DateUntaxedIncomeDirectorController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        "must go to Index page when no reasons are selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(WhyTaxReturnPage, Set.empty[WhyTaxReturn])
+            .success
+            .value
+
+          navigator.nextPage(WhyTaxReturnPage, NormalMode, userAnswers) mustBe
+            routes.IndexController.onPageLoad()
+        }
+      }
+
+      "when completing reason date pages" - {
+
+        "must go to Check Your Answers after completing the last selected reason" in {
+          val userAnswers = emptyUserAnswers
+            .set(WhyTaxReturnPage, Set(WhyTaxReturn.CompanyDirector))
+            .success
+            .value
+            .set(DateUntaxedIncomeDirectorPage, LocalDate.of(2026, 1, 1))
             .success
             .value
 
           navigator.nextPage(
-            WhyTaxReturnPage,
+            DateUntaxedIncomeDirectorPage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.sa1.routes.WhyTaxReturnController
-            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
-        }
-
-        "must go from Why tax return page to Index when answer is empty" in {
-          navigator.nextPage(WhyTaxReturnPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController
-            .onPageLoad()
-        }
-
-        "must go from Why tax return page to Index when no reasons are selected" in {
-          val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, Set.empty[WhyTaxReturn]).success.value
-
-          navigator.nextPage(WhyTaxReturnPage, NormalMode, userAnswers) mustBe routes.IndexController
-            .onPageLoad()
+          ) mustBe controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
         }
       }
     }
 
     "in Check mode" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "when AddPreviousLastNamePage" - {
 
-        case object UnknownPage extends Page
-        navigator.nextPage(
-          UnknownPage,
-          CheckMode,
-          emptyUserAnswers
-        ) mustBe controllers.sa1.routes.CheckYourAnswersController
-          .onPageLoad(journeyId = userAnswersId)
+        "must go to EnterPreviousLastName when yes is selected and previous last name is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(AddPreviousLastNamePage, true)
+            .success
+            .value
+
+          navigator.nextPage(AddPreviousLastNamePage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(userAnswersId, CheckMode)
+        }
+
+        "must go to Check Your Answers when yes is selected and previous last name already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(AddPreviousLastNamePage, true)
+            .success
+            .value
+            .set(PreviousLastNamePage, PreviousName("Smith", LocalDate.of(2000, 1, 1)))
+            .success
+            .value
+
+          navigator.nextPage(AddPreviousLastNamePage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must go to Check Your Answers when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(AddPreviousLastNamePage, false)
+            .success
+            .value
+
+          navigator.nextPage(AddPreviousLastNamePage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(AddPreviousLastNamePage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
+        }
       }
 
-      // TODO DTR-8743: Redirect to Check your answers page
-      "must go from any sa1 page to checkYourAnswers" in {
-        navigator.nextPage(
-          AddPreviousLastNamePage,
-          CheckMode,
-          emptyUserAnswers
-        ) mustBe controllers.sa1.routes.AddPreviousLastNameController
-          .onPageLoad(journeyId = userAnswersId, mode = CheckMode)
-        navigator.nextPage(
-          DoYouHaveANinoPage,
-          CheckMode,
-          emptyUserAnswers
-        ) mustBe controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
-        navigator.nextPage(
-          WhyTaxReturnPage,
-          CheckMode,
-          emptyUserAnswers
-        ) mustBe controllers.sa1.routes.WhyTaxReturnController.onPageLoad(journeyId = userAnswersId, mode = CheckMode)
+      "when DoYouHaveANinoPage" - {
+
+        "must go to Enter NINO when yes is selected and NINO is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveANinoPage, true)
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveANinoPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(userAnswersId, CheckMode)
+        }
+
+        "must go to Check Your Answers when yes is selected and NINO already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveANinoPage, true)
+            .success
+            .value
+            .set(EnterNationalInsuranceNumberPage, "QQ123456C")
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveANinoPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must go to No NINO Reason when no is selected and reason is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveANinoPage, false)
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveANinoPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.NoNinoReasonController.onPageLoad(userAnswersId, CheckMode)
+        }
+
+        "must go to Check Your Answers when no is selected and No NINO Reason already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveANinoPage, false)
+            .success
+            .value
+            .set(NoNinoReasonPage, "No Nino")
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveANinoPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(DoYouHaveANinoPage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
+        }
+      }
+
+      "when WhyTaxReturnPage" - {
+
+        "must go to the first unanswered selected reason" in {
+          val userAnswers = emptyUserAnswers
+            .set(
+              WhyTaxReturnPage,
+              Set(
+                WhyTaxReturn.CompanyDirector,
+                WhyTaxReturn.UkPropertyIncome,
+                WhyTaxReturn.ForeignIncome
+              )
+            )
+            .success
+            .value
+            .set(DateUntaxedIncomeDirectorPage, LocalDate.of(2026, 1, 1))
+            .success
+            .value
+
+          navigator.nextPage(WhyTaxReturnPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.DateLandPropertyController.onPageLoad(userAnswersId, CheckMode)
+        }
+
+        "must go to Check Your Answers when all selected reasons already have answers" in {
+          val userAnswers = emptyUserAnswers
+            .set(
+              WhyTaxReturnPage,
+              Set(WhyTaxReturn.CompanyDirector)
+            )
+            .success
+            .value
+            .set(DateUntaxedIncomeDirectorPage, LocalDate.of(2026, 1, 1))
+            .success
+            .value
+
+          navigator.nextPage(WhyTaxReturnPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must go to Check Your Answers when no reasons are selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(WhyTaxReturnPage, Set.empty[WhyTaxReturn])
+            .success
+            .value
+
+          navigator.nextPage(WhyTaxReturnPage, CheckMode, userAnswers) mustBe
+            controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+      }
+
+      "when completing newly selected reason date pages in CheckMode" - {
+
+        "must navigate through all unanswered reasons before returning to Check Your Answers" in {
+
+          val userAnswers = emptyUserAnswers
+            .set(
+              WhyTaxReturnPage,
+              Set(
+                WhyTaxReturn.CompanyDirector,
+                WhyTaxReturn.UkPropertyIncome,
+                WhyTaxReturn.ForeignIncome
+              )
+            )
+            .success
+            .value
+            .set(DateUntaxedIncomeDirectorPage, LocalDate.of(2026, 1, 1))
+            .success
+            .value
+
+          navigator.nextPage(
+            WhyTaxReturnPage,
+            CheckMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.DateLandPropertyController.onPageLoad(userAnswersId, CheckMode)
+
+          val updatedAnswers = userAnswers
+            .set(DateLandPropertyPage, LocalDate.of(2026, 2, 1))
+            .success
+            .value
+
+          navigator.nextPage(
+            DateLandPropertyPage,
+            CheckMode,
+            updatedAnswers
+          ) mustBe controllers.sa1.routes.TaxableForeignIncomeDateController.onPageLoad(userAnswersId, CheckMode)
+
+          val completedAnswers = updatedAnswers
+            .set(TaxableForeignIncomeDatePage, LocalDate.of(2026, 3, 1))
+            .success
+            .value
+
+          navigator.nextPage(
+            TaxableForeignIncomeDatePage,
+            CheckMode,
+            completedAnswers
+          ) mustBe controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
+        }
+
+        "must navigate to the next unanswered reason after completing Trust date" in {
+          val userAnswers = emptyUserAnswers
+            .set(
+              WhyTaxReturnPage,
+              Set(WhyTaxReturn.TrustIncome, WhyTaxReturn.IncomeThresholds)
+            )
+            .success
+            .value
+            .set(TrustSettlementDatePage, LocalDate.of(2026, 1, 1))
+            .success
+            .value
+
+          navigator.nextPage(
+            TrustSettlementDatePage,
+            CheckMode,
+            userAnswers
+          ) mustBe controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(userAnswersId, CheckMode)
+        }
+      }
+
+      "must go from an unknown page to Check Your Answers" in {
+        case object UnknownPage extends Page
+
+        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe
+          controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
       }
     }
   }

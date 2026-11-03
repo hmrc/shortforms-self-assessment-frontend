@@ -17,6 +17,7 @@
 package views.sa1
 
 import forms.sa1.NoNinoReasonFormProvider
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -40,7 +41,7 @@ class NoNinoReasonViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPer
 
     "render the page title and heading" in {
       val form = formProvider()
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.title() must include(msgs("sa1.noNinoReason.title"))
       doc.select("h1").size() mustBe 1
@@ -49,7 +50,7 @@ class NoNinoReasonViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPer
 
     "render the hint and character count textarea" in {
       val form = formProvider()
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(s"#$fieldId-hint").text() mustBe
         msgs("sa1.noNinoReason.hint")
@@ -66,7 +67,7 @@ class NoNinoReasonViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPer
         Map("value" -> "")
       )
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(".govuk-error-summary").size() mustBe 1
       doc.select(".govuk-error-summary__title").text() mustBe
@@ -78,7 +79,7 @@ class NoNinoReasonViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPer
         Map("value" -> "")
       )
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(".govuk-error-message").size() mustBe 1
       doc.select(".govuk-error-message").text() must include(
@@ -89,14 +90,14 @@ class NoNinoReasonViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPer
     "render the reason when the form is populated" in {
       val form = formProvider().fill(reason)
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(s"textarea#$fieldId").text() mustBe reason
     }
 
     "render the Continue button and correct form action" in {
       val form        = formProvider()
-      val doc         = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc         = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
       val formElement = doc.select("form")
 
       formElement.size() mustBe 1

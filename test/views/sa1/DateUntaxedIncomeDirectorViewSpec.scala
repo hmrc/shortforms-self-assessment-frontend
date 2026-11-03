@@ -17,6 +17,7 @@
 package views.sa1
 
 import forms.sa1.DateUntaxedIncomeDirectorFormProvider
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -39,7 +40,7 @@ class DateUntaxedIncomeDirectorViewSpec extends AnyWordSpec with Matchers with G
 
     "render the page title and heading" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.title() must include(msgs("sa1.dateUntaxedIncomeDirector.title"))
       doc.select("h1").text() mustBe msgs("sa1.dateUntaxedIncomeDirector.heading")
@@ -47,7 +48,7 @@ class DateUntaxedIncomeDirectorViewSpec extends AnyWordSpec with Matchers with G
 
     "render the date hint and input fields" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select("#dateUntaxedIncomeDirector-hint").text() mustBe
         msgs("sa1.dateUntaxedIncomeDirector.hint")
@@ -66,7 +67,7 @@ class DateUntaxedIncomeDirectorViewSpec extends AnyWordSpec with Matchers with G
         )
       )
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select(".govuk-error-summary").size() mustBe 1
       doc.select(".govuk-error-summary__title").text() mustBe
@@ -77,7 +78,7 @@ class DateUntaxedIncomeDirectorViewSpec extends AnyWordSpec with Matchers with G
       val date = LocalDate.of(1990, 5, 10)
       val form = formProvider()(msgs).fill(date)
 
-      val doc = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
 
       doc.select("input[id='dateUntaxedIncomeDirector.day']").attr("value") mustBe "10"
       doc.select("input[id='dateUntaxedIncomeDirector.month']").attr("value") mustBe "5"
@@ -86,7 +87,7 @@ class DateUntaxedIncomeDirectorViewSpec extends AnyWordSpec with Matchers with G
 
     "render the Continue button and correct form action" in {
       val form        = formProvider()(msgs)
-      val doc         = Jsoup.parse(view(form, journeyId)(request, msgs).body)
+      val doc         = Jsoup.parse(view(form, journeyId, NormalMode)(request, msgs).body)
       val formElement = doc.select("form")
 
       formElement.size() mustBe 1

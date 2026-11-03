@@ -26,22 +26,22 @@ import viewmodels.implicits.*
 
 object ContactDetailsSummary {
 
-  def rows(journeyId: String, answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+  def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow]                =
     answers.get(ContactDetailsPage).toSeq.flatMap { answer =>
       Seq(
         SummaryListRowViewModel(
-          key = "contactDetails.checkYourAnswersLabel",
+          key = "sa1.contactDetails.emailAddress.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(answer.emailAddress)),
-          actions = Seq(changeAction(journeyId, "sa1.ontactDetails.change.hidden"))
+          actions = Seq(changeAction(answers.id, "sa1.contactDetails.emailAddress.change.hidden"))
         ),
         SummaryListRowViewModel(
-          key = "contactDetails.checkYourAnswersLabel",
+          key = "sa1.contactDetails.phoneNumber.checkYourAnswersLabel",
           value = ValueViewModel(HtmlContent(answer.phoneNumber)),
-          actions = Seq(changeAction(journeyId, "sa1.ontactDetails.change.hidden"))
+          actions = Seq(changeAction(answers.id, "sa1.contactDetails.phoneNumber.change.hidden"))
         )
       )
     }
-  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages)     =
+  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages) =
     ActionItemViewModel(
       "site.change",
       controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, CheckMode).url

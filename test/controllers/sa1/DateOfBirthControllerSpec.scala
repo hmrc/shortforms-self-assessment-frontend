@@ -33,9 +33,10 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.DateOfBirthView
-
+import models.Mode
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
 
@@ -66,7 +67,8 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
-        verify(mockView).apply(captor.capture(), eqTo(userAnswersId))(any[Request[?]], any[Messages])
+        verify(mockView)
+          .apply(captor.capture(), eqTo(userAnswersId), eqTo[Mode](NormalMode))(any[Request[?]], any[Messages])
 
         val populatedForm = captor.getValue
 
@@ -94,21 +96,27 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
 
       "must save the date and redirect after a valid submission" in new Setup {
         when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
+        when(navigator.nextPage(eqTo(DateOfBirthPage), eqTo(NormalMode), any[UserAnswers]))
+          .thenReturn(controllers.routes.IndexController.onPageLoad())
 
         val request: FakeRequest[AnyContentAsFormUrlEncoded] =
           FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
-        val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+        private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          routes.DateOfBirthController.onPageLoad(userAnswersId, NormalMode).url
+          controllers.routes.IndexController.onPageLoad().url
 
         val captor: ArgumentCaptor[UserAnswers] =
           ArgumentCaptor.forClass(classOf[UserAnswers])
 
         verify(sessionRepository).set(captor.capture())
         captor.getValue.get(DateOfBirthPage) mustBe Some(validDate)
+
+        val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(navigator).nextPage(eqTo(DateOfBirthPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+        navigatorAnswersCaptor.getValue.get(DateOfBirthPage) mustBe Some(validDate)
       }
     }
   }
@@ -118,8 +126,9 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
   ) {
     protected val mockContent               = "DateOfBirthView"
     protected val mockView: DateOfBirthView = mock
+    protected val navigator: Navigator      = mock
 
-    when(mockView.apply(any[Form[LocalDate]], any[String])(any[Request[?]], any[Messages]))
+    when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
 
     protected val sessionRepository: SessionRepository = mock
@@ -129,6 +138,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       formProvider,
       sessionRepository,
+      navigator,
       mockView
     )
   }

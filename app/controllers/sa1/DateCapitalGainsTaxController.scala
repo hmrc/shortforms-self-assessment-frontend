@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateCapitalGainsTaxFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.DateCapitalGainsTaxPage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class DateCapitalGainsTaxController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateCapitalGainsTaxFormProvider,
+  navigator: Navigator,
   view: DateCapitalGainsTaxView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -59,7 +61,7 @@ class DateCapitalGainsTaxController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DateCapitalGainsTaxPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.sa1.routes.DateCapitalGainsTaxController.onPageLoad(journeyId, mode))
+          } yield Redirect(navigator.nextPage(DateCapitalGainsTaxPage, mode, updatedAnswers))
       )
   }
 }

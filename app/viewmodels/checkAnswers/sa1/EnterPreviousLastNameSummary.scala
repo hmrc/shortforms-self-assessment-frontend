@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.sa1
 
 import models.{CheckMode, UserAnswers}
-import pages.sa1.PreviousLastNamePage
+import pages.sa1.{AddPreviousLastNamePage, PreviousLastNamePage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
@@ -30,27 +30,55 @@ object EnterPreviousLastNameSummary {
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def rows(
-    journeyId: String,
     answers: UserAnswers
   )(implicit messages: Messages): Seq[SummaryListRow] =
-    answers.get(PreviousLastNamePage).toSeq.flatMap { answer =>
-      Seq(
-        SummaryListRowViewModel(
-          key = "sa1.enterPreviousLastName.checkYourAnswersLabel",
-          value = ValueViewModel(answer.previousLastName),
-          actions = Seq(changeAction(journeyId, "sa1.sa1AddPreviousLastName.change.hidden"))
-        ),
-        SummaryListRowViewModel(
-          key = "sa1.enterPreviousLastName.date.label",
-          value = ValueViewModel(answer.lastNameChangeDate.format(dateFormatter)),
-          actions = Seq(changeAction(journeyId, "sa1.enterPreviousLastName.date.change.hidden"))
+    answers.get(AddPreviousLastNamePage) match {
+      case Some(true) =>
+        val previousName = answers.get(PreviousLastNamePage)
+
+        Seq(
+          SummaryListRowViewModel(
+            key = "sa1.enterPreviousLastName.checkYourAnswersLabel",
+            value = ValueViewModel(
+              previousName.map(_.previousLastName).getOrElse(messages("site.notProvided"))
+            ),
+            actions = Seq(
+              action(
+                answers.id,
+                previousName.isDefined,
+                "sa1.enterPreviousLastName.change.hidden"
+              )
+            )
+          ),
+          SummaryListRowViewModel(
+            key = "sa1.enterPreviousLastName.date.checkYourAnswersLabel",
+            value = ValueViewModel(
+              previousName
+                .map(_.lastNameChangeDate.format(dateFormatter))
+                .getOrElse(messages("site.notProvided"))
+            ),
+            actions = Seq(
+              action(
+                answers.id,
+                previousName.isDefined,
+                "sa1.enterPreviousLastName.date.change.hidden"
+              )
+            )
+          )
         )
-      )
+
+      case _ => Seq.empty
     }
 
-  private def changeAction(journeyId: String, hiddenTextKey: String)(implicit messages: Messages) =
+  private def action(
+    journeyId: String,
+    isProvided: Boolean,
+    hiddenTextKey: String
+  )(implicit messages: Messages) =
     ActionItemViewModel(
-      "site.change",
-      controllers.sa1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, CheckMode).url
+      if (isProvided) "site.change" else "site.add",
+      controllers.sa1.routes.EnterPreviousLastNameController
+        .onPageLoad(journeyId, CheckMode)
+        .url
     ).withVisuallyHiddenText(messages(hiddenTextKey))
 }

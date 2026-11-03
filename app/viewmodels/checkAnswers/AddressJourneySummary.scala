@@ -27,18 +27,23 @@ import viewmodels.govuk.summarylist.*
 object AddressJourneySummary {
   def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(AddressPage).toSeq.map { confirmed =>
-      val addressHtml = HtmlFormat.fill(confirmed.address.displayLines.zipWithIndex.flatMap { (line, index) =>
-        Seq(if (index == 0) HtmlFormat.empty else HtmlFormat.raw("<br>"), HtmlFormat.escape(line))
-      })
+
+      val addressHtml = HtmlFormat.fill(
+        confirmed.address.displayLines.map { line =>
+          HtmlFormat.raw(
+            s"<div>${HtmlFormat.escape(line).body}</div>"
+          )
+        }
+      )
+
       SummaryListRowViewModel(
-        KeyViewModel(Text(messages("sa1.address.label"))),
+        KeyViewModel(Text(messages("sa1.address.checkYourAnswersLabel"))),
         ValueViewModel(HtmlContent(addressHtml)),
         Seq(
           ActionItemViewModel(
             Text(messages("site.change")),
             controllers.sa1.routes.AddressLookupController.change(answers.id).url
-          )
-            .withVisuallyHiddenText(messages("sa1.address.label"))
+          ).withVisuallyHiddenText(messages("sa1.address.change.hidden"))
         )
       )
     }

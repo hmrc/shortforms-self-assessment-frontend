@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.UntaxedIncomeNotInPayeStartDateFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.UntaxedIncomeNotInPayeStartDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class UntaxedIncomeNotInPayeStartDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: UntaxedIncomeNotInPayeStartDateFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: UntaxedIncomeNotInPayeStartDateView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -59,8 +61,7 @@ class UntaxedIncomeNotInPayeStartDateController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UntaxedIncomeNotInPayeStartDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            // TODO: Redirect to next page
-          } yield Redirect(controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController.onPageLoad(journeyId, mode))
+          } yield Redirect(navigator.nextPage(UntaxedIncomeNotInPayeStartDatePage, mode, updatedAnswers))
       )
   }
 }

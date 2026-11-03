@@ -16,17 +16,33 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    formHelper: FormWithCSRF,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton
 )
 
-@(list: SummaryList)(implicit request: Request[_], messages: Messages)
+@(journeyId: String, personalDetailsSummary: SummaryList, applicationDetailsSummary: SummaryList)(implicit request: Request[?], messages: Messages)
 
 @layout(
  pageTitle = titleNoForm(title = messages("checkYourAnswers.title"), serviceName = messages("service.sa1.name")),
  serviceName = Some(messages("service.sa1.name"))
 ) {
+    @formHelper(action = controllers.sa1.routes.CheckYourAnswersController.onSubmit(journeyId)) {
+        <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
 
-    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
+        <h2 class="govuk-heading-m">
+            @messages("sa1.checkYourAnswers.personalDetails")
+        </h2>
 
-    @govukSummaryList(list)
+        @govukSummaryList(personalDetailsSummary)
+
+        <h2 class="govuk-heading-m">
+            @messages("sa1.checkYourAnswers.applicationDetails")
+        </h2>
+
+        @govukSummaryList(applicationDetailsSummary)
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
 }

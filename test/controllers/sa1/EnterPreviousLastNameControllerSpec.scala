@@ -34,9 +34,10 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.EnterPreviousLastNameView
-
+import models.Mode
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
   private val journeyId       = "test-journey-id"
@@ -54,15 +55,16 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
     protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
     protected val sessionRepository: SessionRepository = mock
     protected val view: EnterPreviousLastNameView      = mock
-
-    protected lazy val controllerUnderTest = new EnterPreviousLastNameController(
+    protected val navigator: Navigator                 = mock
+    protected lazy val controllerUnderTest             = new EnterPreviousLastNameController(
       new MockAppControllerComponents(userAnswers),
       new PreviousNameFormProvider(),
       sessionRepository,
+      navigator,
       view
     )
 
-    when(view.apply(any[Form[PreviousName]], any[String])(any[Request[?]], any[Messages]))
+    when(view.apply(any[Form[PreviousName]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockViewContent))
   }
 
@@ -83,7 +85,7 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustBe OK
       private val captor = ArgumentCaptor.forClass(classOf[Form[PreviousName]])
-      verify(view).apply(captor.capture(), eqTo(journeyId))(any[Request[?]], any[Messages])
+      verify(view).apply(captor.capture(), eqTo(journeyId), any[Mode])(any[Request[?]], any[Messages])
 
       val populatedForm: Form[PreviousName] = captor.getValue
       populatedForm("previousLastName").value mustBe Some("John Doe")
@@ -108,6 +110,8 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
+      when(navigator.nextPage(eqTo(PreviousLastNamePage), eqTo(NormalMode), any[UserAnswers]))
+        .thenReturn(routes.DateOfBirthController.onPageLoad(journeyId, NormalMode))
 
       private val request = FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
 
@@ -119,6 +123,10 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
       private val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
       captor.getValue.get(PreviousLastNamePage) mustBe Some(previousName)
+
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator).nextPage(eqTo(PreviousLastNamePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(PreviousLastNamePage) mustBe Some(previousName)
     }
   }
 }
