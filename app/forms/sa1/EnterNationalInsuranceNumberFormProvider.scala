@@ -28,7 +28,11 @@ class EnterNationalInsuranceNumberFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("sa1.enterNationalInsuranceNumber.error.required")
-        .verifying(maxLengthNino(maxLength, "sa1.enterNationalInsuranceNumber.error.length"))
-        .verifying(regexpNinO(RegexFormat, "sa1.enterNationalInsuranceNumber.error.invalid"))
+        .verifying(
+          firstError(
+            maxLengthNino(maxLength, "sa1.enterNationalInsuranceNumber.error.length"),
+            regexpNinO(RegexFormat, "sa1.enterNationalInsuranceNumber.error.invalid")
+          )
+        )
     )
 }
