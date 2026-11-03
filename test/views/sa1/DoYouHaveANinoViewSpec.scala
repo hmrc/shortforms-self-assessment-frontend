@@ -17,6 +17,7 @@
 package views.sa1
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.sa1.DoYouHaveANinoFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
@@ -24,10 +25,9 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import views.html.sa1.DoYouHaveANinoView
 
-import scala.jdk.CollectionConverters.*
-
 class DoYouHaveANinoViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
+  private val appConfig                  = app.injector.instanceOf[FrontendAppConfig]
   private val doYouHaveANinoFormProvider = new DoYouHaveANinoFormProvider()
   private val form                       = doYouHaveANinoFormProvider()
 
@@ -88,16 +88,16 @@ class DoYouHaveANinoViewSpec extends SpecBase with GuiceOneAppPerSuite {
         "If none of these apply to you, you can still register for Self Assessment without one."
       )
 
-      val link = doc
-        .select("a")
-        .asScala
-        .find(_.text() == msgs("sa1.doYouHaveANino.p2.linkText"))
-        .value
+      val findNinoLink = doc.select(
+        s"""a[href="${appConfig.findYourNinoUrl}"]"""
+      )
 
-      link.text() mustEqual msgs("sa1.doYouHaveANino.p2.linkText")
-      link.attr("target") mustBe "_blank"
-      link.attr("rel") must include("noopener")
-      link.attr("rel") must include("noreferrer")
+      findNinoLink.size() mustBe 1
+      findNinoLink.text() mustBe
+        msgs("sa1.doYouHaveANino.p2.linkText")
+      findNinoLink.attr("target") mustBe "_blank"
+      findNinoLink.attr("rel") must include("noopener")
+      findNinoLink.attr("rel") must include("noreferrer")
     }
 
     "must render yes and no radio buttons" in {

@@ -34,7 +34,10 @@
     .getOrElse("day")
 }
 
-@layout(pageTitle = title(form, messages("sa1.highIncomeChildBenefitDate.title"))) {
+@layout(
+    pageTitle = title(form, title = "sa1.highIncomeChildBenefitDate.title", serviceName = "service.sa1.name"),
+    serviceName = Some(messages("service.sa1.name"))
+) {
 
     @formHelper(action = controllers.sa1.routes.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 

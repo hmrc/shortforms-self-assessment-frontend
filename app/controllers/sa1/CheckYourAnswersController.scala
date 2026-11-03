@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent}
 import viewmodels.checkAnswers.AddressJourneySummary
 import viewmodels.checkAnswers.sa1.NameSummary
 import viewmodels.govuk.summarylist.*
-import views.html.CheckYourAnswersView
+import views.html.sa1.CheckYourAnswersView
 
 class CheckYourAnswersController @Inject() (
   val controllerComponents: AppControllerComponents,

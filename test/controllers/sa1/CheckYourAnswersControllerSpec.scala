@@ -33,7 +33,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import views.html.CheckYourAnswersView
+import views.html.sa1.CheckYourAnswersView
 
 class CheckYourAnswersControllerSpec extends SpecBase {
 

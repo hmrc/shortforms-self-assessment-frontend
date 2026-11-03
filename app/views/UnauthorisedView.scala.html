@@ -21,7 +21,8 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("unauthorised.title")),
+    pageTitle = titleNoForm(title = "unauthorised.title", serviceName = "service.name"),
+    serviceName = Some(messages("service.name")),
     timeout   = false
 ) {
 

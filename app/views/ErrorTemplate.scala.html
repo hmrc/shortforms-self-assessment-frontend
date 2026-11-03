@@ -20,7 +20,10 @@
 
 @(pageTitle: String, heading: String, message: String)(implicit rh: RequestHeader, messages: Messages)
 
-@layout(pageTitle = titleNoForm(pageTitle)) {
+@layout(
+ pageTitle = titleNoForm(title = pageTitle, serviceName = "service.name"),
+ serviceName = Some(messages("service.name"))
+) {
     <h1 class="govuk-heading-xl">@messages(heading)</h1>
 
     <p class="govuk-body">@messages(message)</p>

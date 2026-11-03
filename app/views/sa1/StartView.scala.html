@@ -28,8 +28,9 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("sa1.start.title")),
-showBackLink = false
+    pageTitle    = titleNoForm(title = "sa1.start.title", serviceName = "service.sa1.name"),
+    serviceName = Some(messages("service.sa1.name")),
+    showBackLink = false
 ) {
     <span class="govuk-caption-l">@messages("site.sa.caption")</span>
     <h1 class="govuk-heading-xl">@messages("sa1.start.title")</h1>

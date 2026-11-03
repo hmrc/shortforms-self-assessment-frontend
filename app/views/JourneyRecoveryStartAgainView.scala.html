@@ -21,7 +21,10 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("journeyRecovery.startAgain.title"))) {
+@layout(
+    pageTitle = titleNoForm(title = "journeyRecovery.startAgain.title", serviceName = "service.name"),
+    serviceName = Some(messages("service.name"))
+) {
 
     <h1 class="govuk-heading-xl">@messages("journeyRecovery.startAgain.heading")</h1>
 

@@ -24,7 +24,10 @@
 
 @(journeyId: String, form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("sa1.dateCapitalGainsTax.title"))) {
+@layout(
+    pageTitle = title(form, title = "sa1.dateCapitalGainsTax.title", serviceName = "service.sa1.name"),
+    serviceName = Some(messages("service.sa1.name"))
+) {
 
     @formHelper(action = controllers.sa1.routes.DateCapitalGainsTaxController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 

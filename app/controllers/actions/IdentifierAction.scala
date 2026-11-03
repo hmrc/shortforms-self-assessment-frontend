@@ -70,6 +70,12 @@ class AuthenticatedIdentifierAction @Inject() (
           case (AffinityGroup.Agent, true, _) =>
             block(new IdentifierRequest(request, internalId, None))
 
+          case (AffinityGroup.Agent, false, _) =>
+            logger.info(
+              "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Enrolments of Agent"
+            )
+            throw InsufficientEnrolments("The agent has no valid enrolments")
+
           case (AffinityGroup.Individual, _, cl) if cl >= config.requiredConfidenceLevel =>
             block(new IdentifierRequest(request, internalId, nino))
 
@@ -108,6 +114,9 @@ class AuthenticatedIdentifierAction @Inject() (
       )
 
       Redirect(config.identityVerificationFrontend, queryParams)
+
+    case _: InsufficientEnrolments =>
+      Redirect(routes.FormNotAvailableAgentsController.onPageLoad())
 
     case _ =>
       Redirect(routes.UnauthorisedController.onPageLoad())
