@@ -21,7 +21,8 @@
 @()(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("index.title")),
+    pageTitle    = titleNoForm(title = "index.title", serviceName = "service.name"),
+    serviceName = Some(messages("service.name")),
     showBackLink = false
 ) {
 

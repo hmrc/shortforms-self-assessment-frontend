@@ -29,7 +29,8 @@
 @(form: Form[Name], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle   = title(form, "sa1.name.title"),
+    pageTitle   = title(form, title = "sa1.name.title", serviceName = "service.sa1.name"),
+    serviceName = Some(messages("service.sa1.name")),
     backLinkUrl = Some(controllers.sa1.routes.StartController.onPageLoad().url)
 ) {
 

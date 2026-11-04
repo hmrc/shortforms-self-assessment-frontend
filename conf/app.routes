@@ -126,3 +126,5 @@ GET        /sa1/date-high-income-child-benefit/:journeyId                       
 POST       /sa1/date-high-income-child-benefit/:journeyId                               controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = NormalMode)
 GET        /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = CheckMode)
 POST       /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = CheckMode)
+
+GET         /form-not-available                       controllers.FormNotAvailableAgentsController.onPageLoad()

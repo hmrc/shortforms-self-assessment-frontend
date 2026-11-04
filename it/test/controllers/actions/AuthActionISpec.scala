@@ -75,13 +75,13 @@ class AuthActionISpec extends ISpecBase with MockitoSugar {
 
     "the user doesn't have sufficient enrolments" - {
 
-      "must redirect the user to the unauthorised page" in {
+      "must redirect the user to the form not available page (ERR-AGENT)" in {
         when(mockAuthConnector.authorise(any, any)(any, any)) thenReturn Future.failed(new InsufficientEnrolments)
 
         val result = Harness.onPageLoad()(FakeRequest())
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
+        redirectLocation(result).value mustBe routes.FormNotAvailableAgentsController.onPageLoad().url
       }
     }
 

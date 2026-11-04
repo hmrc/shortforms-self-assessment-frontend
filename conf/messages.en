@@ -1,4 +1,7 @@
-service.name = Registering for Self Assessment
+service.name              = Self Assessment Forms
+service.sa1.name          = Registering for Self Assessment
+service.cwf1st.name       = Registering for Self-employment
+service.ceaseTrading.name = Stopping Self-employment
 
 site.back = Back
 site.remove = Remove
@@ -61,6 +64,23 @@ idVerification.technicalIssue.message = This is a technical issue with Identity 
 idVerification.otherIssue.title   = Identity Verification Other Issue"
 idVerification.otherIssue.heading = IV Other Issue"
 idVerification.otherIssue.message = This is an issue with Identity Verification
+
+formNotAvailableAgents.title = Form not available
+formNotAvailableAgents.heading = Form not available
+formNotAvailableAgents.p1 = You do not have sufficient service enrolments to access this form.
+formNotAvailableAgents.subHeading1 = What you will need to do
+formNotAvailableAgents.p2 = The best way to continue to access the Online Tax Registration Service is to <a href="{0}" class="govuk-link">{1}</a>
+formNotAvailableAgents.p2.linkText = enrol for an Agent Services Account.
+formNotAvailableAgents.p3 = Alternatively, you could enrol as an agent for:
+formNotAvailableAgents.b1 = Self Assessment
+formNotAvailableAgents.b2 = Value Added Tax (you will also need to be VAT registered yourself)
+formNotAvailableAgents.b3 = Corporation Tax
+formNotAvailableAgents.b4 = Machine Gaming Duty
+formNotAvailableAgents.p4 = You can <a href="{0}" class="govuk-link">{1}</a> when you use a service for the first time.
+formNotAvailableAgents.p4.linkText = create an enrolment
+formNotAvailableAgents.subHeading2 = Get help
+formNotAvailableAgents.p5 = For technical problems, contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>
+formNotAvailableAgents.p5.linkText = HMRC Online Services Helpdesk (opens in a new tab)
 
 sa1.start.title = Register for Self Assessment
 sa1.start.heading = Register for Self Assessment

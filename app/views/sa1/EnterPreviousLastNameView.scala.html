@@ -36,7 +36,8 @@
 }
 
 @layout(
-     pageTitle = title(form, "sa1.enterPreviousLastName.title")
+     pageTitle = title(form, title = "sa1.enterPreviousLastName.title", serviceName = "service.sa1.name"),
+     serviceName = Some(messages("service.sa1.name"))
 ) {
     @formHelper(action = controllers.sa1.routes.EnterPreviousLastNameController.onSubmit(journeyId, NormalMode)) {
         @if(form.hasErrors) {
