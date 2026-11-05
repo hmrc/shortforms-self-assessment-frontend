@@ -128,6 +128,15 @@ sa1.name.lastName.error.invalid = Your last name must only include letters, apos
 sa1.name.checkYourAnswersLabel = Name
 sa1.name.change.hidden = name
 
+sa1.declaration.title = Declaration
+sa1.declaration.heading = Declaration
+sa1.declaration.statement = I confirm that the information I have given is correct and complete to the best of my knowledge. I will tell HMRC straight away if my circumstances change in a way that affects the answers I have given.
+sa1.declaration.name = Full name of person completing this form
+sa1.declaration.name.error.length = Your name must be 100 characters or less
+sa1.declaration.confirmAndSubmit = Confirm and submit
+sa1.declaration.confirmAndSubmit.hidden = your Self Assessment registration
+sa1.declaration.back.hidden = to check your answers
+
 sa1.enterPreviousLastName.title = Your previous last name
 sa1.enterPreviousLastName.heading = Your previous last name
 sa1.enterPreviousLastName.label = What was your previous last name?
