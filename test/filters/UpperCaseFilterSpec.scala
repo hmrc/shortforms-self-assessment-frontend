@@ -25,12 +25,12 @@ import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
-class HttpFilterSpec extends SpecBase with GuiceOneAppPerSuite {
+class UpperCaseFilterSpec extends SpecBase with GuiceOneAppPerSuite {
 
-  val filter: HttpFilter =
-    app.injector.instanceOf[HttpFilter]
+  val filter: UpperCaseFilter =
+    app.injector.instanceOf[UpperCaseFilter]
 
-  "HttpFilter" - {
+  "UpperCaseFilter" - {
     "must allow lowercase paths through" in {
       val request = FakeRequest(GET, "/self-assessment-forms/sa1/name/b24ab280-a19f-44da-ade9-33fc81bf0e3d")
 

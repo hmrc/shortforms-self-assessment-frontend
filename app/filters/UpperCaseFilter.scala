@@ -22,7 +22,7 @@ import play.api.mvc.*
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
+class UpperCaseFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
   def apply(nextFilter: RequestHeader => Future[Result])(requestHeader: RequestHeader): Future[Result] = {
 
     val lowerPath = requestHeader.path.toLowerCase
