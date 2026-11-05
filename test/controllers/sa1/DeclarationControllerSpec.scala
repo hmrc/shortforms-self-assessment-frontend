@@ -67,6 +67,17 @@ class DeclarationControllerSpec extends SpecBase {
       verify(sessionRepository).set(savedAnswers.capture())
       savedAnswers.getValue.get(DeclarationPage) mustBe Some("Jane Doe")
     }
+
+    "must accept an empty name because the declaration name is optional" in new Setup {
+      val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> ""))
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe routes.DeclarationController.onPageLoad(userAnswersId).url
+
+      val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(savedAnswers.capture())
+      savedAnswers.getValue.get(DeclarationPage) mustBe Some("")
+    }
   }
 
   private class Setup {

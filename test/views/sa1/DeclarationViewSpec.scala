@@ -35,11 +35,12 @@ class DeclarationViewSpec extends SpecBase with GuiceOneAppPerSuite {
       val doc = Jsoup.parse(view(form, userAnswersId)(FakeRequest(), msgs).body)
 
       doc.title() mustBe
-        s"${msgs("sa1.declaration.title")} - ${msgs("service.name")} - ${msgs("site.govuk")}"
+        s"${msgs("sa1.declaration.title")} - ${msgs("service.sa1.name")} - ${msgs("site.govuk")}"
       doc.select("h1").text() mustBe msgs("sa1.declaration.heading")
       doc.select("p.govuk-body").text() mustBe msgs("sa1.declaration.statement")
       doc.select("label[for=value]").text() mustBe msgs("sa1.declaration.name")
       doc.select("input#value").hasAttr("maxlength") mustBe false
+      doc.select("input#value").attr("autocomplete") mustBe "off"
       doc.select("input#value").hasClass("govuk-input--width-30") mustBe true
       doc.select("button").text() must include(msgs("sa1.declaration.confirmAndSubmit"))
       doc.select("button .govuk-visually-hidden").text() mustBe
