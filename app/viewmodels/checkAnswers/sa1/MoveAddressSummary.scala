@@ -29,10 +29,7 @@ object MoveAddressSummary {
 
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
-  def rows(
-    journeyId: String,
-    answers: UserAnswers
-  )(implicit messages: Messages): Seq[SummaryListRow] =
+  def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(MoveAddressPage).toSeq.flatMap { answer =>
       Seq(
         SummaryListRowViewModel(
@@ -41,7 +38,7 @@ object MoveAddressSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.sa1.routes.MoveAddressController.onPageLoad(journeyId, CheckMode).url
+              controllers.sa1.routes.MoveAddressController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.moveAddress.change.hidden"))
           )
         )

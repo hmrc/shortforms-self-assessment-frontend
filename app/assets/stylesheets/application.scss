@@ -9,3 +9,7 @@
 .js-enabled .js-visible {
   display: inline-block !important;
 }
+
+.application-details .govuk-summary-list > :nth-child(odd)  {
+    border-bottom: 0 none;
+}

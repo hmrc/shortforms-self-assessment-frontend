@@ -36,11 +36,13 @@
 
         @govukSummaryList(personalDetailsSummary)
 
-        <h2 class="govuk-heading-m">
-            @messages("sa1.checkYourAnswers.applicationDetails")
-        </h2>
+        <section class="application-details">
+            <h2 class="govuk-heading-m">
+                @messages("sa1.checkYourAnswers.applicationDetails")
+            </h2>
+            @govukSummaryList(applicationDetailsSummary)
+        </section>
 
-        @govukSummaryList(applicationDetailsSummary)
         @govukButton(
             ButtonViewModel(messages("site.continue"))
         )

@@ -33,6 +33,7 @@
 @(pageTitle: String, serviceName: Option[String] = None, showBackLink: Boolean = true, backLinkUrl: Option[String] = None, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
+    <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/application.css")'>
 
     @if(timeout) {
         @hmrcTimeoutDialog(TimeoutDialog(

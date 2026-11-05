@@ -30,7 +30,7 @@ class MoveAddressSummarySpec extends SpecBase {
   "MoveAddressSummary" - {
 
     "must return no rows when the move address answer does not exist" in {
-      val result = MoveAddressSummary.rows(userAnswersId, emptyUserAnswers)(msgs)
+      val result = MoveAddressSummary.rows(emptyUserAnswers)(msgs)
 
       result mustBe empty
     }
@@ -43,7 +43,7 @@ class MoveAddressSummarySpec extends SpecBase {
         .success
         .value
 
-      val result = MoveAddressSummary.rows(userAnswersId, userAnswers)(msgs)
+      val result = MoveAddressSummary.rows(userAnswers)(msgs)
 
       result                                                        must have size 1
       result.head.value.content.toString                            must include("10 May 1990")

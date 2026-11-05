@@ -62,6 +62,7 @@ class CheckYourAnswersController @Inject() (
       EnterPreviousLastNameSummary.rows(ua) ++
       DateOfBirthSummary.rows(ua) ++
       AddressJourneySummary.rows(ua) ++
+      MoveAddressSummary.rows(ua) ++
       ContactDetailsSummary.rows(ua) ++
       DoYouHaveANinoSummary.row(ua) ++
       EnterNationalInsuranceNumberSummary.row(ua) ++
