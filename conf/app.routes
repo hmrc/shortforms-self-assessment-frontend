@@ -18,8 +18,6 @@ GET         /unauthorised                                controllers.Unauthorise
 
 GET         /form-not-available                          controllers.FormNotAvailableAgentsController.onPageLoad()
 
-GET         /page-not-found                              controllers.PageNotFoundController.onPageLoad()
-
 GET         /identity-verification/upliftFailure         controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
 
 GET         /sa1                                         controllers.IndexController.startSA1()

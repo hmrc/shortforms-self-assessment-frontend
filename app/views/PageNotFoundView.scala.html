@@ -26,7 +26,7 @@
         appConfig: FrontendAppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit rh: RequestHeader, messages: Messages)
 
 @layout(
   pageTitle = titleNoForm(messages("pageNotFound.title"), serviceName = "service.name"),
