@@ -16,6 +16,8 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
+GET         /form-not-available                          controllers.FormNotAvailableAgentsController.onPageLoad()
+
 GET         /identity-verification/upliftFailure         controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
 
 GET         /sa1                                         controllers.IndexController.startSA1()
@@ -130,5 +132,3 @@ POST       /sa1/date-high-income-child-benefit/change/:journeyId                
 
 GET         /sa1/declaration/:journeyId                   controllers.sa1.DeclarationController.onPageLoad(journeyId: String)
 POST        /sa1/declaration/:journeyId                   controllers.sa1.DeclarationController.onSubmit(journeyId: String)
-
-GET         /form-not-available                       controllers.FormNotAvailableAgentsController.onPageLoad()
