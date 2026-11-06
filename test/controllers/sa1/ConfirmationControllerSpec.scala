@@ -48,7 +48,7 @@ class ConfirmationControllerSpec extends SpecBase {
 
   private class Setup {
     protected val view: ConfirmationView = mock(classOf[ConfirmationView])
-    private val expectedReferenceNumber = "AB123CD"
+    private val expectedReferenceNumber  = "AB123CD"
     when(view.apply(any[String], eqTo(expectedReferenceNumber))(any[Request[?]], any[Messages]))
       .thenReturn(Html("Confirmation view"))
 
