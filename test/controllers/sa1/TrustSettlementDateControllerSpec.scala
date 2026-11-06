@@ -21,7 +21,7 @@ import controllers.MockAppControllerComponents
 import forms.sa1.TrustSettlementDateFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.TrustSettlementDatePage
@@ -36,6 +36,8 @@ import views.html.sa1.TrustSettlementDateView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
+import models.Mode
 
 class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
 
@@ -63,7 +65,7 @@ class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustBe OK
 
         val captor: ArgumentCaptor[Form[LocalDate]] = ArgumentCaptor.forClass(classOf[Form[LocalDate]])
-        verify(mockView).apply(captor.capture(), any[String])(any[Request[?]], any[Messages])
+        verify(mockView).apply(captor.capture(), any[String], any[Mode])(any[Request[?]], any[Messages])
 
         val populatedForm: Form[LocalDate] = captor.getValue
 
@@ -89,19 +91,26 @@ class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
 
   "save the date and redirect after a valid submission" in new Setup {
     when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    when(navigator.nextPage(eqTo(TrustSettlementDatePage), eqTo(NormalMode), any[UserAnswers]))
+      .thenReturn(controllers.routes.IndexController.onPageLoad())
+
     val request: FakeRequest[AnyContentAsFormUrlEncoded] =
       FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
-    val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+    private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
     status(result) mustBe SEE_OTHER
     redirectLocation(result) mustBe Some(
-      controllers.sa1.routes.TrustSettlementDateController.onPageLoad(userAnswersId, NormalMode).url
+      controllers.routes.IndexController.onPageLoad().url
     )
 
     val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
     verify(sessionRepository).set(captor.capture())
     captor.getValue.get(TrustSettlementDatePage) mustBe Some(validDate)
+
+    val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(navigator).nextPage(eqTo(TrustSettlementDatePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+    navigatorAnswersCaptor.getValue.get(TrustSettlementDatePage) mustBe Some(validDate)
   }
 
   private class Setup(
@@ -111,14 +120,16 @@ class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                          = "TrustSettlementDateView"
     protected val sessionRepository: SessionRepository = mock
     private val formProvider                           = new TrustSettlementDateFormProvider()
+    protected val navigator: Navigator                 = mock
 
-    when(mockView.apply(any[Form[LocalDate]], any[String])(any[Request[?]], any[Messages]))
+    when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
 
     protected lazy val controllerUnderTest = new TrustSettlementDateController(
       new MockAppControllerComponents(userAnswers),
       formProvider,
       sessionRepository,
+      navigator,
       mockView
     )
   }

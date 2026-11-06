@@ -30,7 +30,6 @@ object DateOfBirthSummary {
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def rows(
-    journeyId: String,
     answers: UserAnswers
   )(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(DateOfBirthPage).toSeq.flatMap { answer =>
@@ -41,7 +40,7 @@ object DateOfBirthSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.sa1.routes.DateOfBirthController.onPageLoad(journeyId, CheckMode).url
+              controllers.sa1.routes.DateOfBirthController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.dateOfBirth.change.hidden"))
           )
         )

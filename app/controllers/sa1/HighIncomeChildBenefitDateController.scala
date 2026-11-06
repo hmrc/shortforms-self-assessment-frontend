@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.HighIncomeChildBenefitDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class HighIncomeChildBenefitDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: HighIncomeChildBenefitDateFormProvider,
+  navigator: Navigator,
   view: HighIncomeChildBenefitDateView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -51,7 +53,7 @@ class HighIncomeChildBenefitDateController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(HighIncomeChildBenefitDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode))
+          } yield Redirect(navigator.nextPage(HighIncomeChildBenefitDatePage, mode, updatedAnswers))
       )
   }
 }

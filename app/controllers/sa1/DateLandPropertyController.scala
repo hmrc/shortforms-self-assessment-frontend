@@ -19,10 +19,12 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateLandPropertyFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.DateLandPropertyPage
 import play.api.mvc.*
 import repositories.SessionRepository
 import views.html.sa1.DateLandPropertyView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -30,6 +32,7 @@ class DateLandPropertyController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateLandPropertyFormProvider,
+  navigator: Navigator,
   view: DateLandPropertyView
 ) extends AppController {
 
@@ -50,8 +53,7 @@ class DateLandPropertyController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DateLandPropertyPage, date))
               _              <- sessionRepository.set(updatedAnswers)
-              // TODO: Redirect to first recieve taxable foreign income page once ready
-            } yield Redirect(controllers.sa1.routes.DateLandPropertyController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(navigator.nextPage(DateLandPropertyPage, mode, updatedAnswers))
         )
     }
 }

@@ -37,6 +37,7 @@ import repositories.SessionRepository
 import views.html.sa1.EnterNationalInsuranceNumberView
 
 import scala.concurrent.{ExecutionContext, Future}
+import navigation.Navigator
 
 class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
 
@@ -57,6 +58,7 @@ class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matche
   private trait Setup {
     protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
 
+    protected val navigator: Navigator                   = mock[Navigator]
     protected val sessionRepository: SessionRepository   = mock[SessionRepository]
     protected val view: EnterNationalInsuranceNumberView = mock[EnterNationalInsuranceNumberView]
 
@@ -64,6 +66,7 @@ class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matche
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       new EnterNationalInsuranceNumberFormProvider(),
+      navigator,
       view
     )
     when(view.apply(any[Form[_]], any[String], any)(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
@@ -108,20 +111,25 @@ class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matche
 
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-
+      when(
+        navigator.nextPage(eqTo(EnterNationalInsuranceNumberPage), eqTo(NormalMode), any[UserAnswers])
+      ).thenReturn(controllers.routes.IndexController.onPageLoad())
       val request: FakeRequest[AnyContentAsFormUrlEncoded] =
         FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
 
       val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(
-        controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, NormalMode).url
-      ) // TODO: Change URL post define right reroute URL
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
       val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
       captor.getValue.get(EnterNationalInsuranceNumberPage) mustBe Some(enterNationalInsuranceNumber)
+
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator)
+        .nextPage(eqTo(EnterNationalInsuranceNumberPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(EnterNationalInsuranceNumberPage) mustBe Some(enterNationalInsuranceNumber)
     }
   }
 }

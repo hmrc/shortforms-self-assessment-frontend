@@ -20,6 +20,7 @@ import controllers.MockAppControllerComponents
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
+import navigation.Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.TryValues
@@ -29,7 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.ContactDetailsPage
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
+import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -46,28 +47,28 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
   private val journeyId = "test-journey-id"
   private val userId    = "test-user-id"
 
-  def onwardRoute = Call("GET", "/foo")
+  private val contactDetails =
+    ContactDetails(emailAddress = "name@example.com", phoneNumber = "+44 1111111111")
 
-  private val contactDetails    = ContactDetails(emailAddress = "name@example.com", phoneNumber = "+44 1111111111")
-  private val validFormData     = Map(
+  private val validFormData = Map(
     "emailAddress" -> "name@example.com",
     "phoneNumber"  -> "+44 1111111111"
   )
-  protected val mockViewContent = "ContactDetailsView"
 
-  lazy val contactDetailsRoute: String =
-    controllers.sa1.routes.ContactDetailsController.onPageLoad("test-journey-id", NormalMode).url
+  protected val mockViewContent = "ContactDetailsView"
 
   private trait Setup {
     protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
 
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: ContactDetailsView             = mock[ContactDetailsView]
+    protected val navigator: Navigator                 = mock[Navigator]
 
     protected lazy val controllerUnderTest = new ContactDetailsController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       new ContactDetailsFormProvider(),
+      navigator,
       view
     )
     when(view.apply(any[Form[ContactDetails]], any[String], any)(any[Request[?]], any[Messages]))
@@ -115,6 +116,9 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
 
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+      when(
+        navigator.nextPage(eqTo(ContactDetailsPage), eqTo(NormalMode), any[UserAnswers])
+      ).thenReturn(controllers.routes.IndexController.onPageLoad())
 
       val request: FakeRequest[AnyContentAsFormUrlEncoded] =
         FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
@@ -122,13 +126,16 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
       val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(
-        controllers.sa1.routes.ContactDetailsController.onPageLoad(journeyId, NormalMode).url
-      ) // TODO: Change URL post define right reroute URL
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
       val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
+
       captor.getValue.get(ContactDetailsPage) mustBe Some(contactDetails)
+
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator).nextPage(eqTo(ContactDetailsPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(ContactDetailsPage) mustBe Some(contactDetails)
     }
   }
 }

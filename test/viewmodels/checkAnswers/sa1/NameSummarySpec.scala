@@ -19,25 +19,64 @@ package viewmodels.checkAnswers.sa1
 import base.SpecBase
 import models.CheckMode
 import models.sa1.Name
+import pages.sa1.NamePage
+import play.api.test.Helpers.stubMessages
 
 class NameSummarySpec extends SpecBase {
-  private val msgs = play.api.test.Helpers.stubMessages()
 
-  private def row(name: Name) = NameSummary.row(name, userAnswersId, CheckMode)(msgs)
+  private val msgs = stubMessages()
 
-  "NameSummary.row" - {
+  "NameSummary" - {
 
-    "must show the full name as the value" in {
-      row(Name("Jane", "Doe")).value.content.asHtml.toString must include("Jane Doe")
+    "must return no rows when name answers do not exist" in {
+      val result = NameSummary.rows(emptyUserAnswers)(msgs)
+
+      result mustBe empty
     }
 
-    "must link to the name page in check mode for the journey" in {
-      row(Name("Jane", "Doe")).actions.value.items.head.href mustEqual
-        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, CheckMode).url
+    "must return two rows when name answers exist" in {
+      val name = Name("Jane", "Doe")
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(NamePage, name)
+          .success
+          .value
+
+      val result = NameSummary.rows(userAnswers)(msgs)
+
+      result must have size 2
+
+      result.head.value.content.asHtml.toString must include("Jane")
+      result(1).value.content.asHtml.toString   must include("Doe")
+
+      val expectedUrl =
+        controllers.sa1.routes.NameController
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
+
+      result.head.actions.value.items.head.href mustBe expectedUrl
+      result(1).actions.value.items.head.href mustBe expectedUrl
+
+      result.head.actions.value.items.head.visuallyHiddenText.value mustBe
+        msgs("sa1.name.firstName.change.hidden")
+
+      result(1).actions.value.items.head.visuallyHiddenText.value mustBe
+        msgs("sa1.name.lastName.change.hidden")
     }
 
     "must escape the name so it is displayed as text" in {
-      row(Name("<b>Jane</b>", "Doe")).value.content.asHtml.toString must include("&lt;b&gt;Jane&lt;/b&gt;")
+      val name = Name("<b>Jane</b>", "Doe")
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(NamePage, name)
+          .success
+          .value
+
+      val result = NameSummary.rows(userAnswers)(msgs)
+
+      result.head.value.content.asHtml.toString must include("&lt;b&gt;Jane&lt;/b&gt;")
     }
   }
 }

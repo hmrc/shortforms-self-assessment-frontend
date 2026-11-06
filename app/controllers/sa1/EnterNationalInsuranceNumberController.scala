@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.EnterNationalInsuranceNumberPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
@@ -32,6 +33,7 @@ class EnterNationalInsuranceNumberController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: EnterNationalInsuranceNumberFormProvider,
+  navigator: Navigator,
   view: EnterNationalInsuranceNumberView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -62,9 +64,9 @@ class EnterNationalInsuranceNumberController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield request.nino match {
               case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
-                Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
+                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
               case None                                                                                   =>
-                Redirect(controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(journeyId, mode))
+                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
               case _                                                                                      =>
                 BadRequest(
                   view(

@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.OtherReasonFormProvider
 import models.sa1.OtherReason
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -37,6 +37,7 @@ import views.html.sa1.OtherReasonView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class OtherReasonControllerSpec extends SpecBase with MockitoSugar {
 
@@ -70,7 +71,7 @@ class OtherReasonControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustBe OK
 
         val captor: ArgumentCaptor[Form[OtherReason]] = ArgumentCaptor.forClass(classOf[Form[OtherReason]])
-        verify(mockView).apply(captor.capture(), eqTo(userAnswersId))(any[Request[?]], any[Messages])
+        verify(mockView).apply(captor.capture(), eqTo(userAnswersId), any)(any[Request[?]], any[Messages])
         val populatedForm: Form[OtherReason]          = captor.getValue
 
         populatedForm("reason").value mustBe Some("test reason")
@@ -97,36 +98,45 @@ class OtherReasonControllerSpec extends SpecBase with MockitoSugar {
     "save the submitted data and redirect after a valid submission" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
+      val updatedAnswers = userAnswers.set(OtherReasonPage, otherReason).success.value
+
+      when(navigator.nextPage(OtherReasonPage, NormalMode, updatedAnswers))
+        .thenReturn(controllers.routes.IndexController.onPageLoad())
+
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
 
       val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(
-        controllers.sa1.routes.OtherReasonController.onPageLoad(userAnswersId, NormalMode).url
-      )
 
-      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+
+      val captor: ArgumentCaptor[UserAnswers] =
+        ArgumentCaptor.forClass(classOf[UserAnswers])
 
       verify(sessionRepository).set(captor.capture())
       captor.getValue.get(OtherReasonPage) mustBe Some(otherReason)
+
+      verify(navigator).nextPage(OtherReasonPage, NormalMode, updatedAnswers)
     }
   }
 
   private class Setup(
-    userAnswers: UserAnswers = emptyUserAnswers
+    protected val userAnswers: UserAnswers = emptyUserAnswers
   ) {
     protected val mockView: OtherReasonView            = mock
     protected val mockContent                          = "OtherReasonView"
     protected val sessionRepository: SessionRepository = mock
+    protected val navigator: Navigator                 = mock
+    private val formProvider                           = new OtherReasonFormProvider()
 
-    private val formProvider = new OtherReasonFormProvider()
-
-    when(mockView.apply(any[Form[OtherReason]], any[String])(any[Request[?]], any[Messages]))
+    when(mockView.apply(any[Form[OtherReason]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
     protected lazy val controllerUnderTest = new OtherReasonController(
       new MockAppControllerComponents(userAnswers),
       formProvider,
       sessionRepository,
+      navigator,
       mockView
     )
   }

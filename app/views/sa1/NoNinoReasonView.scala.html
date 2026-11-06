@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.NormalMode
+@import models.Mode
 @import viewmodels.LabelSize
 @import uk.gov.hmrc.govukfrontend.views.html.components.CharacterCount
 
@@ -26,14 +26,14 @@
     govukButton: GovukButton
 )
 
-@(form: Form[String], journeyId: String)(implicit request: Request[?], messages: Messages)
+@(form: Form[String], journeyId: String, mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @layout(
     pageTitle = title(form, title = "sa1.noNinoReason.title", serviceName = "service.sa1.name"),
     serviceName = Some(messages("service.sa1.name"))
 ) {
     @formHelper(
-        action = controllers.sa1.routes.NoNinoReasonController.onSubmit(journeyId, NormalMode)
+        action = controllers.sa1.routes.NoNinoReasonController.onSubmit(journeyId, mode)
     ) {
         @if(form.hasErrors) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

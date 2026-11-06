@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.PreviousNameFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.PreviousLastNamePage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class EnterPreviousLastNameController @Inject() (
   override val controllerComponents: AppControllerComponents,
   formProvider: PreviousNameFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: EnterPreviousLastNameView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -39,7 +41,7 @@ class EnterPreviousLastNameController @Inject() (
     SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -47,12 +49,12 @@ class EnterPreviousLastNameController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           answer =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
               saved          <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.sa1.routes.DateOfBirthController.onPageLoad(journeyId, mode))
+            } yield Redirect(navigator.nextPage(PreviousLastNamePage, mode, updatedAnswers))
         )
     }
 }

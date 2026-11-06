@@ -30,7 +30,7 @@ class ContactDetailsSummarySpec extends SpecBase {
 
     "must return no rows when contactDetails answers do not exist" in {
       val result =
-        ContactDetailsSummary.rows(userAnswersId, emptyUserAnswers)(msgs)
+        ContactDetailsSummary.rows(emptyUserAnswers)(msgs)
 
       result mustBe empty
     }
@@ -48,7 +48,7 @@ class ContactDetailsSummarySpec extends SpecBase {
           .value
 
       val result =
-        ContactDetailsSummary.rows(userAnswersId, userAnswers)(msgs)
+        ContactDetailsSummary.rows(userAnswers)(msgs)
 
       result must have size 2
 

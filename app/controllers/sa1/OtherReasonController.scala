@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.OtherReasonFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.OtherReasonPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class OtherReasonController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: OtherReasonFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: OtherReasonView
 ) extends AppController {
 
@@ -38,7 +40,7 @@ class OtherReasonController @Inject() (
     SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(OtherReasonPage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -46,12 +48,12 @@ class OtherReasonController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           answer =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(OtherReasonPage, answer))
               saved          <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.sa1.routes.OtherReasonController.onPageLoad(journeyId, mode))
+            } yield Redirect(navigator.nextPage(OtherReasonPage, mode, updatedAnswers))
         )
     }
 }

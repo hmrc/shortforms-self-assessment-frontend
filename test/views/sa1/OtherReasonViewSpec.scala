@@ -18,6 +18,7 @@ package views.sa1
 
 import base.SpecBase
 import forms.sa1.OtherReasonFormProvider
+import models.NormalMode
 import models.sa1.OtherReason
 import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -38,7 +39,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "render the page title and heading" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
 
       doc.title() must include(msgs("sa1.otherReason.title"))
       doc.select("h1").text() mustBe msgs("sa1.otherReason.heading")
@@ -46,7 +47,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "render the reason label and character count" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
 
       doc.select("label[for=reason]").text() mustBe msgs("sa1.otherReason.reason.label")
 
@@ -56,7 +57,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "render the date hint and input fields" in {
       val form = formProvider()(msgs)
-      val doc  = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
 
       doc.select("#reasonDate-hint").text() mustBe
         msgs("sa1.otherReason.date.hint")
@@ -76,7 +77,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
         )
       )
 
-      val doc = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
 
       doc.select(".govuk-error-summary").size() mustBe 1
       doc.select(".govuk-error-summary__title").text() mustBe msgs("error.summary.title")
@@ -89,7 +90,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
       )
 
       val form = formProvider()(msgs).fill(otherReason)
-      val doc  = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc  = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
 
       doc.select("#reason").text() mustBe "Test reason"
 
@@ -100,7 +101,7 @@ class OtherReasonViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "render the Continue button and correct form action" in {
       val form        = formProvider()(msgs)
-      val doc         = Jsoup.parse(view(form, userAnswersId)(request, msgs).body)
+      val doc         = Jsoup.parse(view(form, userAnswersId, NormalMode)(request, msgs).body)
       val formElement = doc.select("form")
 
       formElement.size() mustBe 1

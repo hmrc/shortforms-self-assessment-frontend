@@ -30,7 +30,7 @@ class DateOfBirthSummarySpec extends SpecBase {
   "DateOfBirthSummary" - {
 
     "must return no rows when the date of birth answer does not exist" in {
-      val result = DateOfBirthSummary.rows(userAnswersId, emptyUserAnswers)(msgs)
+      val result = DateOfBirthSummary.rows(emptyUserAnswers)(msgs)
 
       result mustBe empty
     }
@@ -43,7 +43,7 @@ class DateOfBirthSummarySpec extends SpecBase {
         .success
         .value
 
-      val result = DateOfBirthSummary.rows(userAnswersId, userAnswers)(msgs)
+      val result = DateOfBirthSummary.rows(userAnswers)(msgs)
 
       result                                                        must have size 1
       result.head.value.content.toString                            must include("10 May 1990")
@@ -52,7 +52,9 @@ class DateOfBirthSummarySpec extends SpecBase {
         .onPageLoad(userAnswersId, CheckMode)
         .url
       result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
-      result.head.actions.value.items.head.visuallyHiddenText.value must include(msgs("sa1.dateOfBirth.change.hidden"))
+      result.head.actions.value.items.head.visuallyHiddenText.value must include(
+        msgs("sa1.dateOfBirth.change.hidden")
+      )
     }
   }
 }

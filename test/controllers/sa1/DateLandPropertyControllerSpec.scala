@@ -36,6 +36,7 @@ import views.html.sa1.DateLandPropertyView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   private val journeyId       = "test-journey-id"
@@ -44,15 +45,17 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   private val mockViewContent = "test view"
 
   private class Setup {
-    protected def userAnswers: UserAnswers           = UserAnswers(journeyId, userId, JourneyType.SA1)
-    private val sessionRepository: SessionRepository = mock[SessionRepository]
-    protected val view: DateLandPropertyView         = mock[DateLandPropertyView]
+    protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
+    protected val sessionRepository: SessionRepository = mock[SessionRepository]
+    protected val view: DateLandPropertyView           = mock[DateLandPropertyView]
+    protected val navigator: Navigator                 = mock[Navigator]
 
     private val formProvider      = new DateLandPropertyFormProvider()
     protected lazy val controller = new DateLandPropertyController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       formProvider,
+      navigator,
       view
     )
 
@@ -96,6 +99,34 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe mockViewContent
+    }
+
+    "save the date and redirect to the next page when valid data is submitted" in new Setup {
+      when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+
+      when(
+        navigator.nextPage(eqTo(DateLandPropertyPage), eqTo(NormalMode), any[UserAnswers])
+      ).thenReturn(controllers.routes.IndexController.onPageLoad())
+
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, "/").withFormUrlEncodedBody(
+          "dateLandPropertyUk.day"   -> "19",
+          "dateLandPropertyUk.month" -> "3",
+          "dateLandPropertyUk.year"  -> "2022"
+        )
+
+      private val result = controller.onSubmit(journeyId, NormalMode)(request)
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+
+      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(captor.capture())
+      captor.getValue.get(DateLandPropertyPage) mustBe Some(date)
+
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator).nextPage(eqTo(DateLandPropertyPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(DateLandPropertyPage) mustBe Some(date)
     }
   }
 }

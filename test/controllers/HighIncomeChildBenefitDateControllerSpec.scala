@@ -22,7 +22,7 @@ import controllers.sa1.HighIncomeChildBenefitDateController
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.sa1.HighIncomeChildBenefitDatePage
@@ -36,6 +36,7 @@ import repositories.SessionRepository
 import views.html.sa1.HighIncomeChildBenefitDateView
 
 import scala.concurrent.Future
+import navigation.Navigator
 
 class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSugar {
 
@@ -89,19 +90,24 @@ class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSuga
 
   "save the date and redirect after a valid submission" in new Setup {
     when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    when(
+      navigator.nextPage(eqTo(HighIncomeChildBenefitDatePage), eqTo(NormalMode), any[UserAnswers])
+    ).thenReturn(controllers.routes.IndexController.onPageLoad())
     val request: FakeRequest[AnyContentAsFormUrlEncoded] =
       FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
     val result: Future[Result] = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
     status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(
-      controllers.sa1.routes.HighIncomeChildBenefitDateController.onPageLoad(userAnswersId, NormalMode).url
-    ) // TODO make change with wiring ticket
+    redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
     val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
     verify(sessionRepository).set(captor.capture())
     captor.getValue.get(HighIncomeChildBenefitDatePage) mustBe Some(validDate)
+
+    val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+    verify(navigator).nextPage(eqTo(HighIncomeChildBenefitDatePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+    navigatorAnswersCaptor.getValue.get(HighIncomeChildBenefitDatePage) mustBe Some(validDate)
   }
 
   private class Setup(
@@ -111,6 +117,7 @@ class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSuga
     protected val mockContent                              = "HighIncomeChildBenefitDateView"
     protected val sessionRepository: SessionRepository     = mock
     private val formProvider                               = new HighIncomeChildBenefitDateFormProvider
+    protected val navigator: Navigator                     = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
@@ -119,6 +126,7 @@ class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSuga
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       formProvider,
+      navigator,
       mockView
     )
   }

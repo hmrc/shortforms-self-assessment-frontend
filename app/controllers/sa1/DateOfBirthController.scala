@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateOfBirthFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.DateOfBirthPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class DateOfBirthController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: DateOfBirthFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: DateOfBirthView
 ) extends AppController {
 
@@ -39,7 +41,7 @@ class DateOfBirthController @Inject() (
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(DateOfBirthPage).fold(form)(form.fill)
 
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -47,14 +49,12 @@ class DateOfBirthController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           dateOfBirth =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, dateOfBirth))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield
-            // TODO: Redirect to Contact details page once ready
-            Redirect(controllers.sa1.routes.DateOfBirthController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(navigator.nextPage(DateOfBirthPage, mode, updatedAnswers))
         )
     }
 }

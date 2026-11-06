@@ -18,11 +18,11 @@ package controllers.sa1
 
 import com.google.inject.Inject
 import controllers.{AppController, AppControllerComponents}
-import models.CheckMode
-import pages.sa1.NamePage
+import models.UserAnswers
+import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent}
 import viewmodels.checkAnswers.AddressJourneySummary
-import viewmodels.checkAnswers.sa1.NameSummary
+import viewmodels.checkAnswers.sa1.*
 import viewmodels.govuk.summarylist.*
 import views.html.sa1.CheckYourAnswersView
 
@@ -33,9 +33,41 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(journeyId: String): Action[AnyContent] =
     SA1DataAction(journeyId) { implicit request =>
-      val nameRows = request.userAnswers.get(NamePage).map(NameSummary.row(_, journeyId, CheckMode)).toSeq
-      val rows     = nameRows ++ AddressJourneySummary.rows(request.userAnswers)
 
-      Ok(view(SummaryListViewModel(rows = rows)))
+      val ua = request.userAnswers
+
+      val personalDetailsSummary =
+        SummaryListViewModel(rows = personalDetailsRows(ua))
+
+      val applicationDetailsSummary =
+        SummaryListViewModel(rows = applicationDetailsRows(ua))
+
+      Ok(
+        view(
+          journeyId,
+          personalDetailsSummary,
+          applicationDetailsSummary
+        )
+      )
     }
+
+  def onSubmit(journeyId: String): Action[AnyContent] =
+    SA1DataAction(journeyId) { implicit request =>
+      Redirect(controllers.sa1.routes.CheckYourAnswersController.onPageLoad(journeyId))
+    }
+
+  private def personalDetailsRows(ua: UserAnswers)(implicit messages: Messages) =
+    NameSummary.rows(ua) ++
+      AddPreviousLastNameSummary.row(ua) ++
+      EnterPreviousLastNameSummary.rows(ua) ++
+      DateOfBirthSummary.rows(ua) ++
+      AddressJourneySummary.rows(ua) ++
+      MoveAddressSummary.rows(ua) ++
+      ContactDetailsSummary.rows(ua) ++
+      DoYouHaveANinoSummary.row(ua) ++
+      EnterNationalInsuranceNumberSummary.row(ua) ++
+      NoNinoReasonSummary.row(ua)
+
+  private def applicationDetailsRows(ua: UserAnswers)(implicit messages: Messages) =
+    WhyTaxReturnSummary.rows(ua)
 }

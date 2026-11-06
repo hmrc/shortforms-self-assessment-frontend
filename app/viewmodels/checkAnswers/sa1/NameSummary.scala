@@ -16,8 +16,9 @@
 
 package viewmodels.checkAnswers.sa1
 
-import models.Mode
-import models.sa1.Name
+import models.CheckMode
+import models.UserAnswers
+import pages.sa1.NamePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -25,13 +26,29 @@ import viewmodels.govuk.all.*
 
 object NameSummary {
 
-  def row(name: Name, journeyId: String, mode: Mode)(implicit messages: Messages): SummaryListRow =
-    SummaryListRowViewModel(
-      key = "sa1.name.checkYourAnswersLabel",
-      value = ValueViewModel(Text(s"${name.firstName} ${name.lastName}")),
-      actions = Seq(
-        ActionItemViewModel("site.change", controllers.sa1.routes.NameController.onPageLoad(journeyId, mode).url)
-          .withVisuallyHiddenText(messages("sa1.name.change.hidden"))
+  def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
+    answers.get(NamePage).toSeq.flatMap { name =>
+      Seq(
+        SummaryListRowViewModel(
+          key = "sa1.name.firstName.checkYourAnswersLabel",
+          value = ValueViewModel(Text(name.firstName)),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.sa1.routes.NameController.onPageLoad(answers.id, CheckMode).url
+            ).withVisuallyHiddenText(messages("sa1.name.firstName.change.hidden"))
+          )
+        ),
+        SummaryListRowViewModel(
+          key = "sa1.name.lastName.checkYourAnswersLabel",
+          value = ValueViewModel(Text(name.lastName)),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              controllers.sa1.routes.NameController.onPageLoad(answers.id, CheckMode).url
+            ).withVisuallyHiddenText(messages("sa1.name.lastName.change.hidden"))
+          )
+        )
       )
-    )
+    }
 }

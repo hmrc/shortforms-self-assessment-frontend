@@ -35,6 +35,7 @@ import repositories.SessionRepository
 import views.html.sa1.NameView
 
 import scala.concurrent.Future
+import navigation.Navigator
 
 class NameControllerSpec extends SpecBase {
 
@@ -72,13 +73,18 @@ class NameControllerSpec extends SpecBase {
     }
 
     "must save the name and redirect to the next page when valid data is submitted" in new Setup {
+      emptyUserAnswers.set(NamePage, Name("Jane", "Doe")).success.value
+
+      when(
+        navigator.nextPage(eqTo(NamePage), eqTo(NormalMode), any[UserAnswers])
+      ).thenReturn(controllers.routes.IndexController.onPageLoad())
+
       private val request = FakeRequest().withFormUrlEncodedBody(validData.toSeq*)
 
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
 
       private val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(mockSessionRepository).set(savedAnswers.capture())
@@ -86,14 +92,21 @@ class NameControllerSpec extends SpecBase {
     }
 
     "must save the name and redirect when valid data is submitted in check mode" in new Setup {
+      when(
+        navigator.nextPage(eqTo(NamePage), eqTo(CheckMode), any[UserAnswers])
+      ).thenReturn(controllers.routes.IndexController.onPageLoad())
+
       private val request = FakeRequest().withFormUrlEncodedBody(validData.toSeq*)
 
       private val result = controllerUnderTest.onSubmit(userAnswersId, CheckMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.sa1.routes.NameController.onPageLoad(userAnswersId, NormalMode).url
+      redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
       verify(mockSessionRepository).set(any[UserAnswers])
+
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator).nextPage(eqTo(NamePage), eqTo(CheckMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(NamePage) mustBe Some(Name("Jane", "Doe"))
     }
 
     "must return a Bad Request and show errors when invalid data is submitted" in new Setup {
@@ -109,8 +122,8 @@ class NameControllerSpec extends SpecBase {
   }
 
   trait Setup {
-    protected val givenUserAnswers: UserAnswers = emptyUserAnswers
-
+    protected val givenUserAnswers: UserAnswers  = emptyUserAnswers
+    protected val navigator: Navigator           = mock(classOf[Navigator])
     val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
@@ -123,6 +136,7 @@ class NameControllerSpec extends SpecBase {
       mockSessionRepository,
       new NameFormProvider(),
       new MockAppControllerComponents(givenUserAnswers),
+      navigator,
       stubView
     )
 

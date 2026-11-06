@@ -15,7 +15,7 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import models.NormalMode
+@import models.Mode
 @import models.sa1.OtherReason
 @import viewmodels.LabelSize
 @import uk.gov.hmrc.govukfrontend.views.html.components.CharacterCount
@@ -29,7 +29,7 @@
     govukCharacterCount: GovukCharacterCount
 )
 
-@(form: Form[OtherReason], journeyId: String)(implicit request: Request[?], messages: Messages)
+@(form: Form[OtherReason], journeyId: String, mode: Mode)(implicit request: Request[?], messages: Messages)
 
 @dateErrorTarget = @{
     Seq("day", "month", "year")
@@ -41,7 +41,7 @@
      pageTitle = title(form, title = "sa1.otherReason.title", serviceName = "service.sa1.name"),
      serviceName = Some(messages("service.sa1.name"))
 ) {
-    @formHelper(action = controllers.sa1.routes.OtherReasonController.onSubmit(journeyId, NormalMode)) {
+    @formHelper(action = controllers.sa1.routes.OtherReasonController.onSubmit(journeyId, mode)) {
         @if(form.hasErrors) {
            @govukErrorSummary(ErrorSummaryViewModel(form, Map("reasonDate" -> s"reasonDate.$dateErrorTarget")))
         }

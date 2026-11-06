@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.sa1
 
 import base.SpecBase
 import models.CheckMode
-import pages.sa1.EnterNationalInsuranceNumberPage
+import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
 import play.api.test.Helpers.stubMessages
 
 class EnterNationalInsuranceNumberSummarySpec extends SpecBase {
@@ -27,11 +27,11 @@ class EnterNationalInsuranceNumberSummarySpec extends SpecBase {
 
   "EnterNationalInsuranceNumberSummary" - {
 
-    "must return no rows when enterNationalInsuranceNumber answers do not exist" in {
+    "must return no row when the user does not have a NINO" in {
       val result =
-        EnterNationalInsuranceNumberSummary.row(userAnswersId, emptyUserAnswers)(msgs)
+        EnterNationalInsuranceNumberSummary.row(emptyUserAnswers)(msgs)
 
-      result mustBe empty
+      result mustBe None
     }
 
     "must return one row when enterNationalInsuranceNumber answers exist" in {
@@ -39,20 +39,40 @@ class EnterNationalInsuranceNumberSummarySpec extends SpecBase {
 
       val userAnswers =
         emptyUserAnswers
+          .set(DoYouHaveANinoPage, true)
+          .success
+          .value
           .set(EnterNationalInsuranceNumberPage, enterNationalInsuranceNumber)
           .success
           .value
 
       val result =
-        EnterNationalInsuranceNumberSummary.row(userAnswersId, userAnswers)(msgs)
-      result.head.value.content.toString must include(enterNationalInsuranceNumber)
+        EnterNationalInsuranceNumberSummary.row(userAnswers)(msgs)
+
+      result mustBe defined
+      result.value.value.content.toString must include(enterNationalInsuranceNumber)
 
       val expectedUrl =
         controllers.sa1.routes.EnterNationalInsuranceNumberController
           .onPageLoad(userAnswersId, CheckMode)
           .url
 
-      result.head.actions.value.items.head.href mustBe expectedUrl
+      result.value.actions.value.items.head.href mustBe expectedUrl
+    }
+
+    "must show not provided with an Add action when the user has a NINO but has not entered it" in {
+      val userAnswers =
+        emptyUserAnswers
+          .set(DoYouHaveANinoPage, true)
+          .success
+          .value
+
+      val result =
+        EnterNationalInsuranceNumberSummary.row(userAnswers)(msgs)
+
+      result mustBe defined
+      result.value.value.content.toString                    must include(msgs("site.notProvided"))
+      result.value.actions.value.items.head.content.toString must include(msgs("site.add"))
     }
   }
 }

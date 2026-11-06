@@ -19,10 +19,12 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.TaxableForeignIncomeDateFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.TaxableForeignIncomeDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
 import views.html.sa1.TaxableForeignIncomeDateView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,6 +32,7 @@ class TaxableForeignIncomeDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: TaxableForeignIncomeDateFormProvider,
+  navigator: Navigator,
   view: TaxableForeignIncomeDateView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -50,7 +53,7 @@ class TaxableForeignIncomeDateController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxableForeignIncomeDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.sa1.routes.TaxableForeignIncomeDateController.onPageLoad(journeyId, mode))
+          } yield Redirect(navigator.nextPage(TaxableForeignIncomeDatePage, mode, updatedAnswers))
       )
   }
 }

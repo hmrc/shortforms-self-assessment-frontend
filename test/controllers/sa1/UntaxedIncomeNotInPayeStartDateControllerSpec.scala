@@ -37,6 +37,7 @@ import views.html.sa1.UntaxedIncomeNotInPayeStartDateView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import navigation.Navigator
 
 class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with MockitoSugar {
 
@@ -76,7 +77,9 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
     "onSubmit" - {
       "must redirect to the next page when valid data is submitted" in new Setup {
         when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
-
+        when(
+          navigator.nextPage(eqTo(UntaxedIncomeNotInPayeStartDatePage), eqTo(NormalMode), any[UserAnswers])
+        ).thenReturn(controllers.routes.IndexController.onPageLoad())
         val request = FakeRequest(POST, untaxedIncomeNotInPayeStartDateRoute)
           .withFormUrlEncodedBody(
             "value.day"   -> validAnswer.getDayOfMonth.toString,
@@ -87,14 +90,16 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
         val result = untaxedIncomeNotInPayeStartDateController.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        // TODO: Redirect to next page
-        redirectLocation(result).value mustEqual controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController
-          .onPageLoad(userAnswersId, NormalMode)
-          .url
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
 
         val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(captor.capture())
         captor.getValue.get(UntaxedIncomeNotInPayeStartDatePage) mustBe Some(validAnswer)
+
+        val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(navigator)
+          .nextPage(eqTo(UntaxedIncomeNotInPayeStartDatePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+        navigatorAnswersCaptor.getValue.get(UntaxedIncomeNotInPayeStartDatePage) mustBe Some(validAnswer)
       }
 
       "must return a Bad Request and errors when invalid data is submitted" in new Setup {
@@ -112,6 +117,7 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
   ) {
     protected val mockView: UntaxedIncomeNotInPayeStartDateView = mock[UntaxedIncomeNotInPayeStartDateView]
     protected val mockContent                                   = "UntaxedIncomeNotInPayeStartDateView"
+    protected val navigator: Navigator                          = mock[Navigator]
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
@@ -127,6 +133,7 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
       new MockAppControllerComponents(userAnswers),
       formProvider,
       mockSessionRepository,
+      navigator,
       mockView
     )
   }

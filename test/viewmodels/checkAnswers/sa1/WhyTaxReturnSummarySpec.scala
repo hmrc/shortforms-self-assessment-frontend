@@ -18,11 +18,13 @@ package viewmodels.checkAnswers.sa1
 
 import base.SpecBase
 import models.CheckMode
-import models.sa1.WhyTaxReturn
-import pages.sa1.WhyTaxReturnPage
+import models.sa1.{OtherReason, WhyTaxReturn}
+import pages.sa1.{DateUntaxedIncomeDirectorPage, OtherReasonPage, WhyTaxReturnPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.{stubMessages, stubMessagesApi}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+
+import java.time.LocalDate
 
 class WhyTaxReturnSummarySpec extends SpecBase {
 
@@ -30,52 +32,131 @@ class WhyTaxReturnSummarySpec extends SpecBase {
 
   "WhyTaxReturnSummary" - {
 
-    "when the answer is present" - {
+    "must return no rows when the answer is not present" in {
+      val result = WhyTaxReturnSummary.rows(emptyUserAnswers)
 
-      "must return a SummaryListRow listing the selected reasons in display order with a change link" in {
-        val reasons: Set[WhyTaxReturn] =
-          Set(WhyTaxReturn.Other, WhyTaxReturn.CompanyDirector, WhyTaxReturn.CapitalGainsTax)
+      result mustBe empty
+    }
 
-        val userAnswers = emptyUserAnswers.set(WhyTaxReturnPage, reasons).success.value
+    "must return reason and date rows in display order with correct links" in {
+      val reasons: Set[WhyTaxReturn] =
+        Set(WhyTaxReturn.Other, WhyTaxReturn.CompanyDirector, WhyTaxReturn.CapitalGainsTax)
 
-        val row = WhyTaxReturnSummary.row(userAnswers).value
+      val otherReason = OtherReason(
+        "Additional income details",
+        LocalDate.of(2020, 5, 10)
+      )
 
-        row.key.content.asHtml.toString() mustEqual msgs("sa1.whyTaxReturn.checkYourAnswersLabel")
+      val userAnswers =
+        emptyUserAnswers
+          .set(WhyTaxReturnPage, reasons)
+          .success
+          .value
+          .set(OtherReasonPage, otherReason)
+          .success
+          .value
 
-        row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual Seq(
-          msgs("sa1.whyTaxReturn.companyDirector"),
-          msgs("sa1.whyTaxReturn.capitalGainsTax"),
-          msgs("sa1.whyTaxReturn.other")
-        ).mkString("<br>")
+      val result = WhyTaxReturnSummary.rows(userAnswers)
 
-        row.actions.get.items.size mustEqual 1
-        row.actions.get.items.head.href mustEqual controllers.sa1.routes.WhyTaxReturnController
-          .onPageLoad(userAnswersId, CheckMode)
-          .url
-        row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("sa1.whyTaxReturn.change.hidden")
-      }
+      result must have size 6
 
-      "must HTML-escape the reason text" in {
-        val escapingMsgs: Messages = stubMessages(
-          stubMessagesApi(Map("default" -> Map("sa1.whyTaxReturn.untaxedIncome" -> "<b>wasn''t</b> & \"quoted\"")))
-        )
+      result(0).value.content.asHtml.toString must include(msgs("sa1.whyTaxReturn.companyDirector"))
+      result(1).value.content.asHtml.toString must include(msgs("site.notProvided"))
 
-        val userAnswers =
-          emptyUserAnswers.set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome)).success.value
+      result(2).value.content.asHtml.toString must include(msgs("sa1.whyTaxReturn.capitalGainsTax"))
+      result(3).value.content.asHtml.toString must include(msgs("site.notProvided"))
 
-        val row = WhyTaxReturnSummary.row(userAnswers)(escapingMsgs).value
+      result(4).value.content.asHtml.toString must include("Additional income details")
+      result(5).value.content.asHtml.toString must include("10 May 2020")
 
-        row.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual
-          "&lt;b&gt;wasn&#x27;t&lt;/b&gt; &amp; &quot;quoted&quot;"
+      val reasonUrl =
+        controllers.sa1.routes.WhyTaxReturnController.onPageLoad(userAnswersId, CheckMode).url
+
+      result(0).actions.value.items.head.href mustBe reasonUrl
+      result(2).actions.value.items.head.href mustBe reasonUrl
+      result(4).actions.value.items.head.href mustBe reasonUrl
+
+      result(0).actions.value.items.head.content.asHtml.toString must include(msgs("site.change"))
+
+      val dateUrls = Seq(
+        controllers.sa1.routes.DateUntaxedIncomeDirectorController.onPageLoad(userAnswersId, CheckMode).url,
+        controllers.sa1.routes.DateCapitalGainsTaxController.onPageLoad(userAnswersId, CheckMode).url,
+        controllers.sa1.routes.OtherReasonController.onPageLoad(userAnswersId, CheckMode).url
+      )
+
+      Seq(1, 3, 5).zip(dateUrls).foreach { case (index, expectedUrl) =>
+        result(index).actions.value.items.head.href mustBe expectedUrl
+
+        val expectedAction =
+          if (index == 5) msgs("site.change") else msgs("site.add")
+
+        result(index).actions.value.items.head.content.asHtml.toString must include(expectedAction)
       }
     }
 
-    "when the answer is not present" - {
+    "must display the saved date with a Change action" in {
+      val date = LocalDate.of(2020, 5, 10)
 
-      "must return None" in {
-        WhyTaxReturnSummary.row(emptyUserAnswers) mustBe None
-      }
+      val userAnswers =
+        emptyUserAnswers
+          .set(WhyTaxReturnPage, Set(WhyTaxReturn.CompanyDirector))
+          .success
+          .value
+          .set(DateUntaxedIncomeDirectorPage, date)
+          .success
+          .value
+
+      val result = WhyTaxReturnSummary.rows(userAnswers)
+
+      result must have size 2
+
+      result(1).value.content.asHtml.toString                    must include("10 May 2020")
+      result(1).actions.value.items.head.content.asHtml.toString must include(msgs("site.change"))
+
+      result(1).actions.value.items.head.href mustBe
+        controllers.sa1.routes.DateUntaxedIncomeDirectorController
+          .onPageLoad(userAnswersId, CheckMode)
+          .url
+    }
+
+    "must HTML-escape the translated reason text" in {
+      val escapingMsgs: Messages = stubMessages(
+        stubMessagesApi(
+          Map("default" -> Map("sa1.whyTaxReturn.untaxedIncome" -> "<b>wasn''t</b> & \"quoted\""))
+        )
+      )
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.UntaxedIncome))
+          .success
+          .value
+
+      val result = WhyTaxReturnSummary.rows(userAnswers)(escapingMsgs)
+
+      result.head.value.content.asInstanceOf[HtmlContent].asHtml.toString mustEqual
+        "&lt;b&gt;wasn&#x27;t&lt;/b&gt; &amp; &quot;quoted&quot;"
+    }
+
+    "must HTML-escape the user-entered Other reason" in {
+      val otherReason = OtherReason(
+        "<b>wasn't</b> & \"quoted\"",
+        LocalDate.of(2020, 5, 10)
+      )
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(WhyTaxReturnPage, Set[WhyTaxReturn](WhyTaxReturn.Other))
+          .success
+          .value
+          .set(OtherReasonPage, otherReason)
+          .success
+          .value
+
+      val result = WhyTaxReturnSummary.rows(userAnswers)
+
+      result.head.value.content.asInstanceOf[HtmlContent].asHtml.toString mustEqual
+        "&lt;b&gt;wasn&#x27;t&lt;/b&gt; &amp; &quot;quoted&quot;"
     }
   }
 }

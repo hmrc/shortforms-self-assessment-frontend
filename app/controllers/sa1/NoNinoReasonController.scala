@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NoNinoReasonFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.NoNinoReasonPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class NoNinoReasonController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: NoNinoReasonFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: NoNinoReasonView
 ) extends AppController {
 
@@ -39,7 +41,7 @@ class NoNinoReasonController @Inject() (
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(NoNinoReasonPage).fold(form)(form.fill)
 
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -47,14 +49,12 @@ class NoNinoReasonController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           noNinoReason =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NoNinoReasonPage, noNinoReason))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield
-            // TODO: Redirect to Why Tax return page once ready
-            Redirect(controllers.sa1.routes.NoNinoReasonController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(navigator.nextPage(NoNinoReasonPage, mode, updatedAnswers))
         )
     }
 }

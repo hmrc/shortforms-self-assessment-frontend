@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.TrustSettlementDateFormProvider
 import models.Mode
+import navigation.Navigator
 import pages.sa1.TrustSettlementDatePage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
@@ -32,6 +33,7 @@ class TrustSettlementDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: TrustSettlementDateFormProvider,
   sessionRepository: SessionRepository,
+  navigator: Navigator,
   view: TrustSettlementDateView
 ) extends AppController
     with Logging {
@@ -40,7 +42,7 @@ class TrustSettlementDateController @Inject() (
     SA1DataAction(journeyId) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(TrustSettlementDatePage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId))
+      Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
@@ -48,13 +50,13 @@ class TrustSettlementDateController @Inject() (
       formProvider()
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           trustSettlementDate =>
             for {
               updatedAnswers <-
                 Future.fromTry(request.userAnswers.set(TrustSettlementDatePage, trustSettlementDate))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.sa1.routes.TrustSettlementDateController.onPageLoad(journeyId, mode).url)
+            } yield Redirect(navigator.nextPage(TrustSettlementDatePage, mode, updatedAnswers))
         )
     }
 }
