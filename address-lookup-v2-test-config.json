@@ -34,12 +34,6 @@
           "addressLine2": "Address line 2 must be 35 characters or less",
           "addressLine3": "Address line 3 must be 35 characters or less",
           "town": "Town or city must be 35 characters or less"
-        },
-        "cy": {
-          "addressLine1": "XXXXX",
-          "addressLine2": "XXXXX",
-          "addressLine3": "XXXXX",
-          "town": "XXXXX"
         }
       },
       "mandatoryFields": {

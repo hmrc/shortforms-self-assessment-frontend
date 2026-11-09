@@ -18,7 +18,6 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment, Mode}
-import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 
 @Singleton
@@ -41,14 +40,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, env: Environmen
 
   private val exitSurveyBaseUrl: String = configuration.get[Service]("microservice.services.feedback-frontend").baseUrl
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/shortforms-self-assessment-frontend"
-
-  val languageTranslationEnabled: Boolean =
-    configuration.get[Boolean]("features.welsh-translation")
-
-  def languageMap: Map[String, Lang] = Map(
-    "en" -> Lang("en"),
-    "cy" -> Lang("cy")
-  )
 
   val timeout: Int   = configuration.get[Int]("timeout-dialog.timeout")
   val countdown: Int = configuration.get[Int]("timeout-dialog.countdown")

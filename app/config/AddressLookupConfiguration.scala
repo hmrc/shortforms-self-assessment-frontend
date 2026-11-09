@@ -108,12 +108,6 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
               "addressLine2" -> messagesApi("sa1.address.line2.error.maxLength")(Lang("en")),
               "addressLine3" -> messagesApi("sa1.address.line3.error.maxLength")(Lang("en")),
               "town"         -> messagesApi("sa1.address.town.error.maxLength")(Lang("en"))
-            ),
-            "cy" -> Json.obj(
-              "addressLine1" -> messagesApi("sa1.address.line1.error.maxLength")(Lang("cy")),
-              "addressLine2" -> messagesApi("sa1.address.line2.error.maxLength")(Lang("cy")),
-              "addressLine3" -> messagesApi("sa1.address.line3.error.maxLength")(Lang("cy")),
-              "town"         -> messagesApi("sa1.address.town.error.maxLength")(Lang("cy"))
             )
           ),
           "mandatoryFields"        -> Json.obj(
