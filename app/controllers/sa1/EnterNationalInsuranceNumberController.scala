@@ -61,12 +61,15 @@ class EnterNationalInsuranceNumberController @Inject() (
             for {
               updatedAnswers <-
                 Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
-              _              <- sessionRepository.set(updatedAnswers)
             } yield request.nino match {
               case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
+                sessionRepository.set(updatedAnswers)
                 Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
+                
               case None                                                                                   =>
+                sessionRepository.set(updatedAnswers)
                 Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
+                
               case _                                                                                      =>
                 BadRequest(
                   view(
