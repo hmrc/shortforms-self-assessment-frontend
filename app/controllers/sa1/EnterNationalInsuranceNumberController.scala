@@ -65,12 +65,12 @@ class EnterNationalInsuranceNumberController @Inject() (
               case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
                 sessionRepository.set(updatedAnswers)
                 Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-                
-              case None                                                                                   =>
+
+              case None =>
                 sessionRepository.set(updatedAnswers)
                 Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-                
-              case _                                                                                      =>
+
+              case _ =>
                 BadRequest(
                   view(
                     form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),
