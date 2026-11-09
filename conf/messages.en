@@ -38,6 +38,12 @@ notFound.title = Page not found
 notFound.heading = Page not found
 notFound.message = The page you are looking for could not be found.
 
+systemError.title = Sorry, there is a problem with the service
+systemError.heading = Sorry, there is a problem with the service
+systemError.beforeLink = Try again later or contact the
+systemError.linkText = HMRC Online Services Helpdesk (opens in a new tab)
+systemError.reference = quoting reference: {0}
+
 pageNotFound.title = Page not found
 pageNotFound.heading = Page not found
 pageNotFound.p1 = If you typed the web address, check it is correct.
