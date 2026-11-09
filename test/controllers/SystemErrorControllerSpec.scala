@@ -30,11 +30,12 @@ class SystemErrorControllerSpec extends SpecBase with GuiceOneAppPerSuite {
 
       status(result) mustBe OK
       val doc = Jsoup.parse(contentAsString(result))
-      doc.title() must include("Sorry, there is a problem with the service")
+      doc.title()               must include("Sorry, there is a problem with the service")
       doc.select("h1").text() mustBe "Sorry, there is a problem with the service"
       doc.select("main").text() must include("Try again later or contact the")
       doc.select("main").text() must not include "quoting reference:"
-      val link = doc.select("main a[href='https://www.gov.uk/find-hmrc-contacts/technical-support-with-hmrc-online-services']")
+      val link =
+        doc.select("main a[href='https://www.gov.uk/find-hmrc-contacts/technical-support-with-hmrc-online-services']")
       link.size() mustBe 1
       link.text() mustBe "HMRC Online Services Helpdesk (opens in a new tab)"
       link.attr("target") mustBe "_blank"
