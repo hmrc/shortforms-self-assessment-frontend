@@ -125,6 +125,15 @@ sa1.start.requirements.applyForNationalInsuranceNumber = You can
 sa1.start.requirements.applyForNationalInsuranceNumber.linkText = apply for a National Insurance number (opens in new tab)
 sa1.start.requirements.applyForNationalInsuranceNumber.noNino = if you do not have one.
 
+sa1.confirmation.title = Confirmation
+sa1.confirmation.panel.heading = Application complete
+sa1.confirmation.panel.reference = Your reference number is {0}
+sa1.confirmation.submittedAt = Application submitted to HMRC at {0}.
+sa1.confirmation.next.heading = What happens next
+sa1.confirmation.next.content = We have received your application for Self Assessment. We will contact you if we need any more information.
+sa1.confirmation.backToAccount = Back to your account
+sa1.confirmation.backToAccount.hidden = account homepage
+
 sa1.addPreviousLastName.title = Do you have a previous last name?
 sa1.addPreviousLastName.heading = Do you have a previous last name?
 sa1.addPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
@@ -396,7 +405,5 @@ sa1.highIncomeChildBenefitDate.b1.suffix = went over the threshold
 sa1.highIncomeChildBenefitDate.b1.link = https://www.gov.uk/child-benefit-tax-calculator
 sa1.highIncomeChildBenefitDate.b1.linkText = Child Benefit purposes (opens in a new tab)
 sa1.highIncomeChildBenefitDate.b2 = the date your child benefit payments started
-
-
 
 
