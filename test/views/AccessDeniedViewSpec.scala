@@ -17,16 +17,14 @@
 package views
 
 import base.SpecBase
-import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
 import views.html.AccessDeniedView
 
 class AccessDeniedViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
   private val view    = app.injector.instanceOf[AccessDeniedView]
-  app.injector.instanceOf[FrontendAppConfig]
   private val request = FakeRequest()
   val msgs            = messages(app)
 
