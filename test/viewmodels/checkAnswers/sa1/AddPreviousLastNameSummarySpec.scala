@@ -44,6 +44,8 @@ class AddPreviousLastNameSummarySpec extends SpecBase {
           .url
         row.actions.get.items.head.content.asHtml.toString() must include("site.change")
         row.actions.get.items.head.visuallyHiddenText.value mustEqual "sa1.addPreviousLastName.change.hidden"
+        row.actions.get.items.head.attributes("id") mustBe "previous-last-name-yes-no"
+
       }
 
       "must return a SummaryListRow with 'no' text and change link" in {
@@ -63,6 +65,7 @@ class AddPreviousLastNameSummarySpec extends SpecBase {
           .url
         row.actions.get.items.head.content.asHtml.toString() must include("site.change")
         row.actions.get.items.head.visuallyHiddenText.value mustEqual "sa1.addPreviousLastName.change.hidden"
+        row.actions.get.items.head.attributes("id") mustBe "previous-last-name-yes-no"
       }
     }
 

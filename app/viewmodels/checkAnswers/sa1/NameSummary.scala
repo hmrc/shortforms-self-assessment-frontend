@@ -37,6 +37,7 @@ object NameSummary {
               "site.change",
               controllers.sa1.routes.NameController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.name.firstName.change.hidden"))
+              .withAttribute("id" -> "first-name")
           )
         ),
         SummaryListRowViewModel(
@@ -47,6 +48,7 @@ object NameSummary {
               "site.change",
               controllers.sa1.routes.NameController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.name.lastName.change.hidden"))
+              .withAttribute("id" -> "last-name")
           )
         )
       )

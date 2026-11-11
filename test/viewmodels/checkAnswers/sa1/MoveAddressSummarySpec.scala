@@ -53,6 +53,8 @@ class MoveAddressSummarySpec extends SpecBase {
         .url
       result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
       result.head.actions.value.items.head.visuallyHiddenText.value must include(msgs("sa1.moveAddress.change.hidden"))
+      result.head.actions.value.items.head.attributes("id")         must include("date-moved-to-address")
+
     }
   }
 }

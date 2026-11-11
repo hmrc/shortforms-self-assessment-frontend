@@ -63,6 +63,10 @@ class NameSummarySpec extends SpecBase {
 
       result(1).actions.value.items.head.visuallyHiddenText.value mustBe
         msgs("sa1.name.lastName.change.hidden")
+
+      result.head.actions.value.items.head.attributes("id") must include("first-name")
+      result(1).actions.value.items.head.attributes("id")   must include("last-name")
+
     }
 
     "must escape the name so it is displayed as text" in {

@@ -72,6 +72,9 @@ class AddressJourneySummarySpec extends SpecBase {
 
       result.head.actions.value.items.head.visuallyHiddenText.value mustBe
         msgs("sa1.address.change.hidden")
+
+      result.head.actions.value.items.head.attributes("id") must include("address")
+
     }
 
     "must HTML-escape address display lines" in {

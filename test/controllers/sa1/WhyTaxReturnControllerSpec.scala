@@ -19,13 +19,13 @@ package controllers.sa1
 import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.WhyTaxReturnFormProvider
-import models.sa1.WhyTaxReturn
+import models.sa1.{OtherReason, WhyTaxReturn}
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.sa1.WhyTaxReturnPage
+import pages.sa1.{DateUntaxedIncomeDirectorPage, OtherReasonPage, WhyTaxReturnPage}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -33,6 +33,7 @@ import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.WhyTaxReturnView
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhyTaxReturnControllerSpec extends SpecBase with MockitoSugar {
@@ -96,6 +97,66 @@ class WhyTaxReturnControllerSpec extends SpecBase with MockitoSugar {
       contentAsString(result) mustEqual mockContent
 
       verify(mockView).apply(eqTo(boundForm), eqTo(userAnswersId), eqTo(NormalMode))(any(), any())
+    }
+
+    "must remove dependent answers when a previously selected reason is deselected" in new Setup {
+
+      override protected val userAnswers: UserAnswers = {
+        val previousAnswers: Set[WhyTaxReturn] = Set(
+          WhyTaxReturn.CompanyDirector,
+          WhyTaxReturn.Other
+        )
+
+        emptyUserAnswers
+          .set(WhyTaxReturnPage, previousAnswers)
+          .success
+          .value
+          .set(DateUntaxedIncomeDirectorPage, LocalDate.of(2025, 1, 1))
+          .success
+          .value
+          .set(
+            OtherReasonPage,
+            OtherReason("Additional income", LocalDate.of(2025, 2, 1))
+          )
+          .success
+          .value
+      }
+
+      override protected val answer: Set[WhyTaxReturn] = Set(WhyTaxReturn.Other)
+
+      when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
+      when(mockNavigator.nextPage(any(), any(), any())) thenReturn onwardRoute
+
+      private val request = FakeRequest(POST, whyTaxReturnRoute)
+        .withFormUrlEncodedBody(
+          "value[0]" -> WhyTaxReturn.Other.toString
+        )
+
+      private val result = controller.onSubmit(userAnswersId, NormalMode)(request)
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual onwardRoute.url
+
+      private val expectedAnswers = userAnswers
+        .set(WhyTaxReturnPage, answer)
+        .success
+        .value
+        .remove(DateUntaxedIncomeDirectorPage)
+        .success
+        .value
+
+      verify(mockSessionRepository).set(eqTo(expectedAnswers))
+
+      verify(mockNavigator).nextPage(
+        eqTo(WhyTaxReturnPage),
+        eqTo(NormalMode),
+        eqTo(expectedAnswers)
+      )
+
+      expectedAnswers.get(DateUntaxedIncomeDirectorPage) mustBe None
+      expectedAnswers.get(OtherReasonPage) mustBe Some(
+        OtherReason("Additional income", LocalDate.of(2025, 2, 1))
+      )
     }
   }
 

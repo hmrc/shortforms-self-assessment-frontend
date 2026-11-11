@@ -56,7 +56,13 @@ class WhyTaxReturnController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyTaxReturnPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(WhyTaxReturnPage, value).flatMap { answers =>
+                                  WhyTaxReturnPage.cleanupRemovedAnswers(
+                                    request.userAnswers.get(WhyTaxReturnPage).getOrElse(Set.empty),
+                                    value,
+                                    answers
+                                  )
+                                })
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(WhyTaxReturnPage, mode, updatedAnswers))
         )
