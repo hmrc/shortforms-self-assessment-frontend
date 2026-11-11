@@ -51,6 +51,11 @@ pageNotFound.p2 = If you pasted the web address, check you copied the entire add
 pageNotFound.p3 = If the web address is correct or you selected a link or button, contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> if you need to speak to someone.
 pageNotFound.p3.linkText = HMRC Online Services Helpdesk (opens in new tab)
 
+accessDenied.title = Sorry, there is a problem with the service
+accessDenied.heading = Sorry, there is a problem with the service
+accessDenied.p = You do not have access to this page, or we cannot verify your identity.
+accessDenied.linkText = Continue to your account
+
 index.title = shortforms-self-assessment-frontend
 index.heading = shortforms-self-assessment-frontend
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.

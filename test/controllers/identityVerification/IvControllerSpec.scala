@@ -20,16 +20,15 @@ import base.SpecBase
 import connectors.IvConnector
 import controllers.MockAppControllerComponents
 import handlers.ErrorHandler
-import models.identityVerification.IvResultType
-import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.mvc.Results
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.ErrorTemplate
+import views.html.AccessDeniedView
 
 import scala.concurrent.Future
 
@@ -37,32 +36,14 @@ class IvControllerSpec extends SpecBase with Results {
 
   "Iv Controller" - {
     ".handleIvFailure" - {
-      "must show IV TechnicalIssue page when journey result is TechnicalIssue" in new Setup {
+      "must show Access denied page with status 403 when any journey result" in new Setup {
         when(mockIvConnector.getJourneyStatus(any[String])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(IvResultType.TechnicalIssue))
+          .thenReturn(Future.successful("TechnicalIssue"))
 
         private val result = ivController.handleIvFailure(Some(testJourneyId))(FakeRequest())
 
-        status(result) mustBe OK
-        verify(mockView).apply(
-          eqTo("idVerification.technicalIssue.title"),
-          eqTo("idVerification.technicalIssue.heading"),
-          eqTo("idVerification.technicalIssue.message")
-        )(any, any)
-      }
-
-      "must show IV Other Result page when journey result is not TechnicalIssue" in new Setup {
-        when(mockIvConnector.getJourneyStatus(any[String])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(IvResultType.OtherIssue))
-
-        private val result = ivController.handleIvFailure(Some(testJourneyId))(FakeRequest())
-
-        status(result) mustBe OK
-        verify(mockView).apply(
-          eqTo("idVerification.otherIssue.title"),
-          eqTo("idVerification.otherIssue.heading"),
-          eqTo("idVerification.otherIssue.message")
-        )(any, any)
+        status(result) mustBe FORBIDDEN
+        contentAsString(result) mustBe mockContent
       }
 
       "must respond 400 Bad Request when journeyId is not supplied" in new Setup {
@@ -77,9 +58,9 @@ class IvControllerSpec extends SpecBase with Results {
   }
 
   private class Setup {
-    protected val mockView: ErrorTemplate = mock
-    private val mockContent               = "ErrorTemplate"
-    when(mockView(any(), any(), any())(any(), any()))
+    protected val mockView: AccessDeniedView = mock
+    protected val mockContent                = "AccessDeniedView"
+    when(mockView()(any(), any()))
       .thenReturn(Html(mockContent))
 
     protected val mockErrorHandler: ErrorHandler = mock

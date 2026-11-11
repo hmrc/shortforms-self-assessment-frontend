@@ -20,9 +20,9 @@ import org.apache.pekko.stream.Materializer
 import play.api.mvc.*
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class UpperCaseFilter @Inject() (implicit val mat: Materializer, ec: ExecutionContext) extends Filter {
+class UpperCaseFilter @Inject() (implicit val mat: Materializer) extends Filter {
   def apply(nextFilter: RequestHeader => Future[Result])(requestHeader: RequestHeader): Future[Result] = {
 
     val lowerPath = requestHeader.path.toLowerCase

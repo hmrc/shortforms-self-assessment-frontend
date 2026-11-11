@@ -39,7 +39,7 @@ class IvResultSpec extends SpecBase {
         json.validate[IvResult] mustBe JsSuccess(
           IvResult(
             origin = "shortform",
-            result = IvResultType.TechnicalIssue
+            result = "TechnicalIssue"
           )
         )
       }
@@ -86,7 +86,7 @@ class IvResultSpec extends SpecBase {
         json.validate[IvResult] mustBe JsSuccess(
           IvResult(
             origin = "shortform",
-            result = IvResultType.TechnicalIssue
+            result = "TechnicalIssue"
           )
         )
       }
@@ -152,7 +152,7 @@ class IvResultSpec extends SpecBase {
             """
         )
 
-        json.validate[IvResult].get.result mustBe IvResultType.TechnicalIssue
+        json.validate[IvResult].get.result mustBe "TechnicalIssue"
       }
     }
   }

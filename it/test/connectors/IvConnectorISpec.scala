@@ -19,7 +19,6 @@ package connectors
 import base.ISpecBase
 import com.github.tomakehurst.wiremock.client.{ResponseDefinitionBuilder, WireMock}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, okJson, stubFor, urlEqualTo}
-import models.identityVerification.IvResultType
 import org.scalatest.RecoverMethods.*
 import play.api.Application
 import play.api.http.Status.NOT_FOUND
@@ -66,7 +65,7 @@ class IvConnectorISpec extends ISpecBase with WireMockSupport {
 
       val result = connector.getJourneyStatus("journey-123").futureValue
 
-      result mustBe IvResultType.TechnicalIssue
+      result mustBe "TechnicalIssue"
     }
 
     "must fail with NOT_FOUND when the origin is not shortform" in {
