@@ -59,7 +59,9 @@ class AuthorisedAgentController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorisedAgentPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorisedAgentPage, mode, updatedAnswers))
+          } yield Redirect(
+            controllers.cwf1.routes.AuthorisedAgentController.onPageLoad(journeyId, mode)
+          ) // TODO post implementation of other pages.
       )
   }
 }
