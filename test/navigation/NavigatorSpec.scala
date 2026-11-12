@@ -21,6 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
+import pages.cwf1.AuthorisedAgentPage
 import pages.sa1.*
 
 import java.time.LocalDate
@@ -128,6 +129,35 @@ class NavigatorSpec extends SpecBase {
           ) mustBe controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
         }
       }
+
+      "when authorised agent page" - {
+        "must go from authorised agent page to agent details page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(AuthorisedAgentPage, true).success.value
+
+          navigator.nextPage(AuthorisedAgentPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.AuthorisedAgentController
+              .onPageLoad(userAnswersId, NormalMode) // TODO must change controller to route Agent Details controller
+        }
+
+        "must go from authorised agent page to Nino number page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(AuthorisedAgentPage, false).success.value
+          navigator.nextPage(
+            AuthorisedAgentPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.AuthorisedAgentController
+            .onPageLoad(
+              journeyId = userAnswersId,
+              mode = NormalMode
+            ) // TODO must change controller to route NINO controller
+        }
+
+        "must go from authorised agent to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AuthorisedAgentPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
     }
 
     "in Check mode" - {
@@ -341,6 +371,64 @@ class NavigatorSpec extends SpecBase {
             CheckMode,
             userAnswers
           ) mustBe controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(userAnswersId, CheckMode)
+        }
+      }
+
+      "when Authorised Agent Page" - {
+
+        "must go to Agent Details page when yes is selected for Authorised Agent" in {
+          val userAnswers = emptyUserAnswers
+            .set(AuthorisedAgentPage, true)
+            .success
+            .value
+
+          navigator.nextPage(AuthorisedAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AuthorisedAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route Agent Details
+        }
+
+        "must go to Check Your Answers when yes is selected and Agent Details already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(AuthorisedAgentPage, true)
+            .success
+            .value
+          // .set(AuthorisedAgentPage, true) //TODO must change page to AgentDetails page post agent details page available
+          // .success
+          // .value
+
+          navigator.nextPage(AuthorisedAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AuthorisedAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to No NINO page when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(AuthorisedAgentPage, false)
+            .success
+            .value
+
+          navigator.nextPage(AuthorisedAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AuthorisedAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route NINO page
+        }
+
+        "must go to Check Your Answers when no is selected and NINO already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(AuthorisedAgentPage, false)
+            .success
+            .value
+          /// .set(NiNOPage, "Nino") //TODO must change page to NINO page post NINO page available
+          // .success
+          // .value
+
+          navigator.nextPage(AuthorisedAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AuthorisedAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(AuthorisedAgentPage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
         }
       }
 
