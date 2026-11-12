@@ -18,7 +18,7 @@ GET         /system-error                                controllers.SystemError
 
 GET         /form-not-available                          controllers.FormNotAvailableAgentsController.onPageLoad()
 
-GET         /identity-verification/upliftFailure         controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
+GET         /identity-verification/uplift-failure        controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
 
 GET         /sa1                                         controllers.IndexController.startSA1()
 GET         /cwf1st                                      controllers.IndexController.startCWF1ST()

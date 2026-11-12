@@ -21,7 +21,7 @@ import play.api.libs.json.{JsPath, Reads}
 
 case class IvResult(
   origin: String,
-  result: IvResultType
+  result: String
 )
 
 object IvResult {
@@ -30,6 +30,5 @@ object IvResult {
     (JsPath \ "serviceContract" \ "origin").read[String] and
       (JsPath \ "progress" \ "result")
         .read[String]
-        .map(IvResultType.fromString)
   )(IvResult.apply _)
 }

@@ -20,39 +20,22 @@ import com.google.inject.{Inject, Singleton}
 import connectors.IvConnector
 import controllers.{AppController, AppControllerComponents}
 import handlers.ErrorHandler
-import models.identityVerification.IvResultType.TechnicalIssue
 import play.api.mvc.{Action, AnyContent}
-import views.html.ErrorTemplate
+import views.html.AccessDeniedView
 
 @Singleton
 class IvController @Inject() (
   val controllerComponents: AppControllerComponents,
   ivConnector: IvConnector,
-  errorTemplate: ErrorTemplate,
+  view: AccessDeniedView,
   errorHandler: ErrorHandler
 ) extends AppController {
 
   def handleIvFailure(journeyId: Option[String]): Action[AnyContent] = Action.async { implicit request =>
     journeyId match
-      case None     => errorHandler.onClientError(request, BAD_REQUEST)
+      case None     =>
+        errorHandler.onClientError(request, BAD_REQUEST)
       case Some(id) =>
-        ivConnector.getJourneyStatus(id).map {
-          case TechnicalIssue =>
-            Ok(
-              errorTemplate(
-                "idVerification.technicalIssue.title",
-                "idVerification.technicalIssue.heading",
-                "idVerification.technicalIssue.message"
-              )
-            )
-          case _              =>
-            Ok(
-              errorTemplate(
-                "idVerification.otherIssue.title",
-                "idVerification.otherIssue.heading",
-                "idVerification.otherIssue.message"
-              )
-            )
-        }
+        ivConnector.getJourneyStatus(id).map(_ => Forbidden(view()))
   }
 }

@@ -18,7 +18,7 @@ package connectors
 
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import models.identityVerification.{IvResult, IvResultType}
+import models.identityVerification.IvResult
 import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HttpReads.Implicits.*
@@ -35,7 +35,7 @@ class IvConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClien
   private val baseUrl        = appConfig.identityVerificationBaseUrl
   private val expectedOrigin = "shortform"
 
-  def getJourneyStatus(journeyId: String)(implicit hc: HeaderCarrier): Future[IvResultType] =
+  def getJourneyStatus(journeyId: String)(implicit hc: HeaderCarrier): Future[String] =
     httpClient
       .get(url"$baseUrl/identity-verification/journey/$journeyId")
       .execute[Either[UpstreamErrorResponse, IvResult]]

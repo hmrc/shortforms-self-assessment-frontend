@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,18 +12,28 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.identityVerification
+@import views.html.components._
 
-sealed trait IvResultType
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        h1: h1,
+        p: Paragraph
+)
 
-object IvResultType {
-  case object TechnicalIssue extends IvResultType
-  case object OtherIssue extends IvResultType
+@()(implicit request: Request[_], messages: Messages)
 
-  def fromString(str: String): IvResultType = str match {
-    case "TechnicalIssue" => TechnicalIssue
-    case _                => OtherIssue
-  }
+@layout(pageTitle = titleNoForm(messages("accessDenied.title"), serviceName = "service.name"),
+    serviceName = Some(messages("service.name")),
+    showBackLink = false
+) {
+
+    @h1("accessDenied.heading")
+    @p("accessDenied.p")
+
+    <p class="govuk-body">
+        <a href="/home" class="govuk-link">@messages("accessDenied.linkText")</a>
+    </p>
 }
