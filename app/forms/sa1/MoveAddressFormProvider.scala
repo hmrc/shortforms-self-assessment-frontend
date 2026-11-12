@@ -31,7 +31,7 @@ class MoveAddressFormProvider extends Mappings {
 
   def apply()(implicit messages: Messages): Form[LocalDate] = {
     val maximumDate = LocalDate.now()
-    val minimumDate = maximumDate.minusYears(120)
+    val minimumDate = LocalDate.of(LocalDate.now().getYear - 120, 1, 1)
 
     Form(
       "moveAddressDate" -> localDate(

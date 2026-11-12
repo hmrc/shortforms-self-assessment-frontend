@@ -177,7 +177,7 @@ sa1.enterPreviousLastName.date.error.required = Enter the date your name changed
 sa1.enterPreviousLastName.date.error.invalid = Date name changed must be a real date
 sa1.enterPreviousLastName.date.error.requiredOne = Date name changed must include a {0}
 sa1.enterPreviousLastName.date.error.requiredTwo = Date name changed must include a {0} and {1}
-sa1.enterPreviousLastName.date.error.mustBeAfterMinimum = Date must be after {0}
+sa1.enterPreviousLastName.date.error.mustBeAfterMinimum = Date must be on or after {0}
 sa1.enterPreviousLastName.checkYourAnswersLabel = Previous last name
 sa1.enterPreviousLastName.date.checkYourAnswersLabel = Previous last name changed
 sa1.enterPreviousLastName.change.hidden = Previous last name
@@ -309,6 +309,7 @@ sa1.dateOfBirth.date.error.invalid = Date of birth must be a real date
 sa1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
 sa1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
 sa1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
+sa1.dateOfBirth.date.error.tooOld = Date of birth must be on or after {0}
 
 sa1.taxableForeignIncomeDate.title = Taxable foreign income
 sa1.taxableForeignIncomeDate.heading = Taxable foreign income

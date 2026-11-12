@@ -31,6 +31,7 @@ class DateOfBirthFormProvider extends Mappings {
 
   def apply()(implicit messages: Messages): Form[LocalDate] = {
     val maximumDate = LocalDate.now().minusYears(15).minusMonths(9)
+    val minimumDate = LocalDate.of(LocalDate.now().getYear - 120, 1, 1)
 
     Form(
       "dateOfBirth" -> localDate(
@@ -40,10 +41,17 @@ class DateOfBirthFormProvider extends Mappings {
         requiredKey = "sa1.dateOfBirth.date.error.requiredOne",
         numericOnly = true
       ).verifying(
-        maxDate(
-          maximumDate,
-          "sa1.dateOfBirth.date.error.mustBeInPast",
-          maximumDate.format(dateFormatter)
+        firstError(
+          maxDate(
+            maximumDate,
+            "sa1.dateOfBirth.date.error.mustBeInPast",
+            maximumDate.format(dateFormatter)
+          ),
+          minDate(
+            minimumDate,
+            "sa1.dateOfBirth.date.error.tooOld",
+            minimumDate.format(dateFormatter)
+          )
         )
       )
     )
