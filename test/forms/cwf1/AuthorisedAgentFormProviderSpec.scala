@@ -22,7 +22,7 @@ import play.api.data.FormError
 class AuthorisedAgentFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "cwf1.authorisedAgent.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new AuthorisedAgentFormProvider()()
 

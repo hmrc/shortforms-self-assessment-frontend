@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
- 
+
   "AuthorisedAgent Controller" - {
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
@@ -72,7 +72,7 @@ class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      private val request = FakeRequest().withFormUrlEncodedBody(("value", "true"))
+      private val request          = FakeRequest().withFormUrlEncodedBody(("value", "true"))
 
       when(mockSessionRepository.set(any[UserAnswers]))
         .thenReturn(Future.successful(true))
@@ -87,8 +87,8 @@ class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
-      private val request = FakeRequest().withFormUrlEncodedBody(("value", ""))
-      private val boundForm = form.bind(Map("value" -> ""))
+      private val request          = FakeRequest().withFormUrlEncodedBody(("value", ""))
+      private val boundForm        = form.bind(Map("value" -> ""))
 
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
@@ -107,10 +107,10 @@ class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
     protected val userAnswers: UserAnswers
 
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockView: AuthorisedAgentView = mock
-    protected val mockContent = "AuthorisedAgent"
-    private val authorisedAgentFormProvider = new AuthorisedAgentFormProvider()
-    protected val form: Form[Boolean] = authorisedAgentFormProvider()
+    protected val mockView: AuthorisedAgentView            = mock
+    protected val mockContent                              = "AuthorisedAgent"
+    private val authorisedAgentFormProvider                = new AuthorisedAgentFormProvider()
+    protected val form: Form[Boolean]                      = authorisedAgentFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))

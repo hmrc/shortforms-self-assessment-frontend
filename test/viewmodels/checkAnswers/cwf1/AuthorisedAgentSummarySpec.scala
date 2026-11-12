@@ -22,7 +22,7 @@ import pages.cwf1.AuthorisedAgentPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
-class AuthorisedAgentSummarySpec extends SpecBase{
+class AuthorisedAgentSummarySpec extends SpecBase {
 
   private given Messages = play.api.test.Helpers.stubMessages()
 
@@ -75,5 +75,3 @@ class AuthorisedAgentSummarySpec extends SpecBase{
     }
   }
 }
-
-

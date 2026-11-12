@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.cwf1
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.cwf1.AuthorisedAgentPage
 import play.api.i18n.Messages
@@ -24,21 +23,23 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AuthorisedAgentSummary  {
+object AuthorisedAgentSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AuthorisedAgentPage).map {
-      answer =>
+    answers.get(AuthorisedAgentPage).map { answer =>
 
-        val value = if (answer) "site.yes" else "site.no"
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "cwf1.authorisedAgent.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.cwf1.routes.AuthorisedAgentController.onPageLoad(answers.id, CheckMode).url)
-              .withVisuallyHiddenText(messages("cwf1.authorisedAgent.change.hidden"))
+      SummaryListRowViewModel(
+        key = "cwf1.authorisedAgent.checkYourAnswersLabel",
+        value = ValueViewModel(value),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.cwf1.routes.AuthorisedAgentController.onPageLoad(answers.id, CheckMode).url
           )
+            .withVisuallyHiddenText(messages("cwf1.authorisedAgent.change.hidden"))
         )
+      )
     }
 }

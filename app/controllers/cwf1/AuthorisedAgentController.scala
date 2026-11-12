@@ -29,34 +29,32 @@ import views.html.cwf1.AuthorisedAgentView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAgentController @Inject()(
-                                         sessionRepository: SessionRepository,
-                                         navigator: Navigator,                                       
-                                         formProvider: AuthorisedAgentFormProvider,
-                                         val controllerComponents: AppControllerComponents,
-                                         view: AuthorisedAgentView
-                                 )(implicit ec: ExecutionContext) extends AppController {
+class AuthorisedAgentController @Inject() (
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  formProvider: AuthorisedAgentFormProvider,
+  val controllerComponents: AppControllerComponents,
+  view: AuthorisedAgentView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
   val form: Form[Boolean] = formProvider()
-  
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) {
-    implicit request =>
 
-      val preparedForm = request.userAnswers.get(AuthorisedAgentPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
 
-      Ok(view(preparedForm, journeyId, mode))
+    val preparedForm = request.userAnswers.get(AuthorisedAgentPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+
+    Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) .async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorisedAgentPage, value))
