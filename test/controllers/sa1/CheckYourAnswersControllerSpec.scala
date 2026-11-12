@@ -18,6 +18,7 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
+import handlers.ErrorHandler
 import models.address.{AddressDetails, ConfirmedAddress, Country}
 import models.sa1.Name
 import models.{CheckMode, UserAnswers}
@@ -25,15 +26,18 @@ import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
 import pages.AddressPage
-import pages.sa1.NamePage
+import pages.sa1.*
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
+import services.sa1.CheckYourAnswersValidator
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.sa1.CheckYourAnswersView
+
+import scala.concurrent.Future
 
 class CheckYourAnswersControllerSpec extends SpecBase {
 
@@ -96,13 +100,31 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         Seq(routes.AddressLookupController.change(userAnswersId).url)
     }
 
-    "must redirect to declaration page when submitted" in new Setup {
+    "must redirect to declaration page when submitted and all required data is present" in new Setup {
+
+      when(mockCheckYourAnswersValidator.areRequiredDataPresent(any()))
+        .thenReturn(true)
+
       private val result = controller.onSubmit(userAnswersId)(FakeRequest())
 
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result) mustBe
         Some(routes.DeclarationController.onPageLoad(userAnswersId).url)
+    }
+
+    "must display Page Not Found page with 404 when submitted and some required data are not present" in new Setup {
+
+      when(mockCheckYourAnswersValidator.areRequiredDataPresent(any()))
+        .thenReturn(false)
+
+      when(mockErrorHandler.notFoundTemplate(any()))
+        .thenReturn(Future.successful(Html(stubNotFoundContent)))
+
+      private val result = controller.onSubmit(userAnswersId)(FakeRequest())
+
+      status(result) mustBe NOT_FOUND
+      contentAsString(result) mustBe stubNotFoundContent
     }
   }
 
@@ -119,8 +141,11 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       uprn = Some(998877665544L)
     )
 
-    val stubContent: String            = "Check your answers view"
-    val stubView: CheckYourAnswersView = mock(classOf[CheckYourAnswersView])
+    val stubContent: String                                      = "Check your answers view"
+    val stubView: CheckYourAnswersView                           = mock(classOf[CheckYourAnswersView])
+    val mockErrorHandler: ErrorHandler                           = mock(classOf[ErrorHandler])
+    val stubNotFoundContent: String                              = "Not Found"
+    val mockCheckYourAnswersValidator: CheckYourAnswersValidator = mock(classOf[CheckYourAnswersValidator])
 
     when(
       stubView.apply(
@@ -132,7 +157,9 @@ class CheckYourAnswersControllerSpec extends SpecBase {
 
     val controller = new CheckYourAnswersController(
       new MockAppControllerComponents(userAnswers),
-      stubView
+      stubView,
+      mockCheckYourAnswersValidator,
+      mockErrorHandler
     )
 
     def capturedSummaries(): (SummaryList, SummaryList) = {

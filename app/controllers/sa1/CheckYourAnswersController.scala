@@ -18,17 +18,22 @@ package controllers.sa1
 
 import com.google.inject.Inject
 import controllers.{AppController, AppControllerComponents}
+import handlers.ErrorHandler
 import models.UserAnswers
 import play.api.i18n.Messages
 import play.api.mvc.{Action, AnyContent}
+import services.sa1.CheckYourAnswersValidator
 import viewmodels.checkAnswers.AddressJourneySummary
 import viewmodels.checkAnswers.sa1.*
 import viewmodels.govuk.summarylist.*
 import views.html.sa1.CheckYourAnswersView
+import scala.concurrent.Future
 
 class CheckYourAnswersController @Inject() (
   val controllerComponents: AppControllerComponents,
-  view: CheckYourAnswersView
+  view: CheckYourAnswersView,
+  validator: CheckYourAnswersValidator,
+  errorHandler: ErrorHandler
 ) extends AppController {
 
   def onPageLoad(journeyId: String): Action[AnyContent] =
@@ -52,8 +57,11 @@ class CheckYourAnswersController @Inject() (
     }
 
   def onSubmit(journeyId: String): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
-      Redirect(controllers.sa1.routes.DeclarationController.onPageLoad(journeyId))
+    SA1DataAction(journeyId).async { implicit request =>
+      if (validator.areRequiredDataPresent(request.userAnswers))
+        Future.successful(Redirect(controllers.sa1.routes.DeclarationController.onPageLoad(journeyId)))
+      else
+        errorHandler.notFoundTemplate(request).map(NotFound(_))
     }
 
   private def personalDetailsRows(ua: UserAnswers)(implicit messages: Messages) =
