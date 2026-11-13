@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.MockAppControllerComponents.base
-import controllers.actions.{FakeDataRequiredAction, FakeIdentifierAction}
+import controllers.actions.{FakeActionFilter, FakeDataRequiredAction, FakeIdentifierAction, ReasonRequiredAction}
 import models.JourneyType.SA1
 import models.UserAnswers
 import play.api.mvc.DefaultActionBuilder
@@ -26,15 +26,16 @@ import play.api.test.Helpers.stubMessagesControllerComponents
 final class MockAppControllerComponents(
   userAnswers: UserAnswers = MockAppControllerComponents.emptyUserAnswers
 ) extends AppControllerComponents(
+      _ => new FakeActionFilter(using base.executionContext),
+      new FakeDataRequiredAction(Some(userAnswers))(base.executionContext),
+      new FakeIdentifierAction(base.parsers),
       base.messagesActionBuilder,
       base.actionBuilder.asInstanceOf[DefaultActionBuilder],
       base.parsers,
       base.messagesApi,
       base.langs,
       base.fileMimeTypes,
-      base.executionContext,
-      new FakeIdentifierAction(base.parsers),
-      new FakeDataRequiredAction(Some(userAnswers))(base.executionContext)
+      base.executionContext
     )
 
 object MockAppControllerComponents {

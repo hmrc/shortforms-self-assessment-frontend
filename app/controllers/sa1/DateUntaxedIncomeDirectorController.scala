@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateUntaxedIncomeDirectorFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.CompanyDirector
 import navigation.Navigator
 import pages.sa1.DateUntaxedIncomeDirectorPage
 import play.api.Logging
@@ -39,24 +40,24 @@ class DateUntaxedIncomeDirectorController @Inject() (
     with Logging {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(CompanyDirector)) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(DateUntaxedIncomeDirectorPage).fold(form)(form.fill)
       Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(CompanyDirector)).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           dateUntaxedIncomeDirector =>
-            for {
+            for
               updatedAnswers <-
                 Future.fromTry(request.userAnswers.set(DateUntaxedIncomeDirectorPage, dateUntaxedIncomeDirector))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(DateUntaxedIncomeDirectorPage, mode, updatedAnswers))
+            yield Redirect(navigator.nextPage(DateUntaxedIncomeDirectorPage, mode, updatedAnswers))
         )
     }
 }

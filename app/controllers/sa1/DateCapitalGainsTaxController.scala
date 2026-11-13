@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateCapitalGainsTaxFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.CapitalGainsTax
 import navigation.Navigator
 import pages.sa1.DateCapitalGainsTaxPage
 import play.api.mvc.{Action, AnyContent}
@@ -37,31 +38,30 @@ class DateCapitalGainsTaxController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(CapitalGainsTax)) { implicit request =>
+      val form = formProvider()
 
-    val form = formProvider()
+      val preparedForm = request.userAnswers.get(DateCapitalGainsTaxPage) match
+        case None        => form
+        case Some(value) => form.fill(value)
 
-    val preparedForm = request.userAnswers.get(DateCapitalGainsTaxPage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+      Ok(view(journeyId, preparedForm, mode))
     }
 
-    Ok(view(journeyId, preparedForm, mode))
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(CapitalGainsTax)).async { implicit request =>
+      val form = formProvider()
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-
-    val form = formProvider()
-
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(journeyId, formWithErrors, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DateCapitalGainsTaxPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DateCapitalGainsTaxPage, mode, updatedAnswers))
-      )
-  }
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(journeyId, formWithErrors, mode))),
+          value =>
+            for
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DateCapitalGainsTaxPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            yield Redirect(navigator.nextPage(DateCapitalGainsTaxPage, mode, updatedAnswers))
+        )
+    }
 }

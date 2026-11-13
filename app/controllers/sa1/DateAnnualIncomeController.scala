@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateAnnualIncomeFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.UntaxedIncome
 import navigation.Navigator
 import pages.sa1.DateAnnualIncomePage
 import play.api.mvc.{Action, AnyContent}
@@ -37,24 +38,25 @@ class DateAnnualIncomeController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(UntaxedIncome)) { implicit request =>
+      val form = formProvider()
 
-    val form = formProvider()
+      val preparedForm = request.userAnswers.get(DateAnnualIncomePage).fold(form)(form.fill)
+      Ok(view(preparedForm, journeyId, mode))
+    }
 
-    val preparedForm = request.userAnswers.get(DateAnnualIncomePage).fold(form)(form.fill)
-    Ok(view(preparedForm, journeyId, mode))
-  }
-
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-    formProvider()
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(DateAnnualIncomePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(DateAnnualIncomePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(UntaxedIncome)).async { implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DateAnnualIncomePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            yield Redirect(navigator.nextPage(DateAnnualIncomePage, mode, updatedAnswers))
+        )
+    }
 }

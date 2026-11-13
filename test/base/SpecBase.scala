@@ -23,7 +23,9 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.json.Writes
 import play.api.test.FakeRequest
+import queries.Settable
 
 import scala.concurrent.ExecutionContext
 
@@ -43,4 +45,10 @@ trait SpecBase
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
 
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
+
+  extension (userAnswers: UserAnswers) {
+    def update[A: Writes](key: Settable[A], value: A): UserAnswers = userAnswers.set(key, value).success.value
+
+    def delete[A](key: Settable[A]): UserAnswers = userAnswers.remove(key).success.value
+  }
 }

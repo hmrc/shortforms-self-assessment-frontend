@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.UntaxedIncomeNotInPayeStartDateFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.UntaxedIncome
 import navigation.Navigator
 import pages.sa1.UntaxedIncomeNotInPayeStartDatePage
 import play.api.mvc.{Action, AnyContent}
@@ -37,31 +38,28 @@ class UntaxedIncomeNotInPayeStartDateController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(UntaxedIncome)) { implicit request =>
+      val form = formProvider()
 
-    val form = formProvider()
+      val preparedForm = request.userAnswers.get(UntaxedIncomeNotInPayeStartDatePage) match
+        case None        => form
+        case Some(value) => form.fill(value)
 
-    val preparedForm = request.userAnswers.get(UntaxedIncomeNotInPayeStartDatePage) match {
-      case None        => form
-      case Some(value) => form.fill(value)
+      Ok(view(preparedForm, journeyId, mode))
     }
 
-    Ok(view(preparedForm, journeyId, mode))
-  }
-
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-
-    val form = formProvider()
-
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(UntaxedIncomeNotInPayeStartDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(UntaxedIncomeNotInPayeStartDatePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(UntaxedIncome)).async { implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(UntaxedIncomeNotInPayeStartDatePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            yield Redirect(navigator.nextPage(UntaxedIncomeNotInPayeStartDatePage, mode, updatedAnswers))
+        )
+    }
 }
