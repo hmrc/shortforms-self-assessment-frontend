@@ -60,7 +60,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
       (options \ "signOutHref").as[String] mustBe
         s"http://localhost:10081${_root_.controllers.auth.routes.AuthController.signOut().url}"
       (configUnderTest \ "labels" \ "en" \ "appLevelLabels" \ "navTitle").as[String] mustBe
-        messages(app)("service.name")
+        messages(app)("service.sa1.name")
       (options \ "showBackButtons").as[Boolean] mustBe true
       (options \ "showPhaseBanner").as[Boolean] mustBe false
       (options \ "includeHMRCBranding").as[Boolean] mustBe false
