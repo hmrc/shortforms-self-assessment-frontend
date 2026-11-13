@@ -18,52 +18,55 @@ package viewmodels.checkAnswers.cwf1
 
 import base.SpecBase
 import models.CheckMode
-import pages.cwf1.AuthorisedAgentPage
+import org.scalatest.LoneElement.convertToCollectionLoneElementWrapper
+import pages.cwf1.AreYouAnAgentPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
-class AuthorisedAgentSummarySpec extends SpecBase {
+class AreYouAnAgentSummarySpec extends SpecBase {
 
   private given Messages = play.api.test.Helpers.stubMessages()
 
-  "AuthorisedAgentSummary" - {
+  "AreYouAnAgentSummary" - {
     "when the answer is present" - {
       "must return a SummaryListRow with 'yes' text and change link" in {
 
-        val userAnswers = emptyUserAnswers.set(AuthorisedAgentPage, true).success.value
+        val userAnswers = emptyUserAnswers.set(AreYouAnAgentPage, true).success.value
 
-        val row = AuthorisedAgentSummary.row(userAnswers).value
+        val row = AreYouAnAgentSummary.row(userAnswers).value
 
-        row.key.content.asHtml.toString() mustEqual "cwf1.authorisedAgent.checkYourAnswersLabel"
+        row.key.content.asHtml.toString() mustEqual "cwf1.areYouAnAgent.checkYourAnswersLabel"
 
         val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
         contentString mustEqual "site.yes"
 
-        row.actions.get.items.size mustEqual 1
-        row.actions.get.items.head.href mustEqual controllers.cwf1.routes.AuthorisedAgentController
+        val actionItem = row.actions.get.items.loneElement
+        actionItem.href mustEqual controllers.cwf1.routes.AreYouAnAgentController
           .onPageLoad(userAnswersId, CheckMode)
           .url
+
         row.actions.get.items.head.content.asHtml.toString() must include("site.change")
-        row.actions.get.items.head.visuallyHiddenText.value mustEqual "cwf1.authorisedAgent.change.hidden"
+        row.actions.get.items.head.visuallyHiddenText.value mustEqual "cwf1.areYouAnAgent.change.hidden"
       }
 
       "must return a SummaryListRow with 'no' text and change link" in {
 
-        val userAnswers = emptyUserAnswers.set(AuthorisedAgentPage, false).success.value
+        val userAnswers = emptyUserAnswers.set(AreYouAnAgentPage, false).success.value
 
-        val row = AuthorisedAgentSummary.row(userAnswers).value
+        val row = AreYouAnAgentSummary.row(userAnswers).value
 
-        row.key.content.asHtml.toString() mustEqual "cwf1.authorisedAgent.checkYourAnswersLabel"
+        row.key.content.asHtml.toString() mustEqual "cwf1.areYouAnAgent.checkYourAnswersLabel"
 
         val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
         contentString mustEqual "site.no"
 
-        row.actions.get.items.size mustEqual 1
-        row.actions.get.items.head.href mustEqual controllers.cwf1.routes.AuthorisedAgentController
+        val actionItem = row.actions.get.items.loneElement
+        actionItem.href mustEqual controllers.cwf1.routes.AreYouAnAgentController
           .onPageLoad(userAnswersId, CheckMode)
           .url
+
         row.actions.get.items.head.content.asHtml.toString() must include("site.change")
-        row.actions.get.items.head.visuallyHiddenText.value mustEqual "cwf1.authorisedAgent.change.hidden"
+        row.actions.get.items.head.visuallyHiddenText.value mustEqual "cwf1.areYouAnAgent.change.hidden"
       }
     }
   }
@@ -71,7 +74,7 @@ class AuthorisedAgentSummarySpec extends SpecBase {
   "when the answer is not present" - {
     "must return None" in {
 
-      AuthorisedAgentSummary.row(emptyUserAnswers).isEmpty mustEqual true
+      AreYouAnAgentSummary.row(emptyUserAnswers).isEmpty mustEqual true
     }
   }
 }

@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages.cwf1
+package forms.cwf1
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object AuthorisedAgentPage extends QuestionPage[Boolean] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ toString
+class AreYouAnAgentFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "authorisedAgent"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("cwf1.areYouAnAgent.error.required")
+    )
 }

@@ -18,28 +18,28 @@ package controllers.cwf1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import forms.cwf1.AuthorisedAgentFormProvider
+import forms.cwf1.AreYouAnAgentFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.FakeNavigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.cwf1.AuthorisedAgentPage
+import pages.cwf1.AreYouAnAgentPage
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.cwf1.AuthorisedAgentView
+import views.html.cwf1.AreYouAnAgentView
 
 import scala.concurrent.Future
 
-class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
+class AreYouAnAgentControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  "AuthorisedAgent Controller" - {
+  "AreYouAnAgent Controller" - {
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
 
@@ -56,7 +56,7 @@ class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(AuthorisedAgentPage, true).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(AreYouAnAgentPage, true).success.value
 
       private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
@@ -107,18 +107,18 @@ class AuthorisedAgentControllerSpec extends SpecBase with MockitoSugar {
     protected val userAnswers: UserAnswers
 
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockView: AuthorisedAgentView            = mock
-    protected val mockContent                              = "AuthorisedAgent"
-    private val authorisedAgentFormProvider                = new AuthorisedAgentFormProvider()
-    protected val form: Form[Boolean]                      = authorisedAgentFormProvider()
+    protected val mockView: AreYouAnAgentView              = mock
+    protected val mockContent                              = "AreYouAnAgent"
+    private val areYouAnAgentFormProvider                  = new AreYouAnAgentFormProvider()
+    protected val form: Form[Boolean]                      = areYouAnAgentFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controllerUnderTest = new AuthorisedAgentController(
+    protected lazy val controllerUnderTest = new AreYouAnAgentController(
       mockSessionRepository,
       new FakeNavigator(onwardRoute),
-      authorisedAgentFormProvider,
+      areYouAnAgentFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView
     )

@@ -27,10 +27,10 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, title = "cwf1.authorisedAgent.title", serviceName = "service.cwf1st.name"),
+@layout(pageTitle = title(form, title = "cwf1.areYouAnAgent.title", serviceName = "service.cwf1st.name"),
     serviceName = Some(messages("service.cwf1st.name"))) {
 
-    @formHelper(action = controllers.cwf1.routes.AuthorisedAgentController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.cwf1.routes.AreYouAnAgentController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
@@ -39,7 +39,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("cwf1.authorisedAgent.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("cwf1.areYouAnAgent.heading")).asPageHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),

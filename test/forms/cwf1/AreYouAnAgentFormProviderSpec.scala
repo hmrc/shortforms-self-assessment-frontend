@@ -16,15 +16,30 @@
 
 package forms.cwf1
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import javax.inject.Inject
+class AreYouAnAgentFormProviderSpec extends BooleanFieldBehaviours {
 
-class AuthorisedAgentFormProvider @Inject() extends Mappings {
+  val requiredKey = "cwf1.areYouAnAgent.error.required"
+  val invalidKey  = "error.boolean"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("cwf1.authorisedAgent.error.required")
+  val form = new AreYouAnAgentFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

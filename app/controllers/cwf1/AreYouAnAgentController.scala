@@ -17,24 +17,24 @@
 package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
-import forms.cwf1.AuthorisedAgentFormProvider
+import forms.cwf1.AreYouAnAgentFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.cwf1.AuthorisedAgentPage
+import pages.cwf1.AreYouAnAgentPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import views.html.cwf1.AuthorisedAgentView
+import views.html.cwf1.AreYouAnAgentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAgentController @Inject() (
+class AreYouAnAgentController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Navigator,
-  formProvider: AuthorisedAgentFormProvider,
+  formProvider: AreYouAnAgentFormProvider,
   val controllerComponents: AppControllerComponents,
-  view: AuthorisedAgentView
+  view: AreYouAnAgentView
 )(implicit ec: ExecutionContext)
     extends AppController {
 
@@ -42,7 +42,7 @@ class AuthorisedAgentController @Inject() (
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
 
-    val preparedForm = request.userAnswers.get(AuthorisedAgentPage) match {
+    val preparedForm = request.userAnswers.get(AreYouAnAgentPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -57,9 +57,9 @@ class AuthorisedAgentController @Inject() (
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorisedAgentPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouAnAgentPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorisedAgentPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(AreYouAnAgentPage, mode, updatedAnswers))
       )
   }
 }

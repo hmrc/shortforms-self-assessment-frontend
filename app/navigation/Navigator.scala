@@ -21,7 +21,7 @@ import models.*
 import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
-import pages.cwf1.AuthorisedAgentPage
+import pages.cwf1.AreYouAnAgentPage
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -94,14 +94,14 @@ class Navigator @Inject() () {
       ua => nextReasonRoute(Some(CapitalGainsTax), ua, NormalMode)
     case OtherReasonPage                     =>
       ua => nextReasonRoute(Some(Other), ua, NormalMode)
-    case AuthorisedAgentPage                 =>
+    case AreYouAnAgentPage                   =>
       ua =>
-        ua.get(AuthorisedAgentPage) match {
+        ua.get(AreYouAnAgentPage) match {
           case Some(true)  =>
-            controllers.cwf1.routes.AuthorisedAgentController
+            controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(ua.id, NormalMode) // TODO: make change controller for AgentDetails Page
           case Some(false) =>
-            controllers.cwf1.routes.AuthorisedAgentController
+            controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(ua.id, NormalMode) // TODO: make change controller for NI Number Page
           case _           =>
             routes.IndexController.onPageLoad()
@@ -119,7 +119,7 @@ class Navigator @Inject() () {
         DateAnnualIncomePage | UntaxedIncomeNotInPayeStartDatePage | HighIncomeChildBenefitDatePage |
         DateCapitalGainsTaxPage | OtherReasonPage =>
       ua => nextUnansweredReasonRoute(ua)
-    case AuthorisedAgentPage     => authorisedAgentCheckRoute
+    case AreYouAnAgentPage       => areYouAnAgentCheckRoute
     case _                       =>
       checkYourAnswersRoute
   }
@@ -128,7 +128,7 @@ class Navigator @Inject() () {
     controllers.sa1.routes.CheckYourAnswersController.onPageLoad(ua.id)
 
   private def checkYourAnswersCWF1Route(ua: UserAnswers): Call =
-    controllers.cwf1.routes.AuthorisedAgentController
+    controllers.cwf1.routes.AreYouAnAgentController
       .onPageLoad(ua.id, CheckMode) // TODO change controller to CYA Page controller
 
   private def addPreviousLastNameCheckRoute(ua: UserAnswers): Call =
@@ -239,17 +239,17 @@ class Navigator @Inject() () {
       .getOrElse(checkYourAnswersRoute(userAnswers))
   }
 
-  private def authorisedAgentCheckRoute(ua: UserAnswers): Call =
-    ua.get(AuthorisedAgentPage) match {
-      case Some(true) if ua.get(AuthorisedAgentPage).isEmpty  => // TODO change this page to AgentDetails Page
-        controllers.cwf1.routes.AuthorisedAgentController
+  private def areYouAnAgentCheckRoute(ua: UserAnswers): Call =
+    ua.get(AreYouAnAgentPage) match {
+      case Some(true) if ua.get(AreYouAnAgentPage).isEmpty  => // TODO change this page to AgentDetails Page
+        controllers.cwf1.routes.AreYouAnAgentController
           .onPageLoad(ua.id, CheckMode) // TODO change this controller to AgentDetails Controller
-      case Some(false) if ua.get(AuthorisedAgentPage).isEmpty => // TODO change this page to NINO Page
-        controllers.cwf1.routes.AuthorisedAgentController
+      case Some(false) if ua.get(AreYouAnAgentPage).isEmpty => // TODO change this page to NINO Page
+        controllers.cwf1.routes.AreYouAnAgentController
           .onPageLoad(ua.id, CheckMode) // TODO change this controller to NINO Controller
-      case Some(_)                                            =>
+      case Some(_)                                          =>
         checkYourAnswersCWF1Route(ua)
-      case None                                               =>
+      case None                                             =>
         routes.IndexController.onPageLoad()
     }
 }

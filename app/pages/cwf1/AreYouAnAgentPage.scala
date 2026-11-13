@@ -14,32 +14,14 @@
  * limitations under the License.
  */
 
-package forms.cwf1
+package pages.cwf1
 
-import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class AuthorisedAgentFormProviderSpec extends BooleanFieldBehaviours {
+case object AreYouAnAgentPage extends QuestionPage[Boolean] {
 
-  val requiredKey = "cwf1.authorisedAgent.error.required"
-  val invalidKey  = "error.boolean"
+  override def path: JsPath = JsPath \ toString
 
-  val form = new AuthorisedAgentFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-
-    behave like booleanField(
-      form,
-      fieldName,
-      invalidError = FormError(fieldName, invalidKey)
-    )
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
+  override def toString: String = "areyouanagent"
 }
