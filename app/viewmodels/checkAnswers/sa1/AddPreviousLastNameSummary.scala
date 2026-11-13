@@ -39,6 +39,7 @@ object AddPreviousLastNameSummary {
             controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(answers.id, CheckMode).url
           )
             .withVisuallyHiddenText(messages("sa1.addPreviousLastName.change.hidden"))
+            .withAttribute("id" -> "previous-last-name-yes-no")
         )
       )
     }

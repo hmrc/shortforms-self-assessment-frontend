@@ -42,6 +42,7 @@ object DateOfBirthSummary {
               "site.change",
               controllers.sa1.routes.DateOfBirthController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.dateOfBirth.change.hidden"))
+              .withAttribute("id" -> "date-of-birth")
           )
         )
       )

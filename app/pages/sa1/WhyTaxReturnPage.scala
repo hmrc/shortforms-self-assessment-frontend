@@ -16,13 +16,53 @@
 
 package pages.sa1
 
+import models.UserAnswers
 import models.sa1.WhyTaxReturn
 import pages.QuestionPage
 import play.api.libs.json.JsPath
+import scala.util.Try
 
 case object WhyTaxReturnPage extends QuestionPage[Set[WhyTaxReturn]] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "whyTaxReturn"
+
+  def cleanupRemovedAnswers(
+    previousAnswers: Set[WhyTaxReturn],
+    newAnswers: Set[WhyTaxReturn],
+    userAnswers: UserAnswers
+  ): Try[UserAnswers] = {
+
+    val removedAnswers = previousAnswers.diff(newAnswers)
+
+    removedAnswers.foldLeft(Try(userAnswers)) {
+      case (acc, WhyTaxReturn.CompanyDirector) =>
+        acc.flatMap(_.remove(DateUntaxedIncomeDirectorPage))
+
+      case (acc, WhyTaxReturn.UkPropertyIncome) =>
+        acc.flatMap(_.remove(DateLandPropertyPage))
+
+      case (acc, WhyTaxReturn.ForeignIncome) =>
+        acc.flatMap(_.remove(TaxableForeignIncomeDatePage))
+
+      case (acc, WhyTaxReturn.TrustIncome) =>
+        acc.flatMap(_.remove(TrustSettlementDatePage))
+
+      case (acc, WhyTaxReturn.IncomeThresholds) =>
+        acc.flatMap(_.remove(DateAnnualIncomePage))
+
+      case (acc, WhyTaxReturn.UntaxedIncome) =>
+        acc.flatMap(_.remove(UntaxedIncomeNotInPayeStartDatePage))
+
+      case (acc, WhyTaxReturn.ChildBenefitCharge) =>
+        acc.flatMap(_.remove(HighIncomeChildBenefitDatePage))
+
+      case (acc, WhyTaxReturn.CapitalGainsTax) =>
+        acc.flatMap(_.remove(DateCapitalGainsTaxPage))
+
+      case (acc, WhyTaxReturn.Other) =>
+        acc.flatMap(_.remove(OtherReasonPage))
+    }
+  }
 }

@@ -51,7 +51,9 @@ class DeclarationController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DeclarationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(routes.DeclarationController.onPageLoad(journeyId))
+            } yield Redirect(
+              routes.DeclarationController.onPageLoad(journeyId)
+            ) // TODO as part of iForms submission ticket
         )
     }
 }

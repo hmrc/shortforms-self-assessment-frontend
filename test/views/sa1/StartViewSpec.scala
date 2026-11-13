@@ -99,6 +99,16 @@ class StartViewSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
       }
     }
 
+    "render the save form content" in {
+      val doc = Jsoup.parse(view()(request, msgs).body)
+
+      doc
+        .select("p.govuk-body")
+        .eachText()
+        .toArray
+        .toSeq must contain(msgs("sa1.start.save.form"))
+    }
+
     "render the external links with appropriate attributes" in {
       val doc = Jsoup.parse(view()(request, msgs).body)
 

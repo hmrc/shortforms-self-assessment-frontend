@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(journeyId: String): Action[AnyContent] =
     SA1DataAction(journeyId) { implicit request =>
-      Redirect(controllers.sa1.routes.CheckYourAnswersController.onPageLoad(journeyId))
+      Redirect(controllers.sa1.routes.DeclarationController.onPageLoad(journeyId))
     }
 
   private def personalDetailsRows(ua: UserAnswers)(implicit messages: Messages) =

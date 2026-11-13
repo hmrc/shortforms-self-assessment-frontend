@@ -67,6 +67,7 @@ object WhyTaxReturnSummary {
             .onPageLoad(answers.id, CheckMode)
             .url
         ).withVisuallyHiddenText(messages("sa1.whyTaxReturn.reason.change.hidden"))
+          .withAttribute("id" -> reasonChangeId(reason))
       )
     )
   }
@@ -94,6 +95,7 @@ object WhyTaxReturnSummary {
 
     val action = ActionItemViewModel(date.fold("site.add")(_ => "site.change"), reasonRoute(reason, answers.id).url)
       .withVisuallyHiddenText(messages("sa1.whyTaxReturn.startDate.change.hidden"))
+      .withAttribute("id" -> reasonDateChangeId(reason))
 
     Some(
       SummaryListRowViewModel(
@@ -125,4 +127,21 @@ object WhyTaxReturnSummary {
       case WhyTaxReturn.Other              =>
         controllers.sa1.routes.OtherReasonController.onPageLoad(journeyId, CheckMode)
     }
+
+  private def reasonDateChangeId(reason: WhyTaxReturn): String =
+    reasonChangeId(reason) + "-date"
+
+  private def reasonChangeId(reason: WhyTaxReturn): String =
+    reason match {
+      case WhyTaxReturn.CompanyDirector    => "company-director-untaxed"
+      case WhyTaxReturn.UkPropertyIncome   => "income-land-property"
+      case WhyTaxReturn.ForeignIncome      => "taxable-foreign-income-dividends"
+      case WhyTaxReturn.TrustIncome        => "annual-income-trust-settlement"
+      case WhyTaxReturn.IncomeThresholds   => "income-exceeds-annual-threshold"
+      case WhyTaxReturn.UntaxedIncome      => "untaxed-income-paye-tax-code"
+      case WhyTaxReturn.ChildBenefitCharge => "high-income-child-benefit-charge"
+      case WhyTaxReturn.CapitalGainsTax    => "capital-gains-tax"
+      case WhyTaxReturn.Other              => "other-reason"
+    }
+
 }

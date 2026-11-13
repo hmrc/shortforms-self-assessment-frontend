@@ -45,6 +45,7 @@ object NoNinoReasonSummary {
                   .onPageLoad(answers.id, CheckMode)
                   .url
               ).withVisuallyHiddenText(messages("sa1.noNinoReason.change.hidden"))
+                .withAttribute("id" -> "reason-for-no-national-insurance")
             )
           )
         )

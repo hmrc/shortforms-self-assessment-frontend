@@ -39,6 +39,7 @@ object DoYouHaveANinoSummary {
             controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(answers.id, CheckMode).url
           )
             .withVisuallyHiddenText(messages("sa1.doYouHaveANino.change.hidden"))
+            .withAttribute("id" -> "national-insurance-number-yes-no")
         )
       )
     }

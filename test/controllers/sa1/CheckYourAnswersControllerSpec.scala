@@ -96,13 +96,13 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         Seq(routes.AddressLookupController.change(userAnswersId).url)
     }
 
-    "must redirect to Check Your Answers when submitted" in new Setup {
+    "must redirect to declaration page when submitted" in new Setup {
       private val result = controller.onSubmit(userAnswersId)(FakeRequest())
 
       status(result) mustBe SEE_OTHER
 
       redirectLocation(result) mustBe
-        Some(routes.CheckYourAnswersController.onPageLoad(userAnswersId).url)
+        Some(routes.DeclarationController.onPageLoad(userAnswersId).url)
     }
   }
 

@@ -40,6 +40,7 @@ object MoveAddressSummary {
               "site.change",
               controllers.sa1.routes.MoveAddressController.onPageLoad(answers.id, CheckMode).url
             ).withVisuallyHiddenText(messages("sa1.moveAddress.change.hidden"))
+              .withAttribute("id" -> "date-moved-to-address")
           )
         )
       )

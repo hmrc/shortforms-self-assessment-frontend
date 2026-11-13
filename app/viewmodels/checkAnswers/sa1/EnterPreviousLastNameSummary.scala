@@ -46,7 +46,8 @@ object EnterPreviousLastNameSummary {
               action(
                 answers.id,
                 previousName.isDefined,
-                "sa1.enterPreviousLastName.change.hidden"
+                "sa1.enterPreviousLastName.change.hidden",
+                "previous-last-name"
               )
             )
           ),
@@ -61,7 +62,8 @@ object EnterPreviousLastNameSummary {
               action(
                 answers.id,
                 previousName.isDefined,
-                "sa1.enterPreviousLastName.date.change.hidden"
+                "sa1.enterPreviousLastName.date.change.hidden",
+                "previous-last-name-date"
               )
             )
           )
@@ -73,7 +75,8 @@ object EnterPreviousLastNameSummary {
   private def action(
     journeyId: String,
     isProvided: Boolean,
-    hiddenTextKey: String
+    hiddenTextKey: String,
+    id: String
   )(implicit messages: Messages) =
     ActionItemViewModel(
       if (isProvided) "site.change" else "site.add",
@@ -81,4 +84,6 @@ object EnterPreviousLastNameSummary {
         .onPageLoad(journeyId, CheckMode)
         .url
     ).withVisuallyHiddenText(messages(hiddenTextKey))
+      .withAttribute("id" -> id)
+
 }

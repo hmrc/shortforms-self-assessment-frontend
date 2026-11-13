@@ -44,7 +44,7 @@ object EnterNationalInsuranceNumberSummary {
                 controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad(answers.id, CheckMode).url
               ).withVisuallyHiddenText(
                 messages("sa1.enterNationalInsuranceNumber.change.hidden")
-              )
+              ).withAttribute("id" -> "national-insurance-number")
             )
           )
         )

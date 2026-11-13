@@ -92,6 +92,9 @@ class NoNinoReasonSummarySpec extends SpecBase {
       result.value.actions.value.items.head.href mustBe expectedUrl
       result.value.actions.value.items.head.visuallyHiddenText.value mustBe
         msgs("sa1.noNinoReason.change.hidden")
+
+      result.value.actions.value.items.head.attributes("id") must include("reason-for-no-national-insurance")
+
     }
   }
 }
