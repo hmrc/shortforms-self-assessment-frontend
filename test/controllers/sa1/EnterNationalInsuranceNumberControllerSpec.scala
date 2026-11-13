@@ -16,67 +16,57 @@
 
 package controllers.sa1
 
+import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
+import navigation.FakeNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.TryValues
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import pages.sa1.EnterNationalInsuranceNumberPage
+import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
 import play.api.data.Form
-import play.api.i18n.Messages
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Call, Request, Result}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.EnterNationalInsuranceNumberView
 
-import scala.concurrent.{ExecutionContext, Future}
-import navigation.Navigator
+import scala.concurrent.Future
 
-class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matchers with TryValues with MockitoSugar {
-
-  private implicit val ec: ExecutionContext = ExecutionContext.global
-
+class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSugar {
   private val journeyId = "test-journey-id"
   private val userId    = "test-user-id"
 
-  def onwardRoute = Call("GET", "/foo")
+  private val doYouHaveANinoRoute = routes.DoYouHaveANinoController.onPageLoad(journeyId, NormalMode)
+  def onwardRoute                 = Call("GET", "/foo")
 
   private val enterNationalInsuranceNumber = "NM772208B"
   private val validFormData                = Map("value" -> enterNationalInsuranceNumber)
   protected val mockViewContent            = "EnterNationalInsuranceNumberView"
 
-  lazy val enterNationalInsuranceNumberRoute: String =
-    controllers.sa1.routes.EnterNationalInsuranceNumberController.onPageLoad("test-journey-id", NormalMode).url
-
   private trait Setup {
-    protected def userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
+    protected def userAnswers: UserAnswers =
+      UserAnswers(journeyId, userId, JourneyType.SA1).update(DoYouHaveANinoPage, true)
 
-    protected val navigator: Navigator                   = mock[Navigator]
-    protected val sessionRepository: SessionRepository   = mock[SessionRepository]
-    protected val view: EnterNationalInsuranceNumberView = mock[EnterNationalInsuranceNumberView]
+    protected val sessionRepository: SessionRepository   = mock
+    protected val view: EnterNationalInsuranceNumberView = mock
+    when(view.apply(any[Form[_]], any[String], any)(any, any)) thenReturn Html(mockViewContent)
 
     protected lazy val controllerUnderTest = new EnterNationalInsuranceNumberController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       new EnterNationalInsuranceNumberFormProvider(),
-      navigator,
+      new FakeNavigator(onwardRoute),
       view
     )
-    when(view.apply(any[Form[_]], any[String], any)(any[Request[?]], any[Messages])).thenReturn(Html(mockViewContent))
-
   }
 
-  "EnterNationalInsuranceNumber Controller" should {
+  "page load handler should" - {
 
     "must return OK and the correct view for a GET" in new Setup {
-
       private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
@@ -84,26 +74,65 @@ class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matche
     }
 
     "pre-populate the form when previous contact details exists " in new Setup {
+      override val userAnswers: UserAnswers =
+        super.userAnswers.update(EnterNationalInsuranceNumberPage, enterNationalInsuranceNumber)
 
-      override protected val userAnswers: UserAnswers = UserAnswers(journeyId, userId, JourneyType.SA1)
-        .set(EnterNationalInsuranceNumberPage, enterNationalInsuranceNumber)
-        .success
-        .value
-      private val result                              = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+      private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
       status(result) mustEqual OK
-      val captor: ArgumentCaptor[Form[String]]        = ArgumentCaptor.forClass(classOf[Form[String]])
-      verify(view).apply(captor.capture(), eqTo(journeyId), any)(any[Request[?]], any[Messages])
 
-      val populatedForm: Form[String] = captor.getValue
+      private val captor = ArgumentCaptor.forClass(classOf[Form[String]])
+      verify(view).apply(captor.capture(), eqTo(journeyId), any)(any, any)
+
+      private val populatedForm = captor.getValue
       populatedForm("value").value mustBe Some(enterNationalInsuranceNumber)
     }
 
-    "return BAD_REQUEST when the submitted form is invalid" in new Setup {
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] = FakeRequest(POST, "/").withFormUrlEncodedBody(
-        "value" -> ""
-      )
+    "redirect to 'Do You Have a Nino' page WHEN" - {
+      "question was answered 'No'" in new Setup {
+        override val userAnswers: UserAnswers = emptyUserAnswers.update(DoYouHaveANinoPage, false)
 
-      val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+        private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual doYouHaveANinoRoute.url
+      }
+
+      "question was NOT answered at all" in new Setup {
+        override val userAnswers: UserAnswers = emptyUserAnswers.delete(DoYouHaveANinoPage)
+
+        private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual doYouHaveANinoRoute.url
+      }
+    }
+  }
+
+  "submission handler should" - {
+
+    "redirect to 'Do You Have a Nino' page WHEN" - {
+      "question was answered 'No'" in new Setup {
+        override val userAnswers: UserAnswers = emptyUserAnswers.update(DoYouHaveANinoPage, false)
+
+        private val result = controllerUnderTest.onSubmit(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual doYouHaveANinoRoute.url
+      }
+
+      "question was NOT answered at all" in new Setup {
+        override val userAnswers: UserAnswers = emptyUserAnswers.delete(DoYouHaveANinoPage)
+
+        private val result = controllerUnderTest.onSubmit(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual doYouHaveANinoRoute.url
+      }
+    }
+
+    "return BAD_REQUEST when the submitted form is invalid" in new Setup {
+      private val request = FakeRequest().withFormUrlEncodedBody("value" -> "")
+      private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe mockViewContent
@@ -111,25 +140,16 @@ class EnterNationalInsuranceNumberControllerSpec extends AnyWordSpec with Matche
 
     "save the submitted data and redirect when the form is valid" in new Setup {
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-      when(
-        navigator.nextPage(eqTo(EnterNationalInsuranceNumberPage), eqTo(NormalMode), any[UserAnswers])
-      ).thenReturn(controllers.routes.IndexController.onPageLoad())
-      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-        FakeRequest(POST, "/").withFormUrlEncodedBody(validFormData.toSeq*)
 
-      val result: Future[Result] = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+      private val request = FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
+      private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+      redirectLocation(result).value mustBe onwardRoute.url
 
-      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      private val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
       captor.getValue.get(EnterNationalInsuranceNumberPage) mustBe Some(enterNationalInsuranceNumber)
-
-      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(navigator)
-        .nextPage(eqTo(EnterNationalInsuranceNumberPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
-      navigatorAnswersCaptor.getValue.get(EnterNationalInsuranceNumberPage) mustBe Some(enterNationalInsuranceNumber)
     }
   }
 }

@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.PreviousNameFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.sa1.PreviousLastNamePage
+import pages.sa1.{AddPreviousLastNamePage, PreviousLastNamePage}
 import play.api.mvc.*
 import repositories.SessionRepository
 import views.html.sa1.EnterPreviousLastNameView
@@ -29,7 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnterPreviousLastNameController @Inject() (
-  override val controllerComponents: AppControllerComponents,
+  val controllerComponents: AppControllerComponents,
   formProvider: PreviousNameFormProvider,
   sessionRepository: SessionRepository,
   navigator: Navigator,
@@ -38,23 +38,27 @@ class EnterPreviousLastNameController @Inject() (
     extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
-      val form         = formProvider()
-      val preparedForm = request.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
-      Ok(view(preparedForm, journeyId, mode))
+    SA1DataAction(journeyId) { implicit req =>
+      if req.userAnswers.get(AddPreviousLastNamePage) contains true then
+        val form         = formProvider()
+        val preparedForm = req.userAnswers.get(PreviousLastNamePage).fold(form)(form.fill)
+        Ok(view(preparedForm, journeyId, mode))
+      else Redirect(routes.AddPreviousLastNameController.onPageLoad(journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-          answer =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(PreviousLastNamePage, answer))
-              saved          <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(PreviousLastNamePage, mode, updatedAnswers))
-        )
+    SA1DataAction(journeyId).async { implicit req =>
+      if req.userAnswers.get(AddPreviousLastNamePage) contains true then
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+            answer =>
+              for {
+                updatedAnswers <- Future.fromTry(req.userAnswers.set(PreviousLastNamePage, answer))
+                saved          <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(PreviousLastNamePage, mode, updatedAnswers))
+          )
+      else Future.successful(Redirect(routes.AddPreviousLastNameController.onPageLoad(journeyId, mode)))
     }
 }

@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NoNinoReasonFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.sa1.NoNinoReasonPage
+import pages.sa1.{DoYouHaveANinoPage, NoNinoReasonPage}
 import play.api.mvc.*
 import repositories.SessionRepository
 import views.html.sa1.NoNinoReasonView
@@ -37,24 +37,28 @@ class NoNinoReasonController @Inject() (
 ) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
-      val form         = formProvider()
-      val preparedForm = request.userAnswers.get(NoNinoReasonPage).fold(form)(form.fill)
+    SA1DataAction(journeyId) { implicit req =>
+      if req.userAnswers.get(DoYouHaveANinoPage) contains false then
+        val form         = formProvider()
+        val preparedForm = req.userAnswers.get(NoNinoReasonPage).fold(form)(form.fill)
 
-      Ok(view(preparedForm, journeyId, mode))
+        Ok(view(preparedForm, journeyId, mode))
+      else Redirect(routes.DoYouHaveANinoController.onPageLoad(journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
-      formProvider()
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-          noNinoReason =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(NoNinoReasonPage, noNinoReason))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(NoNinoReasonPage, mode, updatedAnswers))
-        )
+    SA1DataAction(journeyId).async { implicit req =>
+      if req.userAnswers.get(DoYouHaveANinoPage) contains false then
+        formProvider()
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+            noNinoReason =>
+              for {
+                updatedAnswers <- Future.fromTry(req.userAnswers.set(NoNinoReasonPage, noNinoReason))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Redirect(navigator.nextPage(NoNinoReasonPage, mode, updatedAnswers))
+          )
+      else Future.successful(Redirect(routes.DoYouHaveANinoController.onPageLoad(journeyId, mode)))
     }
 }
