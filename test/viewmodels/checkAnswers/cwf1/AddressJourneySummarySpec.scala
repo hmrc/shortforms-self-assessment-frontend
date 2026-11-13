@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers
+package viewmodels.checkAnswers.cwf1
 
 import base.SpecBase
 import models.address.{AddressDetails, ConfirmedAddress}
 import pages.AddressPage
 import play.api.test.Helpers.stubMessages
+import viewmodels.checkAnswers.AddressJourneySummary
 
 class AddressJourneySummarySpec extends SpecBase {
 
