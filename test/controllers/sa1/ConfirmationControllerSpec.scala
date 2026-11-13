@@ -19,7 +19,7 @@ package controllers.sa1
 import base.SpecBase
 import controllers.MockAppControllerComponents
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{mock, times, verify, verifyNoInteractions, when}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -33,23 +33,46 @@ class ConfirmationControllerSpec extends SpecBase {
 
   "ConfirmationController" - {
 
-    "must render the page with the current UK date and time" in new Setup {
-      val result = controller.onPageLoad()(FakeRequest())
+    "must render the backend submission time and acknowledgement reference from the submission" in new Setup {
+      val result = controller.onPageLoad()(
+        FakeRequest().withFlash("submissionReference" -> "ack-123", "submissionTimestamp" -> "2026-11-13T14:18:34.301Z")
+      )
 
       status(result) mustBe OK
       contentAsString(result) mustBe "Confirmation view"
 
       verify(view).apply(
-        eqTo("15:45 on 16 October 2026"),
-        eqTo("AB123CD")
+        eqTo("14:18 on 13 November 2026"),
+        eqTo("ack-123")
       )(any[Request[?]], any[Messages])
+    }
+
+    "must fall back to the current UK time when the submission timestamp is missing or invalid" in new Setup {
+      val missing = controller.onPageLoad()(FakeRequest().withFlash("submissionReference" -> "ack-123"))
+      val invalid = controller.onPageLoad()(
+        FakeRequest().withFlash("submissionReference" -> "ack-123", "submissionTimestamp" -> "not-a-date")
+      )
+
+      status(missing) mustBe OK
+      status(invalid) mustBe OK
+      verify(view, times(2)).apply(
+        eqTo("15:45 on 16 October 2026"),
+        eqTo("ack-123")
+      )(any[Request[?]], any[Messages])
+    }
+
+    "must redirect to the start of SA1 when there is no submission reference, such as after a page refresh" in new Setup {
+      val result = controller.onPageLoad()(FakeRequest())
+
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result).value mustBe controllers.routes.IndexController.startSA1().url
+      verifyNoInteractions(view)
     }
   }
 
   private class Setup {
     protected val view: ConfirmationView = mock(classOf[ConfirmationView])
-    private val expectedReferenceNumber  = "AB123CD"
-    when(view.apply(any[String], eqTo(expectedReferenceNumber))(any[Request[?]], any[Messages]))
+    when(view.apply(any[String], any[String])(any[Request[?]], any[Messages]))
       .thenReturn(Html("Confirmation view"))
 
     protected val controller = new ConfirmationController(

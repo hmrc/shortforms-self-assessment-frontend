@@ -62,4 +62,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, env: Environmen
   val identityVerificationBaseUrl: String =
     configuration.get[Service]("microservice.services.identity-verification").baseUrl
 
+  val shortFormsSelfAssessmentBaseUrl: String =
+    configuration.get[Service]("microservice.services.shortforms-self-assessment").baseUrl
+
 }
