@@ -18,12 +18,12 @@ package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
 import play.api.mvc.{Action, AnyContent}
+import utils.DateTimeFormats.submittedAtFormat
 import views.html.sa1.ConfirmationView
 
-import java.time.format.DateTimeFormatter
-import java.time.{Clock, LocalDateTime, ZoneId}
-import java.util.Locale
+import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 import javax.inject.Inject
+import scala.util.Try
 
 class ConfirmationController @Inject() (
   val controllerComponents: AppControllerComponents,
@@ -31,13 +31,20 @@ class ConfirmationController @Inject() (
   view: ConfirmationView
 ) extends AppController {
 
-  private val submittedAtFormatter = DateTimeFormatter.ofPattern("HH:mm 'on' d MMMM yyyy", Locale.UK)
-  private val londonTime           = ZoneId.of("Europe/London")
-  private val referenceNumber      = "AB123CD"
+  private val londonTime = ZoneId.of("Europe/London")
 
   def onPageLoad(): Action[AnyContent] =
     IdentifierAction { implicit request =>
-      val submittedAt = LocalDateTime.ofInstant(clock.instant(), londonTime).format(submittedAtFormatter)
-      Ok(view(submittedAt, referenceNumber))
+      request.flash.get("submissionReference").filter(_.trim.nonEmpty) match {
+        case Some(referenceNumber) =>
+          val submittedInstant = request.flash
+            .get("submissionTimestamp")
+            .flatMap(value => Try(Instant.parse(value)).toOption)
+            .getOrElse(clock.instant())
+          val submittedAt      = LocalDateTime.ofInstant(submittedInstant, londonTime).format(submittedAtFormat)
+          Ok(view(submittedAt, referenceNumber))
+        case None                  =>
+          Redirect(controllers.routes.IndexController.startSA1())
+      }
     }
 }

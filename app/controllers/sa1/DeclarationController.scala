@@ -16,22 +16,30 @@
 
 package controllers.sa1
 
+import connectors.SA1SubmissionConnector
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DeclarationFormProvider
+import models.UserAnswers
 import pages.sa1.DeclarationPage
-import play.api.mvc.{Action, AnyContent}
+import play.api.Logging
+import play.api.mvc.{Action, AnyContent, Result}
 import repositories.SessionRepository
+import services.SA1SubmissionMapper
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.sa1.DeclarationView
 
 import javax.inject.Inject
 import scala.concurrent.Future
+import scala.util.control.NonFatal
 
 class DeclarationController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DeclarationFormProvider,
+  submissionConnector: SA1SubmissionConnector,
   view: DeclarationView
-) extends AppController {
+) extends AppController
+    with Logging {
 
   private val form = formProvider()
 
@@ -51,9 +59,28 @@ class DeclarationController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DeclarationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(
-              routes.DeclarationController.onPageLoad(journeyId)
-            ) // TODO as part of iForms submission ticket
+              result         <- submitSA1(updatedAnswers)
+            } yield result
         )
+    }
+
+  private def submitSA1(answers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] =
+    SA1SubmissionMapper.map(answers) match {
+      case Left(error)       =>
+        logger.error(s"[DeclarationController][submitSA1] Unable to build SA1 submission: $error")
+        Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
+      case Right(submission) =>
+        submissionConnector
+          .submit(submission)
+          .map { response =>
+            Redirect(routes.ConfirmationController.onPageLoad())
+              .flashing(
+                "submissionReference" -> response.acknowledgementRef,
+                "submissionTimestamp" -> response.receivedTimestamp.toString
+              )
+          }
+          .recover { case NonFatal(_) =>
+            Redirect(controllers.routes.SystemErrorController.onPageLoad())
+          }
     }
 }
