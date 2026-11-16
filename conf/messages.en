@@ -413,4 +413,8 @@ sa1.highIncomeChildBenefitDate.b1.link = https://www.gov.uk/child-benefit-tax-ca
 sa1.highIncomeChildBenefitDate.b1.linkText = Child Benefit purposes (opens in a new tab)
 sa1.highIncomeChildBenefitDate.b2 = the date your child benefit payments started
 
-
+cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
+cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
+cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
+cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
+cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
