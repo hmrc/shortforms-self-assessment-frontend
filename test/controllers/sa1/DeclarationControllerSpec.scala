@@ -57,11 +57,11 @@ class DeclarationControllerSpec extends SpecBase {
       verify(sessionRepository, never()).set(any[UserAnswers])
     }
 
-    "must save a valid name and remain on the declaration page" in new Setup {
+    "must save a valid name and redirect to confirmation page" in new Setup {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> "Jane Doe"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.DeclarationController.onPageLoad(userAnswersId).url
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(savedAnswers.capture())
@@ -72,7 +72,7 @@ class DeclarationControllerSpec extends SpecBase {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> ""))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.DeclarationController.onPageLoad(userAnswersId).url
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(savedAnswers.capture())

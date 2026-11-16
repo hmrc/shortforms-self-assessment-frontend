@@ -45,12 +45,13 @@ class IndexControllerSpec extends SpecBase with MockitoSugar {
         controllers.sa1.routes.StartController.onPageLoad().url
     }
 
-    "must return OK and the correct view for a GET when invoke by startCWF1ST" in new Setup {
+    "must redirect to the CWF1 start page when startCWF1ST is invoked" in new Setup {
       private val result = controllerUnderTest.startCWF1ST()(FakeRequest())
 
-      status(result) mustEqual OK
+      status(result) mustEqual SEE_OTHER
 
-      contentAsString(result) mustEqual "Hello, CWF1ST!"
+      redirectLocation(result).value mustEqual
+        controllers.cwf1.routes.StartController.onPageLoad().url
     }
 
     "must return OK and the correct view for a GET when invoke by startCeaseTrading" in new Setup {

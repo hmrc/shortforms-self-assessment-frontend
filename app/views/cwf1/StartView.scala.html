@@ -1,0 +1,124 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import config.FrontendAppConfig
+
+@this(
+   layout: templates.Layout,
+   bulletListWithLinks: BulletListWithLinks,
+   bulletList: BulletList,
+   govukButton: GovukButton,
+   formHelper: FormWithCSRF,
+   appConfig: FrontendAppConfig
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(
+    pageTitle    = titleNoForm(title = "cwf1.start.title", serviceName = "service.cwf1st.name"),
+    serviceName = Some(messages("service.cwf1st.name")),
+    showBackLink = false
+) {
+    <span class="govuk-caption-l">@messages("site.sa.caption")</span>
+    <h1 class="govuk-heading-xl">@messages("cwf1.start.title")</h1>
+
+    <p class="govuk-body">
+        @messages("cwf1.start.intro")
+    </p>
+
+    <h2 class="govuk-heading-m">
+        @messages("cwf1.start.agents.heading")
+    </h2>
+    <p class="govuk-body">
+        @messages("cwf1.start.agents.content")
+    </p>
+
+   <h2 class="govuk-heading-m">
+        @messages("cwf1.start.directors.heading")
+   </h2>
+   <p class="govuk-body">
+        @messages("cwf1.start.directors.content")
+       <a
+               class="govuk-link"
+               href="@controllers.sa1.routes.StartController.onPageLoad().url"
+       >@messages("cwf1.start.directors.linkText")</a>.
+   </p>
+
+    <h2 class="govuk-heading-m">
+        @messages("cwf1.start.partners.heading")
+    </h2>
+    <p class="govuk-body">
+        @messages("cwf1.start.partners.content")
+    </p>
+
+    @bulletListWithLinks(Seq(
+    (
+    "cwf1.start.partners.sa400.linkText",
+    appConfig.formSA400Url,
+    "cwf1.start.partners.sa400"
+    ),
+    (
+    "cwf1.start.partners.sa401.linkText",
+    appConfig.formSA401Url,
+    "cwf1.start.partners.sa401"
+    ),
+    (
+    "cwf1.start.partners.sa402.linkText",
+    appConfig.formSA402Url,
+    "cwf1.start.partners.sa402"
+    )
+    ))
+
+   <h2 class="govuk-heading-m">
+        @messages("cwf1.start.tradingAllowance.heading")
+   </h2>
+   <p class="govuk-body">
+        @messages("cwf1.start.tradingAllowance.content.prefix")
+       <a
+            class="govuk-link"
+            href="@appConfig.guidanceOnPropertyTradingUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+    >@messages("cwf1.start.tradingAllowance.linkText")</a>
+        @messages("cwf1.start.tradingAllowance.content.suffix")
+   </p>
+
+   <h2 class="govuk-heading-m">
+        @messages("cwf1.start.requirements.heading")
+   </h2>
+   <p class="govuk-body">
+        @messages("cwf1.start.requirements.intro")
+   </p>
+   @bulletList(Seq(
+        "cwf1.start.requirements.nationalInsuranceNumber",
+        "cwf1.start.requirements.utr"
+   ))
+    <p class="govuk-body">
+        @messages("cwf1.start.save.form")
+    </p>
+
+   @formHelper(action = controllers.cwf1.routes.StartController.onSubmit()) {
+      @govukButton(
+        Button(
+          content = Text(messages("site.start")),
+          isStartButton = true
+        )
+     )
+   }
+}
+
+
