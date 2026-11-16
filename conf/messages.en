@@ -439,6 +439,7 @@ cwf1.start.requirements.intro = To use this service, you will need:
 cwf1.start.requirements.nationalInsuranceNumber = your National Insurance number, if you have one
 cwf1.start.requirements.utr = your Unique Taxpayer Reference (UTR), if you have one
 cwf1.start.save.form = Ensure you have these before you start. You cannot save the form and complete it later.
+
 cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
