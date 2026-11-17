@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import models.{JourneyType, SubmissionConfirmation, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito
 import org.mockito.Mockito.{mock, verify, when}
 import pages.sa1.DeclarationPage
 import play.api.i18n.Messages
@@ -36,11 +37,10 @@ import scala.concurrent.Future
 
 class ConfirmationControllerSpec extends SpecBase {
 
-  val confirmation: SubmissionConfirmation         = SubmissionConfirmation(
+  val confirmation: SubmissionConfirmation = SubmissionConfirmation(
     "AB123CD",
     Instant.now()
   )
-  private val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
 
   "ConfirmationController" - {
 
@@ -63,8 +63,6 @@ class ConfirmationControllerSpec extends SpecBase {
           any,
           eqTo("AB123CD")
         )(any[Request[?]], any[Messages])
-
-        verify(sessionRepository).clear(any, any, any)
       }
 
       "verify the clear method invoke successfully post the confirmation request to clear session data" in new Setup(
@@ -74,13 +72,12 @@ class ConfirmationControllerSpec extends SpecBase {
         val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
 
         status(result) mustBe OK
-
-        verify(sessionRepository).clear(any, any, any)
-
         verify(view).apply(
           any,
           eqTo("AB123CD")
         )(any[Request[?]], any[Messages])
+
+        verify(sessionRepository).clear(any, any, any)
 
       }
     }
@@ -101,6 +98,7 @@ class ConfirmationControllerSpec extends SpecBase {
   private class Setup(userAnswers: UserAnswers) {
     protected val view: ConfirmationView           = mock(classOf[ConfirmationView])
     private val pageNotFoundView: PageNotFoundView = mock(classOf[PageNotFoundView])
+    val sessionRepository: SessionRepository       = mock(classOf[SessionRepository])
     when(sessionRepository.clear(any[String], any[String], any)).thenReturn(Future.successful(true))
 
     private val expectedReferenceNumber = "AB123CD"
