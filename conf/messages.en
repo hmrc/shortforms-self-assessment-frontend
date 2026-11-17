@@ -1,6 +1,6 @@
 service.name              = Self Assessment Forms
 service.sa1.name          = Registering for Self Assessment
-service.cwf1st.name       = Registering for Self-employment
+service.cwf1st.name       = Registering for Self Assessment
 service.ceaseTrading.name = Stopping Self-employment
 
 site.back = Back
@@ -412,6 +412,33 @@ sa1.highIncomeChildBenefitDate.b1.suffix = went over the threshold
 sa1.highIncomeChildBenefitDate.b1.link = https://www.gov.uk/child-benefit-tax-calculator
 sa1.highIncomeChildBenefitDate.b1.linkText = Child Benefit purposes (opens in a new tab)
 sa1.highIncomeChildBenefitDate.b2 = the date your child benefit payments started
+
+
+cwf1.start.title = Register for Self Assessment if you’re self-employed
+cwf1.start.heading = Register for Self Assessment if you’re self-employed
+cwf1.start.intro = Use this service to register for self-employment. You will then be able to send a tax return and pay Class 2 National Insurance contributions.
+cwf1.start.agents.heading = Authorised agents
+cwf1.start.agents.content = If you are an authorised agent, you can complete this form on behalf of your client.
+cwf1.start.directors.heading = Directors
+cwf1.start.directors.content = If you are a director of a company registered with Companies House, you do not need to register for self-employment. If you have additional untaxed income you want to declare, use
+cwf1.start.directors.linkText = form SA1
+cwf1.start.partners.heading = Partners
+cwf1.start.partners.content = Partners should not register with this service, but should instead should fill in:
+cwf1.start.partners.sa400.linkText = form SA400
+cwf1.start.partners.sa400 = , if you are a new partnership
+cwf1.start.partners.sa401.linkText = form SA401
+cwf1.start.partners.sa401 = , if you are a partner joining a partnership
+cwf1.start.partners.sa402.linkText = form SA402
+cwf1.start.partners.sa402 = , if you are partners who are not individuals
+cwf1.start.tradingAllowance.heading = Trading allowance
+cwf1.start.tradingAllowance.content.prefix = If your annual gross income from self-employment was £1,000 or less, then you may not need to register your self-employment for that year. Read the
+cwf1.start.tradingAllowance.linkText= guidance on property and trading income (opens in a new tab)
+cwf1.start.tradingAllowance.content.suffix = before you start.
+cwf1.start.requirements.heading = What you will need to register
+cwf1.start.requirements.intro = To use this service, you will need:
+cwf1.start.requirements.nationalInsuranceNumber = your National Insurance number, if you have one
+cwf1.start.requirements.utr = your Unique Taxpayer Reference (UTR), if you have one
+cwf1.start.save.form = Ensure you have these before you start. You cannot save the form and complete it later.
 
 cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?

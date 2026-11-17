@@ -35,7 +35,7 @@ class IndexController @Inject() (
   }
 
   def startCWF1ST(): Action[AnyContent] = IdentifierAction { implicit request =>
-    Ok("Hello, CWF1ST!")
+    Redirect(controllers.cwf1.routes.StartController.onPageLoad())
   }
 
   def startCeaseTrading(): Action[AnyContent] = IdentifierAction { implicit request =>
