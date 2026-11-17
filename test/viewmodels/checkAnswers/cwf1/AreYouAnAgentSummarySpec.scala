@@ -47,6 +47,8 @@ class AreYouAnAgentSummarySpec extends SpecBase {
 
         actionItem.content.asHtml.toString() must include("site.change")
         actionItem.visuallyHiddenText.value mustEqual "cwf1.areYouAnAgent.change.hidden"
+        actionItem.attributes("id")          must include("authorised-agent")
+
       }
 
       "must return a SummaryListRow with 'no' text and change link" in {
@@ -67,6 +69,8 @@ class AreYouAnAgentSummarySpec extends SpecBase {
 
         actionItem.content.asHtml.toString() must include("site.change")
         actionItem.visuallyHiddenText.value mustEqual "cwf1.areYouAnAgent.change.hidden"
+        actionItem.attributes("id")          must include("authorised-agent")
+
       }
     }
   }

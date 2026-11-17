@@ -445,3 +445,9 @@ cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
 cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
+
+cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
+cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?

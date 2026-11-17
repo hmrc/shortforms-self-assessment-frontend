@@ -19,6 +19,7 @@ package controllers.cwf1
 import base.SpecBase
 import controllers.{MockAppControllerComponents, routes}
 import models.JourneyType.CWF1ST
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -45,7 +46,7 @@ class StartControllerSpec extends SpecBase with MockitoSugar {
 
     "onSubmit" - {
 
-      "must start an CWF1 journey and redirect to the Start page" in new Setup {
+      "must start an CWF1 journey and redirect to Are you Agent page" in new Setup {
         when(startJourneyService.startJourney(testUserId, CWF1ST)) thenReturn
           Future.successful(userAnswersId)
 
@@ -53,7 +54,7 @@ class StartControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.cwf1.routes.StartController.onPageLoad().url
+          controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(userAnswersId, NormalMode).url
       }
 
       "must redirect to Journey Recovery when starting the journey fails" in new Setup {
