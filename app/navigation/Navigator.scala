@@ -99,8 +99,8 @@ class Navigator @Inject() () {
       ua =>
         ua.get(AreYouAnAgentPage) match {
           case Some(true)  =>
-            controllers.cwf1.routes.AreYouAnAgentController
-              .onPageLoad(ua.id, NormalMode) // TODO: make change controller for AgentDetails Page
+            controllers.cwf1.routes.AgentDetailsController
+              .onPageLoad(ua.id, NormalMode)
           case Some(false) =>
             controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(ua.id, NormalMode) // TODO: make change controller for NI Number Page

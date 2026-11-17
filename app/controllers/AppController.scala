@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import controllers.actions.{DataRequiredAction, IdentifierAction}
 import models.JourneyType.{CWF1ST, SA1}
 import controllers.actions.{DataRequiredAction, IdentifierAction, ReasonRequiredAction}
-import models.JourneyType.SA1
+import models.JourneyType.{CWF1ST, SA1}
 import models.requests.DataRequest
 import play.api.http.FileMimeTypes
 import play.api.i18n.{I18nSupport, Langs, MessagesApi}
