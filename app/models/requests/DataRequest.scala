@@ -16,11 +16,7 @@
 
 package models.requests
 
-import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
-
-case class OptionalDataRequest[A](request: Request[A], userId: String, userAnswers: Option[UserAnswers])
-    extends WrappedRequest[A](request)
 
 class DataRequest[A](request: IdentifierRequest[A], val userAnswers: UserAnswers)
     extends IdentifierRequest[A](request, request.userId, request.nino)

@@ -20,14 +20,14 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.NoNinoReasonFormProvider
 import models.{Mode, NormalMode, UserAnswers}
+import navigation.FakeNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.sa1.NoNinoReasonPage
+import pages.sa1.{DoYouHaveANinoPage, NoNinoReasonPage}
 import play.api.data.Form
-import play.api.i18n.Messages
-import play.api.mvc.{AnyContentAsFormUrlEncoded, Request}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -35,45 +35,82 @@ import repositories.SessionRepository
 import views.html.sa1.NoNinoReasonView
 
 import scala.concurrent.Future
-import navigation.Navigator
 
 class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
 
   private val noNinoReason = "No Nino"
 
+  private val ninoYesOrNoRoute = routes.DoYouHaveANinoController.onPageLoad(userAnswersId, NormalMode)
+  private val fakeOnwardRoute  = Call(GET, "/next-page")
+
   "NoNinoReasonController" - {
 
-    "onPageLoad" - {
+    "onPageLoad must" - {
 
-      "must return OK and display the page" in new Setup {
-        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
+      "return OK and display the page" in new Setup {
+        private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual mockContent
       }
 
-      "must pre-populate the form when a reason already exists" in new Setup(
-        emptyUserAnswers.set(NoNinoReasonPage, noNinoReason).success.value
-      ) {
-        val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
+      "pre-populate the form when a reason already exists" in new Setup {
+        override val userAnswers: UserAnswers = super.userAnswers.update(NoNinoReasonPage, noNinoReason)
+
+        private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
         status(result) mustEqual OK
 
-        val captor: ArgumentCaptor[Form[String]] = ArgumentCaptor.forClass(classOf[Form[String]])
+        private val captor = ArgumentCaptor.forClass(classOf[Form[String]])
         verify(mockView)
-          .apply(captor.capture(), eqTo(userAnswersId), eqTo[Mode](NormalMode))(any[Request[?]], any[Messages])
+          .apply(captor.capture(), eqTo(userAnswersId), eqTo[Mode](NormalMode))(any, any)
 
-        val populatedForm: Form[String] = captor.getValue
+        private val populatedForm = captor.getValue
         populatedForm("value").value mustBe Some(noNinoReason)
+      }
+
+      "redirect to 'Do You Have a Nino' page WHEN" - {
+        "it was answered 'yes'" in new Setup {
+          override val userAnswers: UserAnswers = emptyUserAnswers.update(DoYouHaveANinoPage, true)
+
+          private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustBe ninoYesOrNoRoute.url
+        }
+
+        "it was NOT answered at all" in new Setup {
+          override val userAnswers: UserAnswers = emptyUserAnswers
+
+          private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustBe ninoYesOrNoRoute.url
+        }
       }
     }
 
     "onSubmit" - {
 
-      "must return BAD_REQUEST when the submitted form is invalid" in new Setup {
-        val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-          FakeRequest(POST, "/").withFormUrlEncodedBody("value" -> "")
+      "redirect to 'Do You Have a Nino' page WHEN" - {
+        "it was answered 'yes'" in new Setup {
+          override val userAnswers: UserAnswers = emptyUserAnswers.update(DoYouHaveANinoPage, true)
 
-        val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+          private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(FakeRequest())
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustBe ninoYesOrNoRoute.url
+        }
+
+        "it was NOT answered at all" in new Setup {
+          override val userAnswers: UserAnswers = emptyUserAnswers
+
+          private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(FakeRequest())
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustBe ninoYesOrNoRoute.url
+        }
+      }
+
+      "must return BAD_REQUEST when the submitted form is invalid" in new Setup {
+        private val request = FakeRequest(POST, "/").withFormUrlEncodedBody("value" -> "")
+
+        private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual mockContent
@@ -81,48 +118,34 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
 
       "must save the submitted data and redirect when the form is valid" in new Setup {
         when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
-        when(
-          navigator.nextPage(eqTo(NoNinoReasonPage), eqTo(NormalMode), any[UserAnswers])
-        ).thenReturn(controllers.routes.IndexController.onPageLoad())
 
-        val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-          FakeRequest(POST, "/").withFormUrlEncodedBody("value" -> noNinoReason)
-
-        val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+        private val request = FakeRequest(POST, "/").withFormUrlEncodedBody("value" -> noNinoReason)
+        private val result  = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual fakeOnwardRoute.url
 
-        val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-
+        private val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(sessionRepository).set(captor.capture())
         captor.getValue.get(NoNinoReasonPage) mustBe Some(noNinoReason)
-
-        val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-        verify(navigator).nextPage(eqTo(NoNinoReasonPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
-        navigatorAnswersCaptor.getValue.get(NoNinoReasonPage) mustBe Some(noNinoReason)
       }
     }
   }
 
-  private class Setup(
-    userAnswers: UserAnswers = emptyUserAnswers
-  ) {
+  private class Setup {
+    protected def userAnswers: UserAnswers = emptyUserAnswers.update(DoYouHaveANinoPage, false)
+
     protected val mockContent                = "NoNinoReasonView"
     protected val mockView: NoNinoReasonView = mock
-    protected val navigator: Navigator       = mock
-
-    when(mockView.apply(any[Form[String]], any[String], any[Mode])(any[Request[?]], any[Messages]))
-      .thenReturn(Html(mockContent))
+    when(mockView.apply(any[Form[String]], any[String], any[Mode])(any, any)) thenReturn Html(mockContent)
 
     protected val sessionRepository: SessionRepository = mock
-    private val formProvider                           = new NoNinoReasonFormProvider()
 
     protected lazy val controllerUnderTest = new NoNinoReasonController(
       new MockAppControllerComponents(userAnswers),
-      formProvider,
+      new NoNinoReasonFormProvider(),
       sessionRepository,
-      navigator,
+      new FakeNavigator(fakeOnwardRoute),
       mockView
     )
   }

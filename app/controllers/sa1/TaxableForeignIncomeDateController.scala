@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.TaxableForeignIncomeDateFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.ForeignIncome
 import navigation.Navigator
 import pages.sa1.TaxableForeignIncomeDatePage
 import play.api.mvc.{Action, AnyContent}
@@ -37,23 +38,25 @@ class TaxableForeignIncomeDateController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(ForeignIncome)) { implicit request =>
 
-    val form         = formProvider()
-    val preparedForm = request.userAnswers.get(TaxableForeignIncomeDatePage).fold(form)(form.fill)
-    Ok(view(preparedForm, journeyId, mode))
-  }
+      val form         = formProvider()
+      val preparedForm = request.userAnswers.get(TaxableForeignIncomeDatePage).fold(form)(form.fill)
+      Ok(view(preparedForm, journeyId, mode))
+    }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-    formProvider()
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxableForeignIncomeDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TaxableForeignIncomeDatePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(ForeignIncome)).async { implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(TaxableForeignIncomeDatePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(TaxableForeignIncomeDatePage, mode, updatedAnswers))
+        )
+    }
 }

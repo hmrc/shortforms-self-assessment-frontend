@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateLandPropertyFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.UkPropertyIncome
 import navigation.Navigator
 import pages.sa1.DateLandPropertyPage
 import play.api.mvc.*
@@ -37,23 +38,23 @@ class DateLandPropertyController @Inject() (
 ) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(UkPropertyIncome)) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(DateLandPropertyPage).fold(form)(form.fill)
       Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(UkPropertyIncome)).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           date =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DateLandPropertyPage, date))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(DateLandPropertyPage, mode, updatedAnswers))
+            yield Redirect(navigator.nextPage(DateLandPropertyPage, mode, updatedAnswers))
         )
     }
 }

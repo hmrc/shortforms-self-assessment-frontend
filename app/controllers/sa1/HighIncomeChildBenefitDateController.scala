@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.ChildBenefitCharge
 import navigation.Navigator
 import pages.sa1.HighIncomeChildBenefitDatePage
 import play.api.mvc.{Action, AnyContent}
@@ -37,23 +38,25 @@ class HighIncomeChildBenefitDateController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
-    val form = formProvider()
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(ChildBenefitCharge)) { implicit request =>
+      val form = formProvider()
 
-    val preparedForm = request.userAnswers.get(HighIncomeChildBenefitDatePage).fold(form)(form.fill)
-    Ok(view(preparedForm, journeyId, mode))
-  }
+      val preparedForm = request.userAnswers.get(HighIncomeChildBenefitDatePage).fold(form)(form.fill)
+      Ok(view(preparedForm, journeyId, mode))
+    }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-    formProvider()
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(HighIncomeChildBenefitDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(HighIncomeChildBenefitDatePage, mode, updatedAnswers))
-      )
-  }
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
+    (SA1DataAction(journeyId) andThen ensureReason(ChildBenefitCharge)).async { implicit request =>
+      formProvider()
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(HighIncomeChildBenefitDatePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            yield Redirect(navigator.nextPage(HighIncomeChildBenefitDatePage, mode, updatedAnswers))
+        )
+    }
 }

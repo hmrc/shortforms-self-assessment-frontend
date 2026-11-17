@@ -17,7 +17,7 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import controllers.actions.{DataRequiredAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, IdentifierAction, ReasonRequiredAction}
 import models.JourneyType.SA1
 import models.requests.DataRequest
 import play.api.http.FileMimeTypes
@@ -35,18 +35,21 @@ abstract class AppController extends FrontendBaseController with I18nSupport {
   protected def SA1DataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
     controllerComponents.identify andThen controllerComponents.getData(journeyId, SA1)
 
+  protected def ensureReason: ReasonRequiredAction = controllerComponents.requireReason
+
   protected given ExecutionContext = controllerComponents.executionContext
 }
 
 @Singleton
 class AppControllerComponents @Inject() (
+  val requireReason: ReasonRequiredAction,
+  val getData: DataRequiredAction,
+  val identify: IdentifierAction,
   val messagesActionBuilder: MessagesActionBuilder,
   val actionBuilder: DefaultActionBuilder,
   val parsers: PlayBodyParsers,
   val messagesApi: MessagesApi,
   val langs: Langs,
   val fileMimeTypes: FileMimeTypes,
-  val executionContext: ExecutionContext,
-  val identify: IdentifierAction,
-  val getData: DataRequiredAction
+  val executionContext: ExecutionContext
 ) extends MessagesControllerComponents
