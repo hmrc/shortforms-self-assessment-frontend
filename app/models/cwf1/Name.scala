@@ -18,7 +18,7 @@ package models.cwf1
 
 import play.api.libs.json.*
 
-case class Name (firstName: String, lastName: String)
+case class Name(firstName: String, lastName: String)
 
 object Name {
 

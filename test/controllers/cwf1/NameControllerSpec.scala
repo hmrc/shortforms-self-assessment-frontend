@@ -80,7 +80,9 @@ class NameControllerSpec extends SpecBase {
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.cwf1.routes.NameController.onPageLoad(journeyId = "test-journey-id", NormalMode).url //TODO
+      redirectLocation(result).value mustEqual controllers.cwf1.routes.NameController
+        .onPageLoad(journeyId = "test-journey-id", NormalMode)
+        .url // TODO
 
     }
 

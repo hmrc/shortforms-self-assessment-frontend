@@ -25,18 +25,17 @@ import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
 import views.html.cwf1.NameView
 
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class NameController @Inject() (
-                                 sessionRepository: SessionRepository,
-                                 formProvider: NameFormProvider,
-                                 val controllerComponents: AppControllerComponents,
-                                 navigator: Navigator,
-                                 view: NameView
-                               )(implicit ec: ExecutionContext)
-  extends AppController {
+  sessionRepository: SessionRepository,
+  formProvider: NameFormProvider,
+  val controllerComponents: AppControllerComponents,
+  navigator: Navigator,
+  view: NameView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
   private val form = formProvider()
 
