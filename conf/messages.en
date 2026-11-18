@@ -26,7 +26,7 @@ date.error.month = month
 date.error.year = year
 
 timeout.title = You’re about to be signed out
-timeout.message = Registering for Self Assessment
+timeout.message = Your current session will time out in n seconds. You will lose any information you have entered.
 timeout.keepAlive = Continue with form
 timeout.signOut = Return to your account
 
