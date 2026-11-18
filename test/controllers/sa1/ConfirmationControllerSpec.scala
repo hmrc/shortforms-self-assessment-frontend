@@ -71,7 +71,7 @@ class ConfirmationControllerSpec extends SpecBase {
       "must render page not found page when SubmissionConfirmation is none" in new Setup(emptyUserAnswers) {
         val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
 
-        status(result) mustBe OK
+        status(result) mustBe NOT_FOUND
         contentAsString(result) mustBe "Page not found"
 
       }

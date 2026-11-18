@@ -95,6 +95,6 @@ object UserAnswers {
         (__ \ "data").format[JsObject] and
         (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) and
         (__ \ "confirmation").formatNullable[SubmissionConfirmation]
-    )(UserAnswers.apply, ua => (ua.id, ua.userId, ua.journeyType, ua.data, ua.lastUpdated, ua.confirmation))
+    )(UserAnswers.apply, Tuple.fromProductTyped)
   }
 }

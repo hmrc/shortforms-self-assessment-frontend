@@ -50,7 +50,7 @@ class ConfirmationController @Inject() (
           val updatedAnswers   = request.userAnswers.copy(data = Json.obj())
           sessionRepository.set(updatedAnswers).map(_ => confirmationView)
         case _                  =>
-          Future.successful(Ok(pageNotFoundView()))
+          Future.successful(NotFound(pageNotFoundView()))
       }
     }
 }
