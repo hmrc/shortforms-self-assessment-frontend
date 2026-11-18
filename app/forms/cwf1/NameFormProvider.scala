@@ -33,7 +33,7 @@ class NameFormProvider @Inject() extends Mappings {
       mapping(
         "firstName" -> nameField("firstName"),
         "lastName"  -> nameField("lastName")
-      )((firstName, lastName) => Name(firstName, lastName))(name => Some((name.firstName, name.lastName)))
+      )(Name.apply)(x => Some((x.firstName, x.lastName)))
     )
 
   private def nameField(field: String): Mapping[String] =
