@@ -28,7 +28,7 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
 
   def apply(callback: Call, landingPage: Call)(implicit request: RequestHeader): JsObject = {
     def appLabels(language: String): JsObject = Json.obj(
-      "appLevelLabels" -> Json.obj("navTitle" -> messagesApi("service.name")(Lang(language)))
+      "appLevelLabels" -> Json.obj("navTitle" -> messagesApi("service.sa1.name")(Lang(language)))
     )
 
     def labels(language: String): JsObject = {

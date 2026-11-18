@@ -20,8 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.sa1.EnterNationalInsuranceNumberPage
-import play.api.data.Form
+import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
 import views.html.sa1.EnterNationalInsuranceNumberView
@@ -38,48 +37,50 @@ class EnterNationalInsuranceNumberController @Inject() (
 )(implicit ec: ExecutionContext)
     extends AppController {
 
-  val form: Form[String] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
+    SA1DataAction(journeyId) { implicit req =>
+      if req.userAnswers.get(DoYouHaveANinoPage) contains true then
+        val preparedForm = req.userAnswers.get(EnterNationalInsuranceNumberPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(EnterNationalInsuranceNumberPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-
-      Ok(view(preparedForm, journeyId, mode))
+        Ok(view(preparedForm, journeyId, mode))
+      else Redirect(routes.DoYouHaveANinoController.onPageLoad(journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-          value =>
-            for {
-              updatedAnswers <-
-                Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
-            } yield request.nino match {
-              case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
-                sessionRepository.set(updatedAnswers)
-                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
+    SA1DataAction(journeyId).async { implicit req =>
+      if req.userAnswers.get(DoYouHaveANinoPage) contains true then
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+            value =>
+              for {
+                updatedAnswers <-
+                  Future.fromTry(req.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
+              } yield req.nino match {
+                case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
+                  sessionRepository.set(updatedAnswers)
+                  Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
 
-              case None =>
-                sessionRepository.set(updatedAnswers)
-                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
+                case None =>
+                  sessionRepository.set(updatedAnswers)
+                  Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
 
-              case _ =>
-                BadRequest(
-                  view(
-                    form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),
-                    journeyId,
-                    mode
+                case _ =>
+                  BadRequest(
+                    view(
+                      form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),
+                      journeyId,
+                      mode
+                    )
                   )
-                )
-
-            }
-        )
+              }
+          )
+      else Future.successful(Redirect(routes.DoYouHaveANinoController.onPageLoad(journeyId, mode)))
     }
 }

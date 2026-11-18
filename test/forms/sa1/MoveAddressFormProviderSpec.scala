@@ -28,7 +28,7 @@ class MoveAddressFormProviderSpec extends DateBehaviours {
   private val formProvider  = new MoveAddressFormProvider()
   private val msgs          = stubMessages()
   private val maximumDate   = LocalDate.now()
-  private val minimumDate   = maximumDate.minusYears(120)
+  private val minimumDate   = LocalDate.of(LocalDate.now().getYear - 120, 1, 1)
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   private val form          = formProvider()(msgs)
 

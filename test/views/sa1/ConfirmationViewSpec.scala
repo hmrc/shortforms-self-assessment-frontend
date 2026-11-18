@@ -32,7 +32,7 @@ class ConfirmationViewSpec extends SpecBase with GuiceOneAppPerSuite {
     "render the confirmation panel, submission time and next steps" in {
       val doc = Jsoup.parse(view("15:45 on 16 October 2026", "AB123CD")(FakeRequest(), msgs).body)
 
-      doc.title() mustBe s"Confirmation - ${msgs("service.name")} - ${msgs("site.govuk")}"
+      doc.title() mustBe s"Confirmation - ${msgs("service.sa1.name")} - ${msgs("site.govuk")}"
       doc.select("a.govuk-back-link").size() mustBe 0
       doc.select(".govuk-panel--confirmation .govuk-panel__title").text() mustBe
         msgs("sa1.confirmation.panel.heading")

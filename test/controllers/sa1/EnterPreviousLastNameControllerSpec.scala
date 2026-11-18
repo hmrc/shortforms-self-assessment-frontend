@@ -19,56 +19,62 @@ package controllers.sa1
 import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.PreviousNameFormProvider
-import models.{JourneyType, NormalMode, UserAnswers}
 import models.sa1.PreviousName
+import models.{JourneyType, Mode, NormalMode, UserAnswers}
+import navigation.FakeNavigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.sa1.PreviousLastNamePage
+import pages.sa1.{AddPreviousLastNamePage, PreviousLastNamePage}
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.sa1.EnterPreviousLastNameView
-import models.Mode
+
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
 
 class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
-  private val journeyId       = "test-journey-id"
-  private val userId          = "test-user-id"
+  private val journeyId = "test-journey-id"
+  private val userId    = "test-user-id"
+
   private val previousName    = PreviousName(previousLastName = "John Doe", lastNameChangeDate = LocalDate.of(2020, 5, 10))
   private val mockViewContent = "test view"
-  private val validFormData   = Map(
+  private val validFormData   = Seq(
     "previousLastName"         -> "John Doe",
     "lastNameChangeDate.day"   -> "10",
     "lastNameChangeDate.month" -> "5",
     "lastNameChangeDate.year"  -> "2020"
   )
 
+  private val previousLastNameYesOrNoRoute = routes.AddPreviousLastNameController.onPageLoad(journeyId, NormalMode).url
+  private val fakeOnwardRoute              = Call(GET, "/next-page")
+
   private class Setup {
-    protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
+    protected def userAnswers: UserAnswers =
+      UserAnswers(journeyId, userId, JourneyType.SA1).update(AddPreviousLastNamePage, true)
+
     protected val sessionRepository: SessionRepository = mock
-    protected val view: EnterPreviousLastNameView      = mock
-    protected val navigator: Navigator                 = mock
-    protected lazy val controllerUnderTest             = new EnterPreviousLastNameController(
+    when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
+
+    protected val view: EnterPreviousLastNameView = mock
+    when(view.apply(any[Form[PreviousName]], any[String], any[Mode])(any, any)) thenReturn Html(mockViewContent)
+
+    protected lazy val controllerUnderTest = new EnterPreviousLastNameController(
       new MockAppControllerComponents(userAnswers),
       new PreviousNameFormProvider(),
       sessionRepository,
-      navigator,
+      new FakeNavigator(fakeOnwardRoute),
       view
     )
-
-    when(view.apply(any[Form[PreviousName]], any[String], any[Mode])(any[Request[?]], any[Messages]))
-      .thenReturn(Html(mockViewContent))
   }
 
-  "EnterPreviousLastNameController should" - {
+  "page load handler should" - {
 
     "return OK when loading the page" in new Setup {
       private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
@@ -78,8 +84,7 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "pre-populate the form when previous name data exists" in new Setup {
-      override protected val userAnswers: UserAnswers =
-        UserAnswers(journeyId, userId, JourneyType.SA1).set(PreviousLastNamePage, previousName).success.value
+      override protected val userAnswers: UserAnswers = super.userAnswers.update(PreviousLastNamePage, previousName)
 
       private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
@@ -92,6 +97,51 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
       populatedForm("lastNameChangeDate.day").value mustBe Some("10")
       populatedForm("lastNameChangeDate.month").value mustBe Some("5")
       populatedForm("lastNameChangeDate.year").value mustBe Some("2020")
+    }
+
+    "redirect to previous last name yes/no page WHEN" - {
+      "it was answered no" in new Setup {
+        override protected val userAnswers: UserAnswers = super.userAnswers.update(AddPreviousLastNamePage, false)
+
+        private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe previousLastNameYesOrNoRoute
+      }
+
+      "it was NOT answered at all" in new Setup {
+        override protected val userAnswers: UserAnswers = super.userAnswers.delete(AddPreviousLastNamePage)
+
+        private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe previousLastNameYesOrNoRoute
+      }
+    }
+  }
+
+  "submission handler" - {
+
+    "redirect to previous last name yes/no page WHEN" - {
+      "it was answered no" in new Setup {
+        override protected val userAnswers: UserAnswers = super.userAnswers.update(AddPreviousLastNamePage, false)
+
+        private val request = FakeRequest().withFormUrlEncodedBody(validFormData*)
+        private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe previousLastNameYesOrNoRoute
+      }
+
+      "it was NOT answered at all" in new Setup {
+        override protected val userAnswers: UserAnswers = super.userAnswers.delete(AddPreviousLastNamePage)
+
+        private val request = FakeRequest().withFormUrlEncodedBody(validFormData*)
+        private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe previousLastNameYesOrNoRoute
+      }
     }
 
     "return BAD_REQUEST when the submitted form is invalid" in new Setup {
@@ -109,24 +159,15 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "save the submitted data and redirect when the form is valid" in new Setup {
-      when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
-      when(navigator.nextPage(eqTo(PreviousLastNamePage), eqTo(NormalMode), any[UserAnswers]))
-        .thenReturn(routes.DateOfBirthController.onPageLoad(journeyId, NormalMode))
-
-      private val request = FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
-
-      private val result = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+      private val request = FakeRequest().withFormUrlEncodedBody(validFormData*)
+      private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(routes.DateOfBirthController.onPageLoad(journeyId, NormalMode).url)
+      redirectLocation(result).value mustBe fakeOnwardRoute.url
 
       private val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(captor.capture())
       captor.getValue.get(PreviousLastNamePage) mustBe Some(previousName)
-
-      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(navigator).nextPage(eqTo(PreviousLastNamePage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
-      navigatorAnswersCaptor.getValue.get(PreviousLastNamePage) mustBe Some(previousName)
     }
   }
 }

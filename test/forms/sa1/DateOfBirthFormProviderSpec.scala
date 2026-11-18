@@ -25,9 +25,11 @@ import java.time.format.DateTimeFormatter
 
 class DateOfBirthFormProviderSpec extends DateBehaviours {
 
-  private val formProvider  = new DateOfBirthFormProvider()
-  private val msgs          = stubMessages()
-  private val maximumDate   = LocalDate.now().minusYears(15).minusMonths(9)
+  private val formProvider = new DateOfBirthFormProvider()
+  private val msgs         = stubMessages()
+  private val maximumDate  = LocalDate.now().minusYears(15).minusMonths(9)
+  private val minimumDate  = LocalDate.of(LocalDate.now().getYear - 120, 1, 1)
+
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   private val form          = formProvider()(msgs)
 
@@ -37,6 +39,12 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
     Seq(maximumDate.format(dateFormatter))
   )
 
+  private val minimumDateError = FormError(
+    "dateOfBirth",
+    "sa1.dateOfBirth.date.error.tooOld",
+    Seq(minimumDate.format(dateFormatter))
+  )
+
   "DateOfBirthFormProvider" - {
 
     "dateOfBirth" - {
@@ -44,7 +52,7 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
       dateField(
         form,
         "dateOfBirth",
-        datesBetween(LocalDate.of(1900, 1, 1), maximumDate)
+        datesBetween(minimumDate, maximumDate)
       )
 
       dateFieldWithMax(
@@ -65,6 +73,19 @@ class DateOfBirthFormProviderSpec extends DateBehaviours {
 
         result.value.value mustBe maximumDate
         result.errors mustBe empty
+      }
+      "accept the minimum date" in {
+        val result = form.bind(dateData(minimumDate))
+
+        result.value.value mustBe minimumDate
+        result.errors mustBe empty
+      }
+
+      "reject a date before the minimum date" in {
+        val dateBeforeMinimum = minimumDate.minusDays(1)
+        val result            = form.bind(dateData(dateBeforeMinimum))
+
+        result.errors must contain only minimumDateError
       }
     }
   }

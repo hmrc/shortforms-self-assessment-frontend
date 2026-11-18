@@ -21,6 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
+import pages.cwf1.{AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.sa1.*
 
 import java.time.LocalDate
@@ -128,6 +129,60 @@ class NavigatorSpec extends SpecBase {
           ) mustBe controllers.sa1.routes.CheckYourAnswersController.onPageLoad(userAnswersId)
         }
       }
+
+      "when authorised agent page" - {
+        "must go from authorised agent page to agent details page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(AreYouAnAgentPage, true).success.value
+
+          navigator.nextPage(AreYouAnAgentPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, NormalMode) // TODO must change controller to route Agent Details controller
+        }
+
+        "must go from authorised agent page to Nino number page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(AreYouAnAgentPage, false).success.value
+          navigator.nextPage(
+            AreYouAnAgentPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.AreYouAnAgentController
+            .onPageLoad(
+              journeyId = userAnswersId,
+              mode = NormalMode
+            ) // TODO must change controller to route NINO controller
+        }
+
+        "must go from authorised agent to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AreYouAnAgentPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
+      "when have you registered before page" - {
+        "must go from have you registered before to have you registered before when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, true).success.value
+          navigator.nextPage(
+            HaveYouRegisteredForSelfAssessmentPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from have you registered before page to have you registered before when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, false).success.value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        "must go from have you registered before page to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController
+            .onPageLoad()
+        }
+      }
+
     }
 
     "in Check mode" - {
@@ -341,6 +396,107 @@ class NavigatorSpec extends SpecBase {
             CheckMode,
             userAnswers
           ) mustBe controllers.sa1.routes.DateAnnualIncomeController.onPageLoad(userAnswersId, CheckMode)
+        }
+      }
+
+      "when Authorised Agent Page" - {
+
+        "must go to Agent Details page when yes is selected for Authorised Agent" in {
+          val userAnswers = emptyUserAnswers
+            .set(AreYouAnAgentPage, true)
+            .success
+            .value
+
+          navigator.nextPage(AreYouAnAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route Agent Details
+        }
+
+        "must go to Check Your Answers when yes is selected and Agent Details already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(AreYouAnAgentPage, true)
+            .success
+            .value
+          // .set(AuthorisedAgentPage, true) //TODO must change page to AgentDetails page post agent details page available
+          // .success
+          // .value
+
+          navigator.nextPage(AreYouAnAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to No NINO page when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(AreYouAnAgentPage, false)
+            .success
+            .value
+
+          navigator.nextPage(AreYouAnAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route NINO page
+        }
+
+        "must go to Check Your Answers when no is selected and NINO already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(AreYouAnAgentPage, false)
+            .success
+            .value
+          /// .set(NiNOPage, "Nino") //TODO must change page to NINO page post NINO page available
+          // .success
+          // .value
+
+          navigator.nextPage(AreYouAnAgentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(AreYouAnAgentPage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
+        }
+      }
+
+      "when Have Registered Before" - {
+
+        "must go to Have Registered Before when yes is selected and utr is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, true)
+            .success
+            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(userAnswersId, CheckMode) // TODO
+        }
+
+        "must go to Check Your Answers when yes is selected and utr already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, true)
+            .success
+            .value
+//            .set(PreviousLastNamePage, PreviousName("Smith", LocalDate.of(2000, 1, 1))) //TODO UTR
+//            .success
+//            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Check Your Answers when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, false)
+            .success
+            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
         }
       }
 

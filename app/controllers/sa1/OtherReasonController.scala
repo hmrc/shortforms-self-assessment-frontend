@@ -19,6 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.OtherReasonFormProvider
 import models.Mode
+import models.sa1.WhyTaxReturn.Other
 import navigation.Navigator
 import pages.sa1.OtherReasonPage
 import play.api.mvc.*
@@ -37,23 +38,23 @@ class OtherReasonController @Inject() (
 ) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId) { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(Other)) { implicit request =>
       val form         = formProvider()
       val preparedForm = request.userAnswers.get(OtherReasonPage).fold(form)(form.fill)
       Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
+    (SA1DataAction(journeyId) andThen ensureReason(Other)).async { implicit request =>
       formProvider()
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           answer =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(OtherReasonPage, answer))
               saved          <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(OtherReasonPage, mode, updatedAnswers))
+            yield Redirect(navigator.nextPage(OtherReasonPage, mode, updatedAnswers))
         )
     }
 }
