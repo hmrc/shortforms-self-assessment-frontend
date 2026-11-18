@@ -446,6 +446,17 @@ cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent represent
 cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
 cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
 
+cwf1.enterUTR.title = Your Self Assessment Unique Taxpayer Reference (UTR)
+cwf1.enterUTR.heading = Your Self Assessment Unique Taxpayer Reference (UTR)
+cwf1.enterUTR.content = You can find it in your Personal Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+cwf1.enterUTR.linkText = Get more help to find your UTR (opens in new tab)
+cwf1.enterUTR.subHeading = What is your Self Assessment UTR?
+cwf1.enterUTR.hint = Your UTR is 10 digits long.
+cwf1.enterUTR.checkYourAnswersLabel = Self Assessment UTR
+cwf1.enterUTR.error.required = Enter your UTR
+cwf1.enterUTR.error.length = Your UTR should be 10 digits long
+cwf1.enterUTR.error.invalid = Your UTR can only contain numbers
+cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
