@@ -147,3 +147,8 @@ GET         /cwf1/address/:addressType/:journeyId                    controllers
 GET         /cwf1/address/:addressType/change/:journeyId             controllers.cwf1.Cwf1AddressLookupController.change(addressType: Cwf1AddressType, journeyId: String)
 GET         /cwf1/address-callback/:addressType/:journeyId           controllers.cwf1.Cwf1AddressLookupController.callback(addressType: Cwf1AddressType, journeyId: String, id: String ?= "")
 GET         /cwf1/address-callback/:addressType/change/:journeyId    controllers.cwf1.Cwf1AddressLookupController.callbackChange(addressType: Cwf1AddressType, journeyId: String, id: String ?= "")
+
+GET         /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/registered-before/change/:journeyId             controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/registered-before/change/:journeyId             controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onSubmit(journeyId: String, mode: Mode = CheckMode)

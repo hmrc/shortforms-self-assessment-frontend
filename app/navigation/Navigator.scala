@@ -18,10 +18,11 @@ package navigation
 
 import controllers.routes
 import models.*
+import models.JourneyType.{CWF1ST, SA1}
 import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
-import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HomeAddressPage, PreviousHomeAddressPage}
+import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage, HomeAddressPage, PreviousHomeAddressPage}
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -40,9 +41,9 @@ class Navigator @Inject() () {
     }
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case NamePage                            =>
+    case NamePage                               =>
       ua => controllers.sa1.routes.AddPreviousLastNameController.onPageLoad(ua.id, NormalMode)
-    case AddPreviousLastNamePage             =>
+    case AddPreviousLastNamePage                =>
       ua =>
         ua.get(AddPreviousLastNamePage) match {
           case Some(true)  =>
@@ -52,15 +53,15 @@ class Navigator @Inject() () {
           case _           =>
             routes.IndexController.onPageLoad()
         }
-    case PreviousLastNamePage                =>
+    case PreviousLastNamePage                   =>
       ua => controllers.sa1.routes.DateOfBirthController.onPageLoad(ua.id, NormalMode)
-    case DateOfBirthPage                     =>
+    case DateOfBirthPage                        =>
       ua => controllers.sa1.routes.ContactDetailsController.onPageLoad(ua.id, NormalMode)
-    case MoveAddressPage                     =>
+    case MoveAddressPage                        =>
       ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
-    case ContactDetailsPage                  =>
+    case ContactDetailsPage                     =>
       ua => controllers.sa1.routes.Sa1AddressLookupController.start(ua.id)
-    case DoYouHaveANinoPage                  =>
+    case DoYouHaveANinoPage                     =>
       ua =>
         ua.get(DoYouHaveANinoPage) match {
           case Some(true)  =>
@@ -70,31 +71,31 @@ class Navigator @Inject() () {
           case _           =>
             routes.IndexController.onPageLoad()
         }
-    case EnterNationalInsuranceNumberPage    =>
+    case EnterNationalInsuranceNumberPage       =>
       ua => controllers.sa1.routes.WhyTaxReturnController.onPageLoad(ua.id, NormalMode)
-    case NoNinoReasonPage                    =>
+    case NoNinoReasonPage                       =>
       ua => controllers.sa1.routes.WhyTaxReturnController.onPageLoad(ua.id, NormalMode)
-    case WhyTaxReturnPage                    =>
+    case WhyTaxReturnPage                       =>
       ua => nextReasonRoute(None, ua, NormalMode)
-    case DateUntaxedIncomeDirectorPage       =>
+    case DateUntaxedIncomeDirectorPage          =>
       ua => nextReasonRoute(Some(CompanyDirector), ua, NormalMode)
-    case DateLandPropertyPage                =>
+    case DateLandPropertyPage                   =>
       ua => nextReasonRoute(Some(UkPropertyIncome), ua, NormalMode)
-    case TaxableForeignIncomeDatePage        =>
+    case TaxableForeignIncomeDatePage           =>
       ua => nextReasonRoute(Some(ForeignIncome), ua, NormalMode)
-    case TrustSettlementDatePage             =>
+    case TrustSettlementDatePage                =>
       ua => nextReasonRoute(Some(TrustIncome), ua, NormalMode)
-    case DateAnnualIncomePage                =>
+    case DateAnnualIncomePage                   =>
       ua => nextReasonRoute(Some(IncomeThresholds), ua, NormalMode)
-    case UntaxedIncomeNotInPayeStartDatePage =>
+    case UntaxedIncomeNotInPayeStartDatePage    =>
       ua => nextReasonRoute(Some(UntaxedIncome), ua, NormalMode)
-    case HighIncomeChildBenefitDatePage      =>
+    case HighIncomeChildBenefitDatePage         =>
       ua => nextReasonRoute(Some(ChildBenefitCharge), ua, NormalMode)
-    case DateCapitalGainsTaxPage             =>
+    case DateCapitalGainsTaxPage                =>
       ua => nextReasonRoute(Some(CapitalGainsTax), ua, NormalMode)
-    case OtherReasonPage                     =>
+    case OtherReasonPage                        =>
       ua => nextReasonRoute(Some(Other), ua, NormalMode)
-    case AreYouAnAgentPage                   =>
+    case AreYouAnAgentPage                      =>
       ua =>
         ua.get(AreYouAnAgentPage) match {
           case Some(true)  =>
@@ -106,13 +107,25 @@ class Navigator @Inject() () {
           case _           =>
             routes.IndexController.onPageLoad()
         }
-    case AgentAddressPage                    =>
+    case AgentAddressPage                       =>
       _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1 NI number page (CWF1-101)
-    case HomeAddressPage                     =>
+    case HomeAddressPage                        =>
       _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1-107 page
-    case PreviousHomeAddressPage             =>
+    case PreviousHomeAddressPage                =>
       _ => routes.IndexController.onPageLoad() // TODO: route to the page after CWF1-108
-    case _                                   =>
+    case HaveYouRegisteredForSelfAssessmentPage =>
+      ua =>
+        ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+              .onPageLoad(ua.id, NormalMode) // TODO UTR PAGE
+          case Some(false) =>
+            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+              .onPageLoad(ua.id, NormalMode) // TODO NAME page
+          case _           =>
+            routes.IndexController.onPageLoad()
+        }
+    case _                                      =>
       _ => routes.IndexController.onPageLoad()
   }
 
@@ -126,12 +139,26 @@ class Navigator @Inject() () {
         DateCapitalGainsTaxPage | OtherReasonPage =>
       ua => nextUnansweredReasonRoute(ua)
     case AreYouAnAgentPage                                            => areYouAnAgentCheckRoute
+    case HaveYouRegisteredForSelfAssessmentPage                       => haveYouRegisteredForSelfAssessmentCheckRoute
     case AgentAddressPage | HomeAddressPage | PreviousHomeAddressPage =>
       checkYourAnswersCWF1Route
     case _                                                            =>
-      checkYourAnswersRoute
+      ua => fallBackRoute(ua)
   }
 
+  private def fallBackRoute(ua: UserAnswers): Call         =
+    ua.journeyType match {
+      case SA1 =>
+        checkYourAnswersRoute(ua)
+
+      case CWF1ST =>
+        checkYourAnswersCWF1Route(ua)
+
+      case _ =>
+        throw new IllegalArgumentException(
+          s"Unsupported journey type: ${ua.journeyType}"
+        )
+    }
   private def checkYourAnswersRoute(ua: UserAnswers): Call =
     controllers.sa1.routes.CheckYourAnswersController.onPageLoad(ua.id)
 
@@ -258,6 +285,17 @@ class Navigator @Inject() () {
       case Some(_)                                          =>
         checkYourAnswersCWF1Route(ua)
       case None                                             =>
+        routes.IndexController.onPageLoad()
+    }
+
+  private def haveYouRegisteredForSelfAssessmentCheckRoute(ua: UserAnswers): Call =
+    ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
+      case Some(true) if ua.get(HaveYouRegisteredForSelfAssessmentPage).isEmpty =>
+        controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+          .onPageLoad(ua.id, CheckMode) // TODO Change to UTR page and controller
+      case Some(_)                                                              =>
+        checkYourAnswersCWF1Route(ua)
+      case None                                                                 =>
         routes.IndexController.onPageLoad()
     }
 }

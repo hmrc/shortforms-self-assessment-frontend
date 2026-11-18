@@ -467,3 +467,9 @@ cwf1.previousHomeAddress.edit.title = What is your previous home address?
 cwf1.previousHomeAddress.select.title = Choose your previous home address
 cwf1.previousHomeAddress.confirm.title = Review your previous home address
 cwf1.previousHomeAddress.enterManually = Enter your previous home address manually
+
+cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
+cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
+cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?

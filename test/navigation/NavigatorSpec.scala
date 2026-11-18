@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
-import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HomeAddressPage, PreviousHomeAddressPage}
+import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage, HomeAddressPage, PreviousHomeAddressPage}
 import pages.sa1.*
 
 import java.time.LocalDate
@@ -155,6 +155,31 @@ class NavigatorSpec extends SpecBase {
         "must go from authorised agent to Index when answer is empty" in {
           val userAnswers = emptyUserAnswers
           navigator.nextPage(AreYouAnAgentPage, NormalMode, userAnswers) mustBe routes.IndexController.onPageLoad()
+        }
+      }
+
+      "when have you registered before page" - {
+        "must go from have you registered before to have you registered before when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, true).success.value
+          navigator.nextPage(
+            HaveYouRegisteredForSelfAssessmentPage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from have you registered before page to have you registered before when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, false).success.value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        "must go from have you registered before page to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(AddPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController
+            .onPageLoad()
         }
       }
 
@@ -437,6 +462,49 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(page, CheckMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+      }
+
+      "when Have Registered Before" - {
+
+        "must go to Have Registered Before when yes is selected and utr is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, true)
+            .success
+            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(userAnswersId, CheckMode) // TODO
+        }
+
+        "must go to Check Your Answers when yes is selected and utr already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, true)
+            .success
+            .value
+//            .set(PreviousLastNamePage, PreviousName("Smith", LocalDate.of(2000, 1, 1))) //TODO UTR
+//            .success
+//            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Check Your Answers when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(HaveYouRegisteredForSelfAssessmentPage, false)
+            .success
+            .value
+
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, emptyUserAnswers) mustBe
+            routes.IndexController.onPageLoad()
         }
       }
 
