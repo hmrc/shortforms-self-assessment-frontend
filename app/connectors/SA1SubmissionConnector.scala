@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
@@ -41,11 +41,7 @@ class SA1SubmissionConnector @Inject() (appConfig: FrontendAppConfig, httpClient
     httpClient
       .post(url"$baseUrl/self-assessment-forms/api/sa1")
       .withBody(Json.toJson(submission))
-      .execute[Either[UpstreamErrorResponse, SA1Response]]
-      .flatMap {
-        case Right(response) => Future.successful(response)
-        case Left(error)     => Future.failed(error)
-      }
+      .execute[SA1Response]
       .andThen { case Failure(e) =>
         logger.error("[SA1SubmissionConnector][submit] Failed to submit SA1 form", e)
       }

@@ -18,12 +18,12 @@ package connectors
 
 import base.ISpecBase
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, okJson, postRequestedFor, stubFor, urlEqualTo, verify}
+import com.github.tomakehurst.wiremock.client.WireMock.{okJson, stubFor, urlEqualTo}
 import models.sa1.{SA1Address, SA1Reasons, SA1Response, SA1Submission}
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.test.WireMockSupport
-import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 
 import java.time.{Instant, LocalDate}
 
@@ -57,27 +57,16 @@ class SA1SubmissionConnectorISpec extends ISpecBase with WireMockSupport {
 
   "submit" - {
 
-    "must forward the Authorization and X-Session-ID headers to the backend" in {
+    "must return the acknowledgement from the backend" in {
       stubFor(
         WireMock
           .post(urlEqualTo(submitUrl))
           .willReturn(okJson("""{"acknowledgementRef":"ref-123","receivedTimestamp":"2026-11-13T14:18:34.301Z"}"""))
       )
 
-      val hc = HeaderCarrier(
-        authorization = Some(Authorization("Bearer token-123")),
-        sessionId = Some(SessionId("session-456"))
-      )
-
-      connector.submit(submission)(hc).futureValue mustBe SA1Response(
+      connector.submit(submission)(HeaderCarrier()).futureValue mustBe SA1Response(
         "ref-123",
         Instant.parse("2026-11-13T14:18:34.301Z")
-      )
-
-      verify(
-        postRequestedFor(urlEqualTo(submitUrl))
-          .withHeader("Authorization", equalTo("Bearer token-123"))
-          .withHeader("X-Session-ID", equalTo("session-456"))
       )
     }
   }

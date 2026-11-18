@@ -17,34 +17,37 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
+import repositories.SessionRepository
 import utils.DateTimeFormats.submittedAtFormat
+import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
-import java.time.{Clock, Instant, LocalDateTime, ZoneId}
+import java.time.{LocalDateTime, ZoneId}
 import javax.inject.Inject
-import scala.util.Try
+import scala.concurrent.Future
 
 class ConfirmationController @Inject() (
   val controllerComponents: AppControllerComponents,
-  clock: Clock,
-  view: ConfirmationView
+  sessionRepository: SessionRepository,
+  view: ConfirmationView,
+  pageNotFoundView: PageNotFoundView
 ) extends AppController {
 
   private val londonTime = ZoneId.of("Europe/London")
 
-  def onPageLoad(): Action[AnyContent] =
-    IdentifierAction { implicit request =>
-      request.flash.get("submissionReference").filter(_.trim.nonEmpty) match {
-        case Some(referenceNumber) =>
-          val submittedInstant = request.flash
-            .get("submissionTimestamp")
-            .flatMap(value => Try(Instant.parse(value)).toOption)
-            .getOrElse(clock.instant())
-          val submittedAt      = LocalDateTime.ofInstant(submittedInstant, londonTime).format(submittedAtFormat)
-          Ok(view(submittedAt, referenceNumber))
-        case None                  =>
-          Redirect(controllers.routes.IndexController.startSA1())
+  def onPageLoad(journeyId: String): Action[AnyContent] =
+    SA1DataAction(journeyId).async { implicit request =>
+      request.userAnswers.confirmation match {
+        case Some(confirmation) =>
+          val submittedAt      =
+            LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormat)
+          val confirmationView = Ok(view(submittedAt, confirmation.acknowledgementRef))
+          val updatedAnswers   = request.userAnswers.copy(data = Json.obj())
+          sessionRepository.set(updatedAnswers).map(_ => confirmationView)
+        case None               =>
+          Future.successful(NotFound(pageNotFoundView()))
       }
     }
 }

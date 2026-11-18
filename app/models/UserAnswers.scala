@@ -23,12 +23,30 @@ import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
+final case class SubmissionConfirmation(
+  acknowledgementRef: String,
+  receivedTimestamp: Instant
+)
+
+object SubmissionConfirmation {
+
+  implicit val format: OFormat[SubmissionConfirmation] = {
+    import play.api.libs.functional.syntax._
+
+    (
+      (__ \ "acknowledgementRef").format[String] and
+        (__ \ "receivedTimestamp").format(MongoJavatimeFormats.instantFormat)
+    )(SubmissionConfirmation.apply, sc => (sc.acknowledgementRef, sc.receivedTimestamp))
+  }
+}
+
 final case class UserAnswers(
   id: String,
   userId: String,
   journeyType: JourneyType,
   data: JsObject = Json.obj(),
-  lastUpdated: Instant = Instant.now
+  lastUpdated: Instant = Instant.now,
+  confirmation: Option[SubmissionConfirmation] = None
 ) {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
@@ -75,7 +93,8 @@ object UserAnswers {
         (__ \ "userId").format[String] and
         (__ \ "journeyType").format[JourneyType] and
         (__ \ "data").format[JsObject] and
-        (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-    )(UserAnswers.apply, ua => (ua.id, ua.userId, ua.journeyType, ua.data, ua.lastUpdated))
+        (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) and
+        (__ \ "confirmation").formatNullable[SubmissionConfirmation]
+    )(UserAnswers.apply, Tuple.fromProductTyped)
   }
 }

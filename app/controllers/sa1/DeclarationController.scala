@@ -19,7 +19,7 @@ package controllers.sa1
 import connectors.SA1SubmissionConnector
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DeclarationFormProvider
-import models.UserAnswers
+import models.{SubmissionConfirmation, UserAnswers}
 import pages.sa1.DeclarationPage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, Result}
@@ -59,12 +59,12 @@ class DeclarationController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DeclarationPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-              result         <- submitSA1(updatedAnswers)
+              result         <- submitSA1(journeyId, updatedAnswers)
             } yield result
         )
     }
 
-  private def submitSA1(answers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] =
+  private def submitSA1(journeyId: String, answers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] =
     SA1SubmissionMapper.map(answers) match {
       case Left(error)       =>
         logger.error(s"[DeclarationController][submitSA1] Unable to build SA1 submission: $error")
@@ -72,12 +72,11 @@ class DeclarationController @Inject() (
       case Right(submission) =>
         submissionConnector
           .submit(submission)
-          .map { response =>
-            Redirect(routes.ConfirmationController.onPageLoad())
-              .flashing(
-                "submissionReference" -> response.acknowledgementRef,
-                "submissionTimestamp" -> response.receivedTimestamp.toString
-              )
+          .flatMap { response =>
+            val confirmation = SubmissionConfirmation(response.acknowledgementRef, response.receivedTimestamp)
+            sessionRepository
+              .set(answers.copy(confirmation = Some(confirmation)))
+              .map(_ => Redirect(routes.ConfirmationController.onPageLoad(journeyId)))
           }
           .recover { case NonFatal(_) =>
             Redirect(controllers.routes.SystemErrorController.onPageLoad())

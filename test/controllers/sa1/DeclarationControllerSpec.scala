@@ -21,10 +21,10 @@ import connectors.SA1SubmissionConnector
 import controllers.MockAppControllerComponents
 import forms.sa1.DeclarationFormProvider
 import models.sa1.{SA1Response, SA1Submission}
-import models.UserAnswers
+import models.{SubmissionConfirmation, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, never, verify, when}
+import org.mockito.Mockito.{mock, never, times, verify, when}
 import pages.sa1.DeclarationPage
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -62,17 +62,18 @@ class DeclarationControllerSpec extends SpecBase {
       verify(submissionConnector, never()).submit(any[SA1Submission])(any[HeaderCarrier])
     }
 
-    "must save the declaration, submit the SA1 payload and redirect to the confirmation page with the acknowledgement reference" in new Setup {
+    "must save the declaration, submit the SA1 payload and redirect to the confirmation page with the saved acknowledgement" in new Setup {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> "Jane Doe"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
-      flash(result).get("submissionReference") mustBe Some("ack-123")
-      flash(result).get("submissionTimestamp") mustBe Some("2026-11-13T14:18:34.301Z")
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad(userAnswersId).url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(sessionRepository).set(savedAnswers.capture())
-      savedAnswers.getValue.get(DeclarationPage) mustBe Some("Jane Doe")
+      verify(sessionRepository, times(2)).set(savedAnswers.capture())
+      savedAnswers.getAllValues.get(0).get(DeclarationPage) mustBe Some("Jane Doe")
+      savedAnswers.getValue.confirmation mustBe Some(
+        SubmissionConfirmation("ack-123", Instant.parse("2026-11-13T14:18:34.301Z"))
+      )
 
       verify(submissionConnector).submit(any[SA1Submission])(any[HeaderCarrier])
     }
@@ -81,11 +82,11 @@ class DeclarationControllerSpec extends SpecBase {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> ""))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad(userAnswersId).url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
-      verify(sessionRepository).set(savedAnswers.capture())
-      savedAnswers.getValue.get(DeclarationPage) mustBe Some("")
+      verify(sessionRepository, times(2)).set(savedAnswers.capture())
+      savedAnswers.getAllValues.get(0).get(DeclarationPage) mustBe Some("")
     }
 
     "must redirect to the system error page when the backend submission fails" in new Setup {
@@ -96,7 +97,6 @@ class DeclarationControllerSpec extends SpecBase {
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.SystemErrorController.onPageLoad().url
-      flash(result).get("submissionReference") mustBe None
     }
 
     "must redirect to the system error page without calling the backend when the answers are incomplete" in new Setup {

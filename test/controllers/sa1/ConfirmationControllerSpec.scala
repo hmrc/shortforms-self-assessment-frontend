@@ -18,67 +18,79 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
+import models.{JourneyType, SubmissionConfirmation, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{mock, times, verify, verifyNoInteractions, when}
+import org.mockito.Mockito.{mock, never, verify, when}
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.libs.json.Json
+import play.api.mvc.{Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
+import repositories.SessionRepository
+import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
-import java.time.{Clock, Instant, ZoneOffset}
+import java.time.Instant
+import scala.concurrent.Future
 
 class ConfirmationControllerSpec extends SpecBase {
 
+  private val receivedTimestamp = Instant.parse("2026-11-13T14:18:34.301Z")
+  private val confirmation      = SubmissionConfirmation("AB123CD", receivedTimestamp)
+
   "ConfirmationController" - {
 
-    "must render the backend submission time and acknowledgement reference from the submission" in new Setup {
-      val result = controller.onPageLoad()(
-        FakeRequest().withFlash("submissionReference" -> "ack-123", "submissionTimestamp" -> "2026-11-13T14:18:34.301Z")
-      )
+    "must render the UK submission time and acknowledgement reference from the saved confirmation" in new Setup(
+      UserAnswers(userAnswersId, testUserId, JourneyType.SA1, confirmation = Some(confirmation))
+    ) {
+      val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
 
       status(result) mustBe OK
       contentAsString(result) mustBe "Confirmation view"
-
-      verify(view).apply(
-        eqTo("14:18 on 13 November 2026"),
-        eqTo("ack-123")
-      )(any[Request[?]], any[Messages])
+      verify(view).apply(eqTo("14:18 on 13 November 2026"), eqTo("AB123CD"))(any[Request[?]], any[Messages])
     }
 
-    "must fall back to the current UK time when the submission timestamp is missing or invalid" in new Setup {
-      val missing = controller.onPageLoad()(FakeRequest().withFlash("submissionReference" -> "ack-123"))
-      val invalid = controller.onPageLoad()(
-        FakeRequest().withFlash("submissionReference" -> "ack-123", "submissionTimestamp" -> "not-a-date")
-      )
+    "must clear the submitted data from the session after rendering" in new Setup(
+      UserAnswers(userAnswersId, testUserId, JourneyType.SA1, confirmation = Some(confirmation))
+        .copy(data = Json.obj("declaration" -> "Jane Doe"))
+    ) {
+      val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
 
-      status(missing) mustBe OK
-      status(invalid) mustBe OK
-      verify(view, times(2)).apply(
-        eqTo("15:45 on 16 October 2026"),
-        eqTo("ack-123")
-      )(any[Request[?]], any[Messages])
+      status(result) mustBe OK
+      val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(savedAnswers.capture())
+      savedAnswers.getValue.data mustBe Json.obj()
+      savedAnswers.getValue.confirmation mustBe Some(confirmation)
     }
 
-    "must redirect to the start of SA1 when there is no submission reference, such as after a page refresh" in new Setup {
-      val result = controller.onPageLoad()(FakeRequest())
+    "must return not found when there is no saved confirmation, such as after a page refresh" in new Setup(
+      UserAnswers(userAnswersId, testUserId, JourneyType.SA1)
+    ) {
+      val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.IndexController.startSA1().url
-      verifyNoInteractions(view)
+      status(result) mustBe NOT_FOUND
+      contentAsString(result) mustBe "Page not found"
+      verify(sessionRepository, never()).set(any[UserAnswers])
     }
   }
 
-  private class Setup {
-    protected val view: ConfirmationView = mock(classOf[ConfirmationView])
+  private class Setup(userAnswers: UserAnswers) {
+    protected val view: ConfirmationView               = mock(classOf[ConfirmationView])
+    private val pageNotFoundView: PageNotFoundView     = mock(classOf[PageNotFoundView])
+    protected val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
+    when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
     when(view.apply(any[String], any[String])(any[Request[?]], any[Messages]))
       .thenReturn(Html("Confirmation view"))
+    when(pageNotFoundView.apply()(any[Request[?]], any[Messages]))
+      .thenReturn(Html("Page not found"))
 
     protected val controller = new ConfirmationController(
-      new MockAppControllerComponents(),
-      Clock.fixed(Instant.parse("2026-10-16T14:45:00Z"), ZoneOffset.UTC),
-      view
+      new MockAppControllerComponents(userAnswers = userAnswers),
+      sessionRepository,
+      view,
+      pageNotFoundView
     )
   }
 }
