@@ -17,8 +17,6 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import controllers.actions.{DataRequiredAction, IdentifierAction}
-import models.JourneyType.{CWF1ST, SA1}
 import controllers.actions.{DataRequiredAction, IdentifierAction, ReasonRequiredAction}
 import models.JourneyType.{CWF1ST, SA1}
 import models.requests.DataRequest

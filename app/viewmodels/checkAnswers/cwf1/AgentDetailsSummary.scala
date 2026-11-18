@@ -38,6 +38,7 @@ object AgentDetailsSummary {
             controllers.cwf1.routes.AgentDetailsController.onPageLoad(answers.id, CheckMode).url
           )
             .withVisuallyHiddenText(messages("cwf1.agentDetails.fullName.change.hidden"))
+            .withAttribute("id" -> "agent-full-name")
         )
       )
 
@@ -52,9 +53,9 @@ object AgentDetailsSummary {
                 controllers.cwf1.routes.AgentDetailsController
                   .onPageLoad(answers.id, CheckMode)
                   .url
-              ).withVisuallyHiddenText(
-                messages("cwf1.agentDetails.clientReference.change.hidden")
               )
+                .withVisuallyHiddenText(messages("cwf1.agentDetails.clientReference.change.hidden"))
+                .withAttribute("id" -> "agent-client-ref")
             )
           )
         }
