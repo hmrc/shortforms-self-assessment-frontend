@@ -470,3 +470,10 @@ cwf1.doYouHaveAPreviousLastName.heading = Do you have a previous last name?
 cwf1.doYouHaveAPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
 cwf1.doYouHaveAPreviousLastName.error.required = Select Yes if you have a previous last name
 cwf1.doYouHaveAPreviousLastName.change.hidden = Do you have a previous last name?
+
+resubmissionError.title = You have already submitted this application
+resubmissionError.heading = You have already submitted this application
+resubmissionError.p1 = We have successfully received your recent application.
+resubmissionError.p2 = You can {0} or {1}.
+resubmissionError.p2.linkText1 = start a new application
+resubmissionError.p2.linkText2 = continue to your account

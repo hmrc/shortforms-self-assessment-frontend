@@ -17,10 +17,10 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import play.api.libs.json.Json
+import handlers.ErrorHandler
+import models.JourneyType.SA1
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
 import java.time.format.DateTimeFormatter
@@ -33,21 +33,27 @@ class ConfirmationController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   view: ConfirmationView,
-  pageNotFoundView: PageNotFoundView
+  errorHandler: ErrorHandler
 ) extends AppController {
 
   private val submittedAtFormatter = DateTimeFormatter.ofPattern("HH:mm 'on' d MMMM yyyy", Locale.UK)
   private val londonTime           = ZoneId.of("Europe/London")
 
   def onPageLoad(journeyId: String): Action[AnyContent] =
-    SA1DataAction(journeyId).async { implicit request =>
-      request.userAnswers.confirmation match {
-        case Some(confirmation) =>
-          val submittedAt =
-            LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormatter)
-          Future.successful(Ok(view(submittedAt, confirmation.acknowledgementRef)))
-        case _                  =>
-          Future.successful(NotFound(pageNotFoundView()))
-      }
+    IdentifierAction.async { implicit request =>
+      sessionRepository
+        .get(journeyId, request.userId, SA1)
+        .flatMap {
+          case Some(userAnswers) =>
+            userAnswers.confirmation match {
+              case Some(confirmation) =>
+                val submittedAt =
+                  LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormatter)
+                Future.successful(Ok(view(submittedAt, confirmation.acknowledgementRef)))
+              case _                  =>
+                errorHandler.onClientError(request, NOT_FOUND)
+            }
+          case None              => errorHandler.onClientError(request, NOT_FOUND)
+        }
     }
 }
