@@ -29,7 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 
-class AddressLookupController @Inject() (
+class Sa1AddressLookupController @Inject() (
   val controllerComponents: AppControllerComponents,
   connector: AddressLookupConnector,
   configuration: AddressLookupConfiguration,
@@ -40,17 +40,20 @@ class AddressLookupController @Inject() (
   private val landingPage: Call = routes.StartController.onPageLoad()
 
   def start(journeyId: String): Action[AnyContent] =
-    initialise(journeyId, routes.AddressLookupController.callback(journeyId))
+    initialise(journeyId, routes.Sa1AddressLookupController.callback(journeyId))
 
   def change(journeyId: String): Action[AnyContent] =
-    initialise(journeyId, routes.AddressLookupController.callbackChange(journeyId))
+    initialise(journeyId, routes.Sa1AddressLookupController.callbackChange(journeyId))
 
   private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
-      connector.initialise(configuration(callback, landingPage)).map(Redirect(_)).recover { case NonFatal(ex) =>
-        logger.error("Failed to initialise the SA1 address lookup journey", ex)
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
+      connector
+        .initialise(configuration(callback, landingPage, "sa1.address", "service.sa1.name"))
+        .map(Redirect(_))
+        .recover { case NonFatal(ex) =>
+          logger.error("Failed to initialise the SA1 address lookup journey", ex)
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 
   def callback(journeyId: String, id: String): Action[AnyContent] =

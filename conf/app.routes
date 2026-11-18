@@ -44,10 +44,10 @@ POST        /sa1/previous-last-name/:journeyId                  controllers.sa1.
 GET         /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onPageLoad(journeyId:String, mode: Mode = CheckMode)
 POST        /sa1/previous-last-name/change/:journeyId           controllers.sa1.AddPreviousLastNameController.onSubmit(journeyId:String, mode: Mode = CheckMode)
 
-GET         /sa1/address/:journeyId                      controllers.sa1.AddressLookupController.start(journeyId: String)
-GET         /sa1/address/change/:journeyId               controllers.sa1.AddressLookupController.change(journeyId: String)
-GET         /sa1/address-callback/:journeyId             controllers.sa1.AddressLookupController.callback(journeyId: String, id: String ?= "")
-GET         /sa1/address-callback/change/:journeyId      controllers.sa1.AddressLookupController.callbackChange(journeyId: String, id: String ?= "")
+GET         /sa1/address/:journeyId                      controllers.sa1.Sa1AddressLookupController.start(journeyId: String)
+GET         /sa1/address/change/:journeyId               controllers.sa1.Sa1AddressLookupController.change(journeyId: String)
+GET         /sa1/address-callback/:journeyId             controllers.sa1.Sa1AddressLookupController.callback(journeyId: String, id: String ?= "")
+GET         /sa1/address-callback/change/:journeyId      controllers.sa1.Sa1AddressLookupController.callbackChange(journeyId: String, id: String ?= "")
 
 GET         /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /sa1/enter-previous-last-name/:journeyId            controllers.sa1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
@@ -142,3 +142,8 @@ GET        /cwf1/authorised-agent/:journeyId                        controllers.
 POST       /cwf1/authorised-agent/:journeyId                        controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST       /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/address/:addressType/:journeyId                    controllers.cwf1.Cwf1AddressLookupController.start(addressType: Cwf1AddressType, journeyId: String)
+GET         /cwf1/address/:addressType/change/:journeyId             controllers.cwf1.Cwf1AddressLookupController.change(addressType: Cwf1AddressType, journeyId: String)
+GET         /cwf1/address-callback/:addressType/:journeyId           controllers.cwf1.Cwf1AddressLookupController.callback(addressType: Cwf1AddressType, journeyId: String, id: String ?= "")
+GET         /cwf1/address-callback/:addressType/change/:journeyId    controllers.cwf1.Cwf1AddressLookupController.callbackChange(addressType: Cwf1AddressType, journeyId: String, id: String ?= "")

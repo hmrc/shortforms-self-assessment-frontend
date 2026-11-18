@@ -73,7 +73,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
       addressHtml must not include "998877665544"
 
       addressRow.actions.value.items.map(_.href) mustBe
-        Seq(routes.AddressLookupController.change(userAnswersId).url)
+        Seq(routes.Sa1AddressLookupController.change(userAnswersId).url)
     }
 
     "must include the name row before the address row with their change links" in new SetupWithNameAndAddress {
@@ -93,7 +93,7 @@ class CheckYourAnswersControllerSpec extends SpecBase {
         Seq(routes.NameController.onPageLoad(userAnswersId, CheckMode).url)
 
       rows(2).actions.value.items.map(_.href) mustBe
-        Seq(routes.AddressLookupController.change(userAnswersId).url)
+        Seq(routes.Sa1AddressLookupController.change(userAnswersId).url)
     }
 
     "must redirect to declaration page when submitted" in new Setup {

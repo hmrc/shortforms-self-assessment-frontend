@@ -42,7 +42,7 @@ object AddressJourneySummary {
         Seq(
           ActionItemViewModel(
             Text(messages("site.change")),
-            controllers.sa1.routes.AddressLookupController.change(answers.id).url
+            controllers.sa1.routes.Sa1AddressLookupController.change(answers.id).url
           ).withVisuallyHiddenText(messages("sa1.address.change.hidden"))
             .withAttribute("id" -> "address")
         )

@@ -65,7 +65,7 @@ class AddressJourneySummarySpec extends SpecBase {
       )
 
       result.head.actions.value.items.head.href mustBe
-        controllers.sa1.routes.AddressLookupController.change(userAnswersId).url
+        controllers.sa1.routes.Sa1AddressLookupController.change(userAnswersId).url
 
       result.head.actions.value.items.head.content.asHtml.toString must include(
         msgs("site.change")

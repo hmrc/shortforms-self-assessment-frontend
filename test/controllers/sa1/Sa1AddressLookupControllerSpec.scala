@@ -35,9 +35,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class AddressLookupControllerSpec extends SpecBase {
+class Sa1AddressLookupControllerSpec extends SpecBase {
 
-  "SA1 AddressLookupController" - {
+  "Sa1AddressLookupController" - {
     Seq(false, true).foreach { changing =>
       val actionName = if (changing) "change" else "start"
 
@@ -47,9 +47,12 @@ class AddressLookupControllerSpec extends SpecBase {
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe alfUrl
         val callback =
-          if (changing) routes.AddressLookupController.callbackChange(userAnswersId)
-          else routes.AddressLookupController.callback(userAnswersId)
-        verify(mockConfiguration).apply(eqTo(callback), eqTo(landingPage))(any[RequestHeader])
+          if (changing) routes.Sa1AddressLookupController.callbackChange(userAnswersId)
+          else routes.Sa1AddressLookupController.callback(userAnswersId)
+        verify(mockConfiguration)
+          .apply(eqTo(callback), eqTo(landingPage), eqTo("sa1.address"), eqTo("service.sa1.name"))(
+            any[RequestHeader]
+          )
         verify(mockConnector).initialise(eqTo(configuration))(any[HeaderCarrier])
         verifyNoInteractions(mockSessionRepository)
       }
@@ -148,12 +151,13 @@ class AddressLookupControllerSpec extends SpecBase {
     val mockConnector: AddressLookupConnector         = mock(classOf[AddressLookupConnector])
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
 
-    when(mockConfiguration.apply(any[Call], any[Call])(any[RequestHeader])).thenReturn(configuration)
+    when(mockConfiguration.apply(any[Call], any[Call], any[String], any[String])(any[RequestHeader]))
+      .thenReturn(configuration)
     when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier])).thenReturn(Future.successful(alfUrl))
     when(mockConnector.getAddress(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(confirmed))
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
-    lazy val controller = new AddressLookupController(
+    lazy val controller = new Sa1AddressLookupController(
       new MockAppControllerComponents(userAnswers),
       mockConnector,
       mockConfiguration,

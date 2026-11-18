@@ -21,7 +21,7 @@ import models.*
 import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
-import pages.cwf1.AreYouAnAgentPage
+import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HomeAddressPage, PreviousHomeAddressPage}
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -59,7 +59,7 @@ class Navigator @Inject() () {
     case MoveAddressPage                     =>
       ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
     case ContactDetailsPage                  =>
-      ua => controllers.sa1.routes.AddressLookupController.start(ua.id)
+      ua => controllers.sa1.routes.Sa1AddressLookupController.start(ua.id)
     case DoYouHaveANinoPage                  =>
       ua =>
         ua.get(DoYouHaveANinoPage) match {
@@ -106,21 +106,29 @@ class Navigator @Inject() () {
           case _           =>
             routes.IndexController.onPageLoad()
         }
+    case AgentAddressPage                    =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1 NI number page (CWF1-101)
+    case HomeAddressPage                     =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1-107 page
+    case PreviousHomeAddressPage             =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the page after CWF1-108
     case _                                   =>
       _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case AddPreviousLastNamePage => addPreviousLastNameCheckRoute
-    case DoYouHaveANinoPage      => doYouHaveANinoCheckRoute
-    case WhyTaxReturnPage        =>
+    case AddPreviousLastNamePage                                      => addPreviousLastNameCheckRoute
+    case DoYouHaveANinoPage                                           => doYouHaveANinoCheckRoute
+    case WhyTaxReturnPage                                             =>
       ua => nextUnansweredReasonRoute(ua)
     case DateUntaxedIncomeDirectorPage | DateLandPropertyPage | TaxableForeignIncomeDatePage | TrustSettlementDatePage |
         DateAnnualIncomePage | UntaxedIncomeNotInPayeStartDatePage | HighIncomeChildBenefitDatePage |
         DateCapitalGainsTaxPage | OtherReasonPage =>
       ua => nextUnansweredReasonRoute(ua)
-    case AreYouAnAgentPage       => areYouAnAgentCheckRoute
-    case _                       =>
+    case AreYouAnAgentPage                                            => areYouAnAgentCheckRoute
+    case AgentAddressPage | HomeAddressPage | PreviousHomeAddressPage =>
+      checkYourAnswersCWF1Route
+    case _                                                            =>
       checkYourAnswersRoute
   }
 
