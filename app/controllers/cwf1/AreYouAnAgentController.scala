@@ -40,7 +40,7 @@ class AreYouAnAgentController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId) { implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
     val preparedForm = request.userAnswers.get(AreYouAnAgentPage) match {
       case None        => form
@@ -50,16 +50,17 @@ class AreYouAnAgentController @Inject() (
     Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = SA1DataAction(journeyId).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouAnAgentPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AreYouAnAgentPage, mode, updatedAnswers))
-      )
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouAnAgentPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AreYouAnAgentPage, mode, updatedAnswers))
+        )
   }
 }

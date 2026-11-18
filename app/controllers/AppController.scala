@@ -17,6 +17,8 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
+import controllers.actions.{DataRequiredAction, IdentifierAction}
+import models.JourneyType.{CWF1ST, SA1}
 import controllers.actions.{DataRequiredAction, IdentifierAction, ReasonRequiredAction}
 import models.JourneyType.SA1
 import models.requests.DataRequest
@@ -36,6 +38,9 @@ abstract class AppController extends FrontendBaseController with I18nSupport {
     controllerComponents.identify andThen controllerComponents.getData(journeyId, SA1)
 
   protected def ensureReason: ReasonRequiredAction = controllerComponents.requireReason
+
+  protected def CWF1DataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
+    controllerComponents.identify andThen controllerComponents.getData(journeyId, CWF1ST)
 
   protected given ExecutionContext = controllerComponents.executionContext
 }

@@ -142,3 +142,8 @@ GET        /cwf1/authorised-agent/:journeyId                        controllers.
 POST       /cwf1/authorised-agent/:journeyId                        controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET        /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST       /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/registered-before/change/:journeyId             controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/registered-before/change/:journeyId             controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onSubmit(journeyId: String, mode: Mode = CheckMode)

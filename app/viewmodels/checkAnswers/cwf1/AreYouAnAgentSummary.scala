@@ -39,6 +39,7 @@ object AreYouAnAgentSummary {
             controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(answers.id, CheckMode).url
           )
             .withVisuallyHiddenText(messages("cwf1.areYouAnAgent.change.hidden"))
+            .withAttribute("id" -> "authorised-agent")
         )
       )
     }

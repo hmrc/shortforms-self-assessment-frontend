@@ -18,6 +18,7 @@ package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents, routes}
 import models.JourneyType.CWF1ST
+import models.NormalMode
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
 import services.StartJourneyService
@@ -42,7 +43,7 @@ class StartController @Inject() (
       startJourneyService
         .startJourney(request.userId, CWF1ST)
         .map { journeyId =>
-          Redirect(controllers.cwf1.routes.StartController.onPageLoad().url) // TODO
+          Redirect(controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(journeyId, NormalMode).url)
         }
         .recover { case ex =>
           logger.error("Failed to start CWF1 journey", ex)
