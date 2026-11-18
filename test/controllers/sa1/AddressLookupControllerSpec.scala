@@ -74,7 +74,9 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
         when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier]))
           .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-        mustFailAndLogError("Failed to initialise the SA1 address lookup journey")(startJourney(changing)).getMessage mustBe "ALF unavailable"
+        mustFailAndLogError("Failed to initialise the SA1 address lookup journey")(
+          startJourney(changing)
+        ).getMessage mustBe "ALF unavailable"
       }
     }
 
@@ -111,7 +113,9 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
 
         Seq("", " ").foreach { missingId =>
           s"must log and fail without calling ALF or saving when the ID is '$missingId'" in new Setup {
-            mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(confirmAddress(changing, missingId)) mustBe
+            mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+              confirmAddress(changing, missingId)
+            ) mustBe
               an[IllegalArgumentException]
             verifyNoInteractions(mockConnector, mockSessionRepository)
           }
@@ -121,7 +125,9 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
           when(mockConnector.getAddress(any[String])(any[HeaderCarrier]))
             .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(confirmAddress(changing)).getMessage mustBe "ALF unavailable"
+          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+            confirmAddress(changing)
+          ).getMessage mustBe "ALF unavailable"
           verifyNoInteractions(mockSessionRepository)
         }
 
@@ -129,7 +135,9 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
           when(mockSessionRepository.set(any[UserAnswers]))
             .thenReturn(Future.failed(new RuntimeException("Mongo unavailable")))
 
-          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(confirmAddress(changing)).getMessage mustBe "Mongo unavailable"
+          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+            confirmAddress(changing)
+          ).getMessage mustBe "Mongo unavailable"
         }
       }
     }

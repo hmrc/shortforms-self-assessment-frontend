@@ -68,10 +68,9 @@ class AddressLookupController @Inject() (
                           else Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
         updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressPage, address))
         _              <- sessionRepository.set(updatedAnswers)
-      } yield {
+      } yield
         if (changing) Redirect(routes.CheckYourAnswersController.onPageLoad(journeyId))
-        else Redirect(routes.MoveAddressController.onPageLoad(journeyId, NormalMode))
-      }).andThen { case Failure(ex) =>
+        else Redirect(routes.MoveAddressController.onPageLoad(journeyId, NormalMode))).andThen { case Failure(ex) =>
         logger.error("Failed to retrieve or save the confirmed SA1 address", ex)
       }
     }
