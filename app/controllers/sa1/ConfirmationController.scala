@@ -18,6 +18,7 @@ package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
 import models.JourneyType.SA1
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
 import views.html.PageNotFoundView
@@ -46,7 +47,8 @@ class ConfirmationController @Inject() (
           val submittedAt      =
             LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormatter)
           val confirmationView = Ok(view(submittedAt, confirmation.acknowledgementRef))
-          sessionRepository.clear(journeyId, userId = request.userId, SA1).map(_ => confirmationView)
+          val updatedAnswers   = request.userAnswers.copy(data = Json.obj())
+          sessionRepository.set(updatedAnswers).map(_ => confirmationView)
         case _                  =>
           Future.successful(Ok(pageNotFoundView()))
       }

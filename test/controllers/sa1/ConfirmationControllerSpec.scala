@@ -64,22 +64,6 @@ class ConfirmationControllerSpec extends SpecBase {
           eqTo("AB123CD")
         )(any[Request[?]], any[Messages])
       }
-
-      "verify the clear method invoke successfully post the confirmation request to clear session data" in new Setup(
-        userAnswers
-      ) {
-
-        val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
-
-        status(result) mustBe OK
-        verify(view).apply(
-          any,
-          eqTo("AB123CD")
-        )(any[Request[?]], any[Messages])
-
-        verify(sessionRepository).clear(any, any, any)
-
-      }
     }
 
     "check service guard without valid request or userAnswers page" - {
@@ -96,10 +80,10 @@ class ConfirmationControllerSpec extends SpecBase {
   }
 
   private class Setup(userAnswers: UserAnswers) {
-    protected val view: ConfirmationView           = mock(classOf[ConfirmationView])
-    private val pageNotFoundView: PageNotFoundView = mock(classOf[PageNotFoundView])
-    val sessionRepository: SessionRepository       = mock(classOf[SessionRepository])
-    when(sessionRepository.clear(any[String], any[String], any)).thenReturn(Future.successful(true))
+    protected val view: ConfirmationView             = mock(classOf[ConfirmationView])
+    private val pageNotFoundView: PageNotFoundView   = mock(classOf[PageNotFoundView])
+    private val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
+    when(sessionRepository.set(any)).thenReturn(Future.successful(true))
 
     private val expectedReferenceNumber = "AB123CD"
     when(view.apply(any[String], eqTo(expectedReferenceNumber))(any[Request[?]], any[Messages]))
