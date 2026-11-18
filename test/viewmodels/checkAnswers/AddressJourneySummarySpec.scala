@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package viewmodels.checkAnswers.cwf1
+package viewmodels.checkAnswers
 
 import base.SpecBase
 import models.address.{AddressDetails, ConfirmedAddress}
 import pages.AddressPage
 import play.api.test.Helpers.stubMessages
-import viewmodels.checkAnswers.AddressJourneySummary
 
 class AddressJourneySummarySpec extends SpecBase {
 
@@ -65,7 +64,7 @@ class AddressJourneySummarySpec extends SpecBase {
       )
 
       result.head.actions.value.items.head.href mustBe
-        controllers.sa1.routes.Sa1AddressLookupController.change(userAnswersId).url
+        controllers.sa1.routes.AddressLookupController.change(userAnswersId).url
 
       result.head.actions.value.items.head.content.asHtml.toString must include(
         msgs("site.change")

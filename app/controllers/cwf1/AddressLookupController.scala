@@ -19,18 +19,21 @@ package controllers.cwf1
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
 import controllers.{AppController, AppControllerComponents}
-import models.{CheckMode, Cwf1AddressType, Mode, NormalMode}
+import models.address.ConfirmedAddress
+import models.cwf1.AddressType
+import models.{CheckMode, Mode, NormalMode}
 import navigation.Navigator
-import pages.cwf1.Cwf1AddressPage
+import pages.QuestionPage
+import pages.cwf1.{AgentAddressPage, HomeAddressPage, PreviousHomeAddressPage}
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent, Call}
 import repositories.SessionRepository
 
 import javax.inject.Inject
 import scala.concurrent.Future
-import scala.util.control.NonFatal
+import scala.util.Failure
 
-class Cwf1AddressLookupController @Inject() (
+class AddressLookupController @Inject() (
   val controllerComponents: AppControllerComponents,
   connector: AddressLookupConnector,
   configuration: AddressLookupConfiguration,
@@ -41,43 +44,45 @@ class Cwf1AddressLookupController @Inject() (
 
   private val landingPage: Call = routes.StartController.onPageLoad()
 
-  def start(addressType: Cwf1AddressType, journeyId: String): Action[AnyContent] =
-    initialise(addressType, journeyId, routes.Cwf1AddressLookupController.callback(addressType, journeyId))
+  def start(addressType: AddressType, journeyId: String): Action[AnyContent] =
+    initialise(addressType, journeyId, routes.AddressLookupController.callback(addressType, journeyId))
 
-  def change(addressType: Cwf1AddressType, journeyId: String): Action[AnyContent] =
-    initialise(addressType, journeyId, routes.Cwf1AddressLookupController.callbackChange(addressType, journeyId))
+  def change(addressType: AddressType, journeyId: String): Action[AnyContent] =
+    initialise(addressType, journeyId, routes.AddressLookupController.callbackChange(addressType, journeyId))
 
-  private def initialise(addressType: Cwf1AddressType, journeyId: String, callback: Call): Action[AnyContent] =
+  private def initialise(addressType: AddressType, journeyId: String, callback: Call): Action[AnyContent] =
     CWF1DataAction(journeyId).async { implicit request =>
       connector
         .initialise(configuration(callback, landingPage, addressType.messagePrefix, "service.cwf1st.name"))
         .map(Redirect(_))
-        .recover { case NonFatal(ex) =>
+        .andThen { case Failure(ex) =>
           logger.error(s"Failed to initialise the CWF1 $addressType address lookup journey", ex)
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
     }
 
-  def callback(addressType: Cwf1AddressType, journeyId: String, id: String): Action[AnyContent] =
+  def callback(addressType: AddressType, journeyId: String, id: String): Action[AnyContent] =
     saveAddress(addressType, journeyId, id, NormalMode)
 
-  def callbackChange(addressType: Cwf1AddressType, journeyId: String, id: String): Action[AnyContent] =
+  def callbackChange(addressType: AddressType, journeyId: String, id: String): Action[AnyContent] =
     saveAddress(addressType, journeyId, id, CheckMode)
 
-  private def saveAddress(addressType: Cwf1AddressType, journeyId: String, id: String, mode: Mode) =
+  private def saveAddress(addressType: AddressType, journeyId: String, id: String, mode: Mode) =
     CWF1DataAction(journeyId).async { implicit request =>
-      val page = Cwf1AddressPage(addressType)
+      val page = addressPage(addressType)
       (for {
         address        <- if (id.trim.nonEmpty) connector.getAddress(id)
                           else Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
         updatedAnswers <- Future.fromTry(request.userAnswers.set(page, address))
-        saved          <- sessionRepository.set(updatedAnswers)
-      } yield {
-        if (!saved) throw new IllegalStateException(s"CWF1 $addressType address was not saved")
-        Redirect(navigator.nextPage(page, mode, updatedAnswers))
-      }).recover { case NonFatal(ex) =>
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield Redirect(navigator.nextPage(page, mode, updatedAnswers))).andThen { case Failure(ex) =>
         logger.error(s"Failed to retrieve or save the confirmed CWF1 $addressType address", ex)
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
+    }
+
+  private def addressPage(addressType: AddressType): QuestionPage[ConfirmedAddress] =
+    addressType match {
+      case AddressType.Agent        => AgentAddressPage
+      case AddressType.Home         => HomeAddressPage
+      case AddressType.PreviousHome => PreviousHomeAddressPage
     }
 }

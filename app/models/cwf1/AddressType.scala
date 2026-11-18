@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package models.cwf1
 
 import play.api.mvc.PathBindable
 
-enum Cwf1AddressType(val urlSegment: String, val messagePrefix: String) {
-  case Agent extends Cwf1AddressType("agent", "cwf1.agentAddress")
-  case Home extends Cwf1AddressType("home", "cwf1.homeAddress")
-  case PreviousHome extends Cwf1AddressType("previous-home", "cwf1.previousHomeAddress")
+enum AddressType(val urlSegment: String, val messagePrefix: String) {
+  case Agent extends AddressType("agent", "cwf1.agentAddress")
+  case Home extends AddressType("home", "cwf1.homeAddress")
+  case PreviousHome extends AddressType("previous-home", "cwf1.previousHomeAddress")
 }
 
-object Cwf1AddressType {
+object AddressType {
 
-  given PathBindable[Cwf1AddressType] = new PathBindable[Cwf1AddressType] {
-    override def bind(key: String, value: String): Either[String, Cwf1AddressType] =
+  given PathBindable[AddressType] = new PathBindable[AddressType] {
+    override def bind(key: String, value: String): Either[String, AddressType] =
       values.find(_.urlSegment == value).toRight(s"Unknown CWF1 address type: $value")
 
-    override def unbind(key: String, value: Cwf1AddressType): String = value.urlSegment
+    override def unbind(key: String, value: AddressType): String = value.urlSegment
   }
 }

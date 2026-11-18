@@ -60,7 +60,7 @@ class Navigator @Inject() () {
     case MoveAddressPage                        =>
       ua => controllers.sa1.routes.DoYouHaveANinoController.onPageLoad(ua.id, NormalMode)
     case ContactDetailsPage                     =>
-      ua => controllers.sa1.routes.Sa1AddressLookupController.start(ua.id)
+      ua => controllers.sa1.routes.AddressLookupController.start(ua.id)
     case DoYouHaveANinoPage                     =>
       ua =>
         ua.get(DoYouHaveANinoPage) match {

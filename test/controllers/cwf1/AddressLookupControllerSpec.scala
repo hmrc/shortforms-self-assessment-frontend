@@ -20,7 +20,8 @@ import base.SpecBase
 import config.AddressLookupConfiguration
 import connectors.AddressLookupConnector
 import controllers.MockAppControllerComponents
-import models.{CheckMode, Cwf1AddressType, JourneyType, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, JourneyType, Mode, NormalMode, UserAnswers}
+import models.cwf1.AddressType
 import models.address.{AddressDetails, ConfirmedAddress, Country}
 import navigation.Navigator
 import org.mockito.ArgumentCaptor
@@ -35,17 +36,30 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
+import ch.qos.logback.classic.Level
+import play.api.Logger
+import uk.gov.hmrc.play.bootstrap.tools.LogCapturing
+
 import scala.concurrent.Future
 
-class Cwf1AddressLookupControllerSpec extends SpecBase {
+class AddressLookupControllerSpec extends SpecBase with LogCapturing {
+
+  private def mustFailAndLogError(message: String)(result: => Future[Result]): Throwable = {
+    var failure: Throwable = null
+    withCaptureOfLoggingFrom(Logger(classOf[AddressLookupController])) { logs =>
+      failure = result.failed.futureValue
+      logs.filter(_.getLevel == Level.ERROR).map(_.getMessage) mustBe List(message)
+    }
+    failure
+  }
 
   private val addressTypes = Seq(
-    (Cwf1AddressType.Agent, AgentAddressPage, "cwf1.agentAddress", "agent"),
-    (Cwf1AddressType.Home, HomeAddressPage, "cwf1.homeAddress", "home"),
-    (Cwf1AddressType.PreviousHome, PreviousHomeAddressPage, "cwf1.previousHomeAddress", "previous-home")
+    (AddressType.Agent, AgentAddressPage, "cwf1.agentAddress", "agent"),
+    (AddressType.Home, HomeAddressPage, "cwf1.homeAddress", "home"),
+    (AddressType.PreviousHome, PreviousHomeAddressPage, "cwf1.previousHomeAddress", "previous-home")
   )
 
-  "Cwf1AddressLookupController" - {
+  "AddressLookupController" - {
     addressTypes.foreach { (addressType, page, messagePrefix, segment) =>
       s"for the $addressType address" - {
         Seq(false, true).foreach { changing =>
@@ -57,8 +71,8 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
             status(result) mustBe SEE_OTHER
             redirectLocation(result).value mustBe alfUrl
             val callback =
-              if (changing) routes.Cwf1AddressLookupController.callbackChange(addressType, userAnswersId)
-              else routes.Cwf1AddressLookupController.callback(addressType, userAnswersId)
+              if (changing) routes.AddressLookupController.callbackChange(addressType, userAnswersId)
+              else routes.AddressLookupController.callback(addressType, userAnswersId)
             callback.url must include(s"/$segment/")
             verify(mockConfiguration).apply(
               eqTo(callback),
@@ -70,14 +84,13 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
             verifyNoInteractions(mockSessionRepository, mockNavigator)
           }
 
-          s"$actionName must recover when ALF initialisation fails" in new Setup {
+          s"$actionName must log and fail when ALF initialisation fails" in new Setup {
             when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier]))
               .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-            val result = startJourney(addressType, changing)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result).value mustBe recoveryUrl
+            mustFailAndLogError(s"Failed to initialise the CWF1 $addressType address lookup journey")(
+              startJourney(addressType, changing)
+            ).getMessage mustBe "ALF unavailable"
           }
 
           val callbackName = if (changing) "callbackChange" else "callback"
@@ -96,22 +109,21 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
           }
 
           Seq("", " ").foreach { missingId =>
-            s"$callbackName must recover without calling ALF or saving when the ID is '$missingId'" in new Setup {
-              val result = confirmAddress(addressType, changing, missingId)
-
-              status(result) mustBe SEE_OTHER
-              redirectLocation(result).value mustBe recoveryUrl
+            s"$callbackName must log and fail without calling ALF or saving when the ID is '$missingId'" in new Setup {
+              mustFailAndLogError(s"Failed to retrieve or save the confirmed CWF1 $addressType address")(
+                confirmAddress(addressType, changing, missingId)
+              ) mustBe an[IllegalArgumentException]
               verifyNoInteractions(mockConnector, mockSessionRepository)
             }
           }
 
-          s"$callbackName must recover when the address is not saved" in new Setup {
-            when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(false))
+          s"$callbackName must log and fail without continuing when saving fails" in new Setup {
+            when(mockSessionRepository.set(any[UserAnswers]))
+              .thenReturn(Future.failed(new RuntimeException("Mongo unavailable")))
 
-            val result = confirmAddress(addressType, changing)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result).value mustBe recoveryUrl
+            mustFailAndLogError(s"Failed to retrieve or save the confirmed CWF1 $addressType address")(
+              confirmAddress(addressType, changing)
+            ).getMessage mustBe "Mongo unavailable"
             verifyNoInteractions(mockNavigator)
           }
         }
@@ -121,7 +133,6 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
 
   trait Setup {
     val alfUrl: String              = "http://localhost:9028/lookup-address/test-alf-journey"
-    val recoveryUrl: String         = controllers.routes.JourneyRecoveryController.onPageLoad().url
     val nextPage: Call              = Call(GET, "/next-page")
     val configuration: JsObject     = Json.obj("version" -> 2)
     val confirmed: ConfirmedAddress = ConfirmedAddress(
@@ -147,7 +158,7 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
     when(mockNavigator.nextPage(any[Page], any[Mode], any[UserAnswers])).thenReturn(nextPage)
 
-    lazy val controller = new Cwf1AddressLookupController(
+    lazy val controller = new AddressLookupController(
       new MockAppControllerComponents(UserAnswers(userAnswersId, testUserId, JourneyType.CWF1ST)),
       mockConnector,
       mockConfiguration,
@@ -155,11 +166,11 @@ class Cwf1AddressLookupControllerSpec extends SpecBase {
       mockNavigator
     )
 
-    def startJourney(addressType: Cwf1AddressType, changing: Boolean): Future[Result] =
+    def startJourney(addressType: AddressType, changing: Boolean): Future[Result] =
       if (changing) controller.change(addressType, userAnswersId)(FakeRequest(GET, "/"))
       else controller.start(addressType, userAnswersId)(FakeRequest(GET, "/"))
 
-    def confirmAddress(addressType: Cwf1AddressType, changing: Boolean, id: String = "alf-id"): Future[Result] =
+    def confirmAddress(addressType: AddressType, changing: Boolean, id: String = "alf-id"): Future[Result] =
       if (changing) controller.callbackChange(addressType, userAnswersId, id)(FakeRequest(GET, "/"))
       else controller.callback(addressType, userAnswersId, id)(FakeRequest(GET, "/"))
 

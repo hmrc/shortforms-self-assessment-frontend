@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package models.cwf1
 
 import base.SpecBase
 import play.api.mvc.PathBindable
 
-class Cwf1AddressTypeSpec extends SpecBase {
+class AddressTypeSpec extends SpecBase {
 
-  private val binder = summon[PathBindable[Cwf1AddressType]]
+  private val binder = summon[PathBindable[AddressType]]
 
-  "Cwf1AddressType path binder" - {
+  "AddressType path binder" - {
     Seq(
-      Cwf1AddressType.Agent        -> "agent",
-      Cwf1AddressType.Home         -> "home",
-      Cwf1AddressType.PreviousHome -> "previous-home"
+      AddressType.Agent        -> "agent",
+      AddressType.Home         -> "home",
+      AddressType.PreviousHome -> "previous-home"
     ).foreach { (addressType, segment) =>
       s"must round-trip $addressType as '$segment'" in {
         binder.unbind("addressType", addressType) mustBe segment

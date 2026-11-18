@@ -22,7 +22,7 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 
 class AddressLookupConfigurationISpec extends ISpecBase {
-  private val callback    = controllers.sa1.routes.Sa1AddressLookupController.callback(userAnswersId)
+  private val callback    = controllers.sa1.routes.AddressLookupController.callback(userAnswersId)
   private val landingPage = controllers.sa1.routes.StartController.onPageLoad()
 
   private val configProviderUnderTest = app.injector.instanceOf[AddressLookupConfiguration]
@@ -127,11 +127,11 @@ class AddressLookupConfigurationISpec extends ISpecBase {
 
     "must use the supplied message prefix for CWF1 page wording and keep shared field labels" in {
       val cwf1Callback =
-        controllers.cwf1.routes.Cwf1AddressLookupController.callback(models.Cwf1AddressType.Agent, userAnswersId)
+        controllers.cwf1.routes.AddressLookupController.callback(models.cwf1.AddressType.Agent, userAnswersId)
       val cwf1Config   = configProviderUnderTest(
         cwf1Callback,
         controllers.cwf1.routes.StartController.onPageLoad(),
-        models.Cwf1AddressType.Agent.messagePrefix,
+        models.cwf1.AddressType.Agent.messagePrefix,
         "service.cwf1st.name"
       )
       val labels       = (cwf1Config \ "labels" \ "en").as[JsObject]

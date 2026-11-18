@@ -16,7 +16,6 @@
 
 package pages.cwf1
 
-import models.Cwf1AddressType
 import models.address.ConfirmedAddress
 import pages.QuestionPage
 import play.api.libs.json.JsPath
@@ -37,14 +36,4 @@ case object PreviousHomeAddressPage extends QuestionPage[ConfirmedAddress] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "previousHomeAddress"
-}
-
-object Cwf1AddressPage {
-
-  def apply(addressType: Cwf1AddressType): QuestionPage[ConfirmedAddress] =
-    addressType match {
-      case Cwf1AddressType.Agent        => AgentAddressPage
-      case Cwf1AddressType.Home         => HomeAddressPage
-      case Cwf1AddressType.PreviousHome => PreviousHomeAddressPage
-    }
 }

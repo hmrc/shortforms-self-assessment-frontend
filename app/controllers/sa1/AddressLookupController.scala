@@ -27,9 +27,9 @@ import repositories.SessionRepository
 
 import javax.inject.Inject
 import scala.concurrent.Future
-import scala.util.control.NonFatal
+import scala.util.Failure
 
-class Sa1AddressLookupController @Inject() (
+class AddressLookupController @Inject() (
   val controllerComponents: AppControllerComponents,
   connector: AddressLookupConnector,
   configuration: AddressLookupConfiguration,
@@ -40,19 +40,18 @@ class Sa1AddressLookupController @Inject() (
   private val landingPage: Call = routes.StartController.onPageLoad()
 
   def start(journeyId: String): Action[AnyContent] =
-    initialise(journeyId, routes.Sa1AddressLookupController.callback(journeyId))
+    initialise(journeyId, routes.AddressLookupController.callback(journeyId))
 
   def change(journeyId: String): Action[AnyContent] =
-    initialise(journeyId, routes.Sa1AddressLookupController.callbackChange(journeyId))
+    initialise(journeyId, routes.AddressLookupController.callbackChange(journeyId))
 
   private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
       connector
         .initialise(configuration(callback, landingPage, "sa1.address", "service.sa1.name"))
         .map(Redirect(_))
-        .recover { case NonFatal(ex) =>
+        .andThen { case Failure(ex) =>
           logger.error("Failed to initialise the SA1 address lookup journey", ex)
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
     }
 
@@ -68,16 +67,12 @@ class Sa1AddressLookupController @Inject() (
         address        <- if (id.trim.nonEmpty) connector.getAddress(id)
                           else Future.failed(new IllegalArgumentException("ALF callback is missing its address ID"))
         updatedAnswers <- Future.fromTry(request.userAnswers.set(AddressPage, address))
-        saved          <- sessionRepository.set(updatedAnswers)
+        _              <- sessionRepository.set(updatedAnswers)
       } yield {
-        if (!saved) throw new IllegalStateException("SA1 address was not saved")
         if (changing) Redirect(routes.CheckYourAnswersController.onPageLoad(journeyId))
-        else {
-          Redirect(routes.MoveAddressController.onPageLoad(journeyId, NormalMode))
-        }
-      }).recover { case NonFatal(ex) =>
+        else Redirect(routes.MoveAddressController.onPageLoad(journeyId, NormalMode))
+      }).andThen { case Failure(ex) =>
         logger.error("Failed to retrieve or save the confirmed SA1 address", ex)
-        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }
 }
