@@ -28,7 +28,7 @@ import javax.inject.{Inject, Singleton}
 class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messagesApi: MessagesApi) {
 
   def apply(callback: Call, landingPage: Call)(implicit request: RequestHeader): JsObject = {
-    val service = ServiceProps.apply(using request)
+    val service                               = ServiceProps.apply(using request)
     def appLabels(language: String): JsObject = Json.obj(
       "appLevelLabels" -> Json.obj("navTitle" -> messagesApi(service.name)(Lang(language)))
     )
