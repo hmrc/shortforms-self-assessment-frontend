@@ -464,3 +464,9 @@ cwf1.agentDetails.error.fullName.length = The agent’s full name must be no mor
 cwf1.agentDetails.error.clientReference.length = The client reference must be no more than 50 characters
 cwf1.agentDetails.fullName.change.hidden = Agent’s full name
 cwf1.agentDetails.clientReference.change.hidden = Agent’s client reference
+
+cwf1.doYouHaveAPreviousLastName.title = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.heading = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.error.required = Select Yes if you have a previous last name
+cwf1.doYouHaveAPreviousLastName.change.hidden = Do you have a previous last name?

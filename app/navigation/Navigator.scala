@@ -22,7 +22,7 @@ import models.JourneyType.{CWF1ST, SA1}
 import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -116,6 +116,18 @@ class Navigator @Inject() () {
           case Some(false) =>
             controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
               .onPageLoad(ua.id, NormalMode) // TODO NAME page
+          case _           =>
+            routes.IndexController.onPageLoad()
+        }
+    case DoYouHaveAPreviousLastNamePage         =>
+      ua =>
+        ua.get(DoYouHaveAPreviousLastNamePage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+              .onPageLoad(ua.id, NormalMode) // TODO
+          case Some(false) =>
+            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+              .onPageLoad(ua.id, NormalMode) // TODO
           case _           =>
             routes.IndexController.onPageLoad()
         }

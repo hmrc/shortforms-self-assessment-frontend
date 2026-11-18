@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.sa1.*
 
 import java.time.LocalDate
@@ -183,6 +183,35 @@ class NavigatorSpec extends SpecBase {
         }
       }
 
+      // TODO
+      "when Do You Have A Previous Last Name page" - {
+        "must go from do you have a previous last name page to enter previous last name page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveAPreviousLastNamePage, true).success.value
+          navigator.nextPage(
+            DoYouHaveAPreviousLastNamePage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        // TODO
+        "must go from do you have a previous last name page to date of birth page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveAPreviousLastNamePage, false).success.value
+          navigator.nextPage(
+            DoYouHaveAPreviousLastNamePage,
+            NormalMode,
+            userAnswers
+          ) mustBe controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+            .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
+        }
+
+        "must go from add previous last name page to Index when answer is empty" in {
+          val userAnswers = emptyUserAnswers
+          navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, userAnswers) mustBe routes.IndexController
+            .onPageLoad()
+        }
+      }
     }
 
     "in Check mode" - {

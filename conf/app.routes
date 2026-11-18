@@ -152,3 +152,8 @@ GET         /cwf1/agents-details/:journeyId                           controller
 POST        /cwf1/agents-details/:journeyId                           controllers.cwf1.AgentDetailsController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/agents-details/change/:journeyId                    controllers.cwf1.AgentDetailsController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/agents-details/change/:journeyId                    controllers.cwf1.AgentDetailsController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/previous-last-name/:journeyId                         controllers.cwf1.DoYouHaveAPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/previous-last-name/:journeyId                         controllers.cwf1.DoYouHaveAPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/previous-last-name/change/:journeyId                  controllers.cwf1.DoYouHaveAPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/previous-last-name/change/:journeyId                  controllers.cwf1.DoYouHaveAPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
