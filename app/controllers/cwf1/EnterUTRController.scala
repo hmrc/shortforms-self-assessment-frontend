@@ -18,7 +18,7 @@ package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.EnterUTRFormProvider
-import models.{Mode}
+import models.Mode
 import navigation.Navigator
 import pages.cwf1.EnterUTRPage
 import play.api.mvc.{Action, AnyContent}
@@ -50,16 +50,19 @@ class EnterUTRController @Inject() (
       Ok(view(preparedForm, journeyId, mode))
   }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId).async { implicit request =>
-    form
-      .bindFromRequest()
-      .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterUTRPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(controllers.cwf1.routes.EnterUTRController.onPageLoad(journeyId, mode).url) // TODO Name page
-      )
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterUTRPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(
+              controllers.cwf1.routes.EnterUTRController.onPageLoad(journeyId, mode).url
+            ) // TODO Name page
+        )
   }
 }

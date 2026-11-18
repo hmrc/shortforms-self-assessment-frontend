@@ -456,6 +456,7 @@ cwf1.enterUTR.checkYourAnswersLabel = Self Assessment UTR
 cwf1.enterUTR.error.required = Enter your UTR
 cwf1.enterUTR.error.length = Your UTR should be 10 digits long
 cwf1.enterUTR.error.invalid = Your UTR can only contain numbers
+cwf1.enterUTR.change.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?

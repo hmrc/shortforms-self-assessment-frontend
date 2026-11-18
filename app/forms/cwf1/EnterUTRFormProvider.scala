@@ -22,7 +22,7 @@ import play.api.data.Form
 import javax.inject.Inject
 
 class EnterUTRFormProvider @Inject() extends Mappings {
-  private val exactLength   = 10
+  private val exactLength = 10
   private val RegexFormat = "^[0-9]+$"
 
   def apply(): Form[String] =
