@@ -17,15 +17,12 @@
 package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
-import controllers.actions.*
 import forms.cwf1.EnterPreviousLastNameFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.cwf1.EnterPreviousLastNamePage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.cwf1.EnterPreviousLastNameView
 
 import javax.inject.Inject
