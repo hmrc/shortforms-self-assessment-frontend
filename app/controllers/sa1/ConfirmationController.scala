@@ -43,11 +43,9 @@ class ConfirmationController @Inject() (
     SA1DataAction(journeyId).async { implicit request =>
       request.userAnswers.confirmation match {
         case Some(confirmation) =>
-          val submittedAt      =
+          val submittedAt =
             LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormatter)
-          val confirmationView = Ok(view(submittedAt, confirmation.acknowledgementRef))
-          val updatedAnswers   = request.userAnswers.copy(data = Json.obj())
-          sessionRepository.set(updatedAnswers).map(_ => confirmationView)
+          Future.successful(Ok(view(submittedAt, confirmation.acknowledgementRef)))
         case _                  =>
           Future.successful(NotFound(pageNotFoundView()))
       }
