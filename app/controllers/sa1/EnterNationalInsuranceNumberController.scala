@@ -17,31 +17,28 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import forms.sa1.EnterNationalInsuranceNumberFormProvider
+import forms.EnterNiNumberFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.sa1.EnterNationalInsuranceNumberPage
-import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
 import views.html.sa1.EnterNationalInsuranceNumberView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EnterNationalInsuranceNumberController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
-  formProvider: EnterNationalInsuranceNumberFormProvider,
+  formProvider: EnterNiNumberFormProvider,
   navigator: Navigator,
   view: EnterNationalInsuranceNumberView
-)(implicit ec: ExecutionContext)
-    extends AppController {
-
-  val form: Form[String] = formProvider()
+) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
     SA1DataAction(journeyId) { implicit request =>
+      val form = formProvider(request.nino)
 
       val preparedForm = request.userAnswers.get(EnterNationalInsuranceNumberPage) match {
         case None        => form
@@ -53,33 +50,15 @@ class EnterNationalInsuranceNumberController @Inject() (
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
-      form
+      formProvider(request.nino)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
-            for {
-              updatedAnswers <-
-                Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
-            } yield request.nino match {
-              case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
-                sessionRepository.set(updatedAnswers)
-                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-
-              case None =>
-                sessionRepository.set(updatedAnswers)
-                Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-
-              case _ =>
-                BadRequest(
-                  view(
-                    form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),
-                    journeyId,
-                    mode
-                  )
-                )
-
-            }
+            for
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterNationalInsuranceNumberPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            yield Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
         )
     }
 }
