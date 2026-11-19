@@ -132,13 +132,18 @@ POST       /sa1/date-high-income-child-benefit/:journeyId                       
 GET        /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onPageLoad(journeyId, mode: Mode = CheckMode)
 POST       /sa1/date-high-income-child-benefit/change/:journeyId                        controllers.sa1.HighIncomeChildBenefitDateController.onSubmit(journeyId, mode: Mode = CheckMode)
 
-GET         /sa1/declaration/:journeyId                   controllers.sa1.DeclarationController.onPageLoad(journeyId: String)
-POST        /sa1/declaration/:journeyId                   controllers.sa1.DeclarationController.onSubmit(journeyId: String)
+GET        /sa1/declaration/:journeyId                    controllers.sa1.DeclarationController.onPageLoad(journeyId: String)
+POST       /sa1/declaration/:journeyId                    controllers.sa1.DeclarationController.onSubmit(journeyId: String)
 
-GET         /cwf1/start                                   controllers.cwf1.StartController.onPageLoad()
-POST        /cwf1/start                                   controllers.cwf1.StartController.onSubmit()
+GET        /cwf1/start                                    controllers.cwf1.StartController.onPageLoad()
+POST       /cwf1/start                                    controllers.cwf1.StartController.onSubmit()
 
-GET        /cwf1/authorised-agent/:journeyId                        controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /cwf1/authorised-agent/:journeyId                        controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST       /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET        /cwf1/authorised-agent/:journeyId              controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /cwf1/authorised-agent/:journeyId              controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /cwf1/authorised-agent/change/:journeyId       controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST       /cwf1/authorised-agent/change/:journeyId       controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /cwf1/ni-number/:journeyId                     controllers.cwf1.EnterNiNumberController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /cwf1/ni-number/:journeyId                     controllers.cwf1.EnterNiNumberController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /cwf1/ni-number/change/:journeyId              controllers.cwf1.EnterNiNumberController.onPageLoad(journeyId: String,mode: Mode = CheckMode)
+POST       /cwf1/ni-number/change/:journeyId              controllers.cwf1.EnterNiNumberController.onSubmit(journeyId: String, mode: Mode = CheckMode)
