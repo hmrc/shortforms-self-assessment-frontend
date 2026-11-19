@@ -21,7 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage, HomeAddressPage, PreviousHomeAddressPage}
 import pages.sa1.*
 
 import java.time.LocalDate
@@ -454,6 +454,14 @@ class NavigatorSpec extends SpecBase {
         "must go to Index when answer is missing" in {
           navigator.nextPage(AreYouAnAgentPage, CheckMode, emptyUserAnswers) mustBe
             routes.IndexController.onPageLoad()
+        }
+      }
+
+      Seq(AgentAddressPage, HomeAddressPage, PreviousHomeAddressPage).foreach { page =>
+        s"must go from the CWF1 $page to the CWF1 Check Your Answers page" in {
+          navigator.nextPage(page, CheckMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
         }
       }
 

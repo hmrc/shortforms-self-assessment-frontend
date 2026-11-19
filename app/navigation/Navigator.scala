@@ -22,7 +22,7 @@ import models.JourneyType.{CWF1ST, SA1}
 import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AgentAddressPage, AreYouAnAgentPage, HaveYouRegisteredForSelfAssessmentPage, HomeAddressPage, PreviousHomeAddressPage}
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -107,6 +107,12 @@ class Navigator @Inject() () {
           case _           =>
             routes.IndexController.onPageLoad()
         }
+    case AgentAddressPage                       =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1 NI number page (CWF1-101)
+    case HomeAddressPage                        =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the CWF1-107 page
+    case PreviousHomeAddressPage                =>
+      _ => routes.IndexController.onPageLoad() // TODO: route to the page after CWF1-108
     case HaveYouRegisteredForSelfAssessmentPage =>
       ua =>
         ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
@@ -124,18 +130,19 @@ class Navigator @Inject() () {
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case AddPreviousLastNamePage                => addPreviousLastNameCheckRoute
-    case DoYouHaveANinoPage                     => doYouHaveANinoCheckRoute
-    case WhyTaxReturnPage                       =>
+    case AddPreviousLastNamePage                                      => addPreviousLastNameCheckRoute
+    case DoYouHaveANinoPage                                           => doYouHaveANinoCheckRoute
+    case WhyTaxReturnPage                                             =>
       ua => nextUnansweredReasonRoute(ua)
     case DateUntaxedIncomeDirectorPage | DateLandPropertyPage | TaxableForeignIncomeDatePage | TrustSettlementDatePage |
         DateAnnualIncomePage | UntaxedIncomeNotInPayeStartDatePage | HighIncomeChildBenefitDatePage |
         DateCapitalGainsTaxPage | OtherReasonPage =>
       ua => nextUnansweredReasonRoute(ua)
-    case AreYouAnAgentPage                      => areYouAnAgentCheckRoute
-    case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
-
-    case _ =>
+    case AreYouAnAgentPage                                            => areYouAnAgentCheckRoute
+    case HaveYouRegisteredForSelfAssessmentPage                       => haveYouRegisteredForSelfAssessmentCheckRoute
+    case AgentAddressPage | HomeAddressPage | PreviousHomeAddressPage =>
+      checkYourAnswersCWF1Route
+    case _                                                            =>
       ua => fallBackRoute(ua)
   }
 

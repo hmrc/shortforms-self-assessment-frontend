@@ -143,6 +143,11 @@ POST        /cwf1/authorised-agent/:journeyId                        controllers
 GET         /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/authorised-agent/change/:journeyId                  controllers.cwf1.AreYouAnAgentController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /cwf1/address/:addressType/:journeyId                    controllers.cwf1.AddressLookupController.start(addressType: models.cwf1.AddressType, journeyId: String)
+GET         /cwf1/address/:addressType/change/:journeyId             controllers.cwf1.AddressLookupController.change(addressType: models.cwf1.AddressType, journeyId: String)
+GET         /cwf1/address-callback/:addressType/:journeyId           controllers.cwf1.AddressLookupController.callback(addressType: models.cwf1.AddressType, journeyId: String, id: String ?= "")
+GET         /cwf1/address-callback/:addressType/change/:journeyId    controllers.cwf1.AddressLookupController.callbackChange(addressType: models.cwf1.AddressType, journeyId: String, id: String ?= "")
+
 GET         /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /cwf1/registered-before/:journeyId                    controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/registered-before/change/:journeyId             controllers.cwf1.HaveYouRegisteredForSelfAssessmentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)

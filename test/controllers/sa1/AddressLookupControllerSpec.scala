@@ -33,11 +33,24 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
+import ch.qos.logback.classic.Level
+import play.api.Logger
+import uk.gov.hmrc.play.bootstrap.tools.LogCapturing
+
 import scala.concurrent.Future
 
-class AddressLookupControllerSpec extends SpecBase {
+class AddressLookupControllerSpec extends SpecBase with LogCapturing {
 
-  "SA1 AddressLookupController" - {
+  private def mustFailAndLogError(message: String)(result: => Future[Result]): Throwable = {
+    var failure: Throwable = null
+    withCaptureOfLoggingFrom(Logger(classOf[AddressLookupController])) { logs =>
+      failure = result.failed.futureValue
+      logs.filter(_.getLevel == Level.ERROR).map(_.getMessage) mustBe List(message)
+    }
+    failure
+  }
+
+  "AddressLookupController" - {
     Seq(false, true).foreach { changing =>
       val actionName = if (changing) "change" else "start"
 
@@ -49,19 +62,21 @@ class AddressLookupControllerSpec extends SpecBase {
         val callback =
           if (changing) routes.AddressLookupController.callbackChange(userAnswersId)
           else routes.AddressLookupController.callback(userAnswersId)
-        verify(mockConfiguration).apply(eqTo(callback), eqTo(landingPage))(any[RequestHeader])
+        verify(mockConfiguration)
+          .apply(eqTo(callback), eqTo(landingPage), eqTo("sa1.address"), eqTo("service.sa1.name"))(
+            any[RequestHeader]
+          )
         verify(mockConnector).initialise(eqTo(configuration))(any[HeaderCarrier])
         verifyNoInteractions(mockSessionRepository)
       }
 
-      s"$actionName must recover when ALF initialisation fails" in new Setup {
+      s"$actionName must log and fail when ALF initialisation fails" in new Setup {
         when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier]))
           .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-        val result = startJourney(changing)
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe recoveryUrl
+        mustFailAndLogError("Failed to initialise the SA1 address lookup journey")(
+          startJourney(changing)
+        ).getMessage mustBe "ALF unavailable"
       }
     }
 
@@ -97,29 +112,32 @@ class AddressLookupControllerSpec extends SpecBase {
         }
 
         Seq("", " ").foreach { missingId =>
-          s"must recover without calling ALF or saving when the ID is '$missingId'" in new Setup {
-            val result = confirmAddress(changing, missingId)
-
-            status(result) mustBe SEE_OTHER
-            redirectLocation(result).value mustBe recoveryUrl
+          s"must log and fail without calling ALF or saving when the ID is '$missingId'" in new Setup {
+            mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+              confirmAddress(changing, missingId)
+            ) mustBe
+              an[IllegalArgumentException]
             verifyNoInteractions(mockConnector, mockSessionRepository)
           }
         }
 
-        "must recover without saving when address retrieval fails" in new Setup {
+        "must log and fail without saving when address retrieval fails" in new Setup {
           when(mockConnector.getAddress(any[String])(any[HeaderCarrier]))
             .thenReturn(Future.failed(new RuntimeException("ALF unavailable")))
 
-          status(confirmAddress(changing)) mustBe SEE_OTHER
+          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+            confirmAddress(changing)
+          ).getMessage mustBe "ALF unavailable"
           verifyNoInteractions(mockSessionRepository)
         }
 
-        "must recover when saving fails" in new Setup {
+        "must log and fail when saving fails" in new Setup {
           when(mockSessionRepository.set(any[UserAnswers]))
             .thenReturn(Future.failed(new RuntimeException("Mongo unavailable")))
 
-          status(confirmAddress(changing)) mustBe SEE_OTHER
-          redirectLocation(confirmAddress(changing)).value mustBe recoveryUrl
+          mustFailAndLogError("Failed to retrieve or save the confirmed SA1 address")(
+            confirmAddress(changing)
+          ).getMessage mustBe "Mongo unavailable"
         }
       }
     }
@@ -129,7 +147,6 @@ class AddressLookupControllerSpec extends SpecBase {
     def userAnswers: UserAnswers = emptyUserAnswers
 
     val alfUrl: String              = "http://localhost:9028/lookup-address/test-alf-journey"
-    val recoveryUrl: String         = controllers.routes.JourneyRecoveryController.onPageLoad().url
     val landingPage: Call           = routes.StartController.onPageLoad()
     val configuration: JsObject     = Json.obj("version" -> 2)
     val confirmed: ConfirmedAddress = ConfirmedAddress(
@@ -148,7 +165,8 @@ class AddressLookupControllerSpec extends SpecBase {
     val mockConnector: AddressLookupConnector         = mock(classOf[AddressLookupConnector])
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
 
-    when(mockConfiguration.apply(any[Call], any[Call])(any[RequestHeader])).thenReturn(configuration)
+    when(mockConfiguration.apply(any[Call], any[Call], any[String], any[String])(any[RequestHeader]))
+      .thenReturn(configuration)
     when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier])).thenReturn(Future.successful(alfUrl))
     when(mockConnector.getAddress(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(confirmed))
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
