@@ -17,7 +17,6 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import models.JourneyType.SA1
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
