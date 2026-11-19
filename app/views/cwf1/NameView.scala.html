@@ -48,6 +48,7 @@
                 label = LabelViewModel(messages("cwf1.name.firstName"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("off")
          )
 
          @govukInput(
@@ -56,6 +57,7 @@
                  label = LabelViewModel(messages("cwf1.name.lastName"))
              )
              .withWidth(TwoThirds)
+             .withAutocomplete("off")
          )
 
          @govukButton(
