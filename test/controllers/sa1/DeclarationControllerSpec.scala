@@ -37,6 +37,7 @@ import scala.concurrent.Future
 
 class DeclarationControllerSpec extends SpecBase {
 
+  val journeyId = "test-journey-id"
   "DeclarationController" - {
 
     "must pre-populate the name when loading an answered declaration" in new Setup {
@@ -61,7 +62,7 @@ class DeclarationControllerSpec extends SpecBase {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> "Jane Doe"))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad(journeyId).url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(savedAnswers.capture())
@@ -72,7 +73,7 @@ class DeclarationControllerSpec extends SpecBase {
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> ""))
 
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad().url
+      redirectLocation(result).value mustBe routes.ConfirmationController.onPageLoad(journeyId).url
 
       val savedAnswers = ArgumentCaptor.forClass(classOf[UserAnswers])
       verify(sessionRepository).set(savedAnswers.capture())
