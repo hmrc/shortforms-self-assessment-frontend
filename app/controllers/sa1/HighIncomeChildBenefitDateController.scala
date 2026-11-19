@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.HighIncomeChildBenefitDateFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.ChildBenefitCharge
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.HighIncomeChildBenefitDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class HighIncomeChildBenefitDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: HighIncomeChildBenefitDateFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: HighIncomeChildBenefitDateView
 )(implicit ec: ExecutionContext)
     extends AppController {

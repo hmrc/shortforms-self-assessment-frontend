@@ -37,7 +37,7 @@ import models.Mode
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class DateUntaxedIncomeDirectorControllerSpec extends SpecBase with MockitoSugar {
 
@@ -118,7 +118,7 @@ class DateUntaxedIncomeDirectorControllerSpec extends SpecBase with MockitoSugar
     protected val mockContent                             = "DateUntaxedIncomeDirectorView"
     protected val sessionRepository: SessionRepository    = mock
     private val formProvider                              = new DateUntaxedIncomeDirectorFormProvider()
-    protected val navigator: Navigator                    = mock
+    protected val navigator: Sa1Navigator                 = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateAnnualIncomeFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.UntaxedIncome
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DateAnnualIncomePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class DateAnnualIncomeController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateAnnualIncomeFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: DateAnnualIncomeView
 )(implicit ec: ExecutionContext)
     extends AppController {

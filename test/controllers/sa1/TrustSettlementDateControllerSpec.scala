@@ -36,7 +36,7 @@ import views.html.sa1.TrustSettlementDateView
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 import models.Mode
 
 class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
@@ -120,7 +120,7 @@ class TrustSettlementDateControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                          = "TrustSettlementDateView"
     protected val sessionRepository: SessionRepository = mock
     private val formProvider                           = new TrustSettlementDateFormProvider()
-    protected val navigator: Navigator                 = mock
+    protected val navigator: Sa1Navigator              = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

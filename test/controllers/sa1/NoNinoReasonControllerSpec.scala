@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.NoNinoReasonFormProvider
 import models.{Mode, NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{FakeNavigator, Sa1Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -145,7 +145,7 @@ class NoNinoReasonControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       new NoNinoReasonFormProvider(),
       sessionRepository,
-      new FakeNavigator(fakeOnwardRoute),
+      new Sa1Navigator with FakeNavigator(fakeOnwardRoute),
       mockView
     )
   }

@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateOfBirthFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DateOfBirthPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class DateOfBirthController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: DateOfBirthFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: DateOfBirthView
 ) extends AppController {
 

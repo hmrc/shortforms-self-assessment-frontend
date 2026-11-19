@@ -36,7 +36,7 @@ import views.html.sa1.DateOfBirthView
 import models.Mode
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
 
@@ -126,7 +126,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
   ) {
     protected val mockContent               = "DateOfBirthView"
     protected val mockView: DateOfBirthView = mock
-    protected val navigator: Navigator      = mock
+    protected val navigator: Sa1Navigator   = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

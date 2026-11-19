@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.cwf1.DoYouHaveAPreviousLastNameFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -122,7 +122,7 @@ class DoYouHaveAPreviousLastNameControllerSpec extends SpecBase with MockitoSuga
 
     protected lazy val controllerUnderTest = new DoYouHaveAPreviousLastNameController(
       mockSessionRepository,
-      new FakeNavigator(onwardRoute),
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       formProvider,
       new MockAppControllerComponents(userAnswers),
       mockView

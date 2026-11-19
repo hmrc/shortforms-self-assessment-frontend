@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.UntaxedIncomeNotInPayeStartDateFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.UntaxedIncome
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.UntaxedIncomeNotInPayeStartDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class UntaxedIncomeNotInPayeStartDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: UntaxedIncomeNotInPayeStartDateFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: UntaxedIncomeNotInPayeStartDateView
 )(implicit ec: ExecutionContext)
     extends AppController {

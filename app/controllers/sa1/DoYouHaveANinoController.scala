@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DoYouHaveANinoFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DoYouHaveANinoPage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouHaveANinoController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   formProvider: DoYouHaveANinoFormProvider,
   val controllerComponents: AppControllerComponents,
   view: DoYouHaveANinoView

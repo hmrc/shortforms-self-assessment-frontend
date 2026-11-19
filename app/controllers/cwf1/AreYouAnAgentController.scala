@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.AreYouAnAgentFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import pages.cwf1.AreYouAnAgentPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AreYouAnAgentController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Cwf1Navigator,
   formProvider: AreYouAnAgentFormProvider,
   val controllerComponents: AppControllerComponents,
   view: AreYouAnAgentView

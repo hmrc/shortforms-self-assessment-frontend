@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.DoYouHaveAPreviousLastNameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import pages.cwf1.DoYouHaveAPreviousLastNamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DoYouHaveAPreviousLastNameController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Cwf1Navigator,
   formProvider: DoYouHaveAPreviousLastNameFormProvider,
   val controllerComponents: AppControllerComponents,
   view: DoYouHaveAPreviousLastNameView

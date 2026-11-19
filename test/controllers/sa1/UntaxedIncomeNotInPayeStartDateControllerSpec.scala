@@ -37,7 +37,7 @@ import views.html.sa1.UntaxedIncomeNotInPayeStartDateView
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with MockitoSugar {
 
@@ -117,7 +117,7 @@ class UntaxedIncomeNotInPayeStartDateControllerSpec extends SpecBase with Mockit
   ) {
     protected val mockView: UntaxedIncomeNotInPayeStartDateView = mock[UntaxedIncomeNotInPayeStartDateView]
     protected val mockContent                                   = "UntaxedIncomeNotInPayeStartDateView"
-    protected val navigator: Navigator                          = mock[Navigator]
+    protected val navigator: Sa1Navigator                       = mock[Sa1Navigator]
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
