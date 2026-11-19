@@ -167,3 +167,8 @@ GET         /cwf1/name/:journeyId                         controllers.cwf1.NameC
 POST        /cwf1/name/:journeyId                         controllers.cwf1.NameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/name/change/:journeyId                  controllers.cwf1.NameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/name/change/:journeyId                  controllers.cwf1.NameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/date-of-birth/:journeyId                       controllers.cwf1.DateOfBirthController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/date-of-birth/:journeyId                       controllers.cwf1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/date-of-birth/change/:journeyId                controllers.cwf1.DateOfBirthController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/date-of-birth/change/:journeyId                controllers.cwf1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = CheckMode)

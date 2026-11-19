@@ -498,3 +498,15 @@ cwf1.name.firstName.checkYourAnswersLabel = First name
 cwf1.name.lastName.checkYourAnswersLabel = Last name
 cwf1.name.firstName.change.hidden = First name
 cwf1.name.lastName.change.hidden = Last name
+
+cwf1.dateOfBirth.title = What is your date of birth?
+cwf1.dateOfBirth.heading = What is your date of birth?
+cwf1.dateOfBirth.checkYourAnswersLabel = Date of birth
+cwf1.dateOfBirth.change.hidden = Date of birth
+cwf1.dateOfBirth.hint = For example, 19 3 2002
+cwf1.dateOfBirth.date.error.required = Enter your date of birth
+cwf1.dateOfBirth.date.error.invalid = Date of birth must be a real date
+cwf1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
+cwf1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
+cwf1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
+cwf1.dateOfBirth.date.error.tooOld = Date of birth must be on or after {0}
