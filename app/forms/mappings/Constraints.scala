@@ -145,4 +145,13 @@ trait Constraints {
         Invalid(errorKey, regex)
     }
 
+  protected def exactLength(length: Int, errorKey: String): Constraint[String] =
+    Constraint { input =>
+      if (input.length == length) {
+        Valid
+      } else {
+        Invalid(errorKey, length)
+      }
+    }
+
 }

@@ -157,3 +157,8 @@ GET         /cwf1/previous-last-name/:journeyId                         controll
 POST        /cwf1/previous-last-name/:journeyId                         controllers.cwf1.DoYouHaveAPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/previous-last-name/change/:journeyId                  controllers.cwf1.DoYouHaveAPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/previous-last-name/change/:journeyId                  controllers.cwf1.DoYouHaveAPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onSubmit(journeyId: String, mode: Mode = CheckMode)

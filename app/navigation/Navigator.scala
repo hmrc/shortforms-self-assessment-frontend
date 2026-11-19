@@ -23,6 +23,7 @@ import models.sa1.WhyTaxReturn
 import models.sa1.WhyTaxReturn.*
 import pages.*
 import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AreYouAnAgentPage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.sa1.*
 import play.api.mvc.Call
 
@@ -111,8 +112,8 @@ class Navigator @Inject() () {
       ua =>
         ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
           case Some(true)  =>
-            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
-              .onPageLoad(ua.id, NormalMode) // TODO UTR PAGE
+            controllers.cwf1.routes.EnterUTRController
+              .onPageLoad(ua.id, NormalMode)
           case Some(false) =>
             controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
               .onPageLoad(ua.id, NormalMode) // TODO NAME page
@@ -295,12 +296,12 @@ class Navigator @Inject() () {
 
   private def haveYouRegisteredForSelfAssessmentCheckRoute(ua: UserAnswers): Call =
     ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
-      case Some(true) if ua.get(HaveYouRegisteredForSelfAssessmentPage).isEmpty =>
-        controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
-          .onPageLoad(ua.id, CheckMode) // TODO Change to UTR page and controller
-      case Some(_)                                                              =>
+      case Some(true) if ua.get(EnterUTRPage).isEmpty =>
+        controllers.cwf1.routes.EnterUTRController
+          .onPageLoad(ua.id, CheckMode)
+      case Some(_)                                    =>
         checkYourAnswersCWF1Route(ua)
-      case None                                                                 =>
+      case None                                       =>
         routes.IndexController.onPageLoad()
     }
 }

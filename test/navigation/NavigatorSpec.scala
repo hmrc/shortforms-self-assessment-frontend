@@ -21,6 +21,7 @@ import controllers.routes
 import models.*
 import models.sa1.{PreviousName, WhyTaxReturn}
 import pages.*
+import pages.cwf1.{AreYouAnAgentPage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.sa1.*
 
@@ -159,13 +160,13 @@ class NavigatorSpec extends SpecBase {
       }
 
       "when have you registered before page" - {
-        "must go from have you registered before to have you registered before when answer is 'yes'" in {
+        "must go from have you registered before to enter utr when answer is 'yes'" in {
           val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, true).success.value
           navigator.nextPage(
             HaveYouRegisteredForSelfAssessmentPage,
             NormalMode,
             userAnswers
-          ) mustBe controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
+          ) mustBe controllers.cwf1.routes.EnterUTRController
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
@@ -495,7 +496,7 @@ class NavigatorSpec extends SpecBase {
             .value
 
           navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
-            controllers.cwf1.routes.AreYouAnAgentController.onPageLoad(userAnswersId, CheckMode) // TODO
+            controllers.cwf1.routes.EnterUTRController.onPageLoad(userAnswersId, CheckMode) // TODO
         }
 
         "must go to Check Your Answers when yes is selected and utr already exists" in {
@@ -503,9 +504,9 @@ class NavigatorSpec extends SpecBase {
             .set(HaveYouRegisteredForSelfAssessmentPage, true)
             .success
             .value
-//            .set(PreviousLastNamePage, PreviousName("Smith", LocalDate.of(2000, 1, 1))) //TODO UTR
-//            .success
-//            .value
+            .set(EnterUTRPage, "1234567890")
+            .success
+            .value
 
           navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, userAnswers) mustBe
             controllers.cwf1.routes.AreYouAnAgentController
