@@ -36,7 +36,7 @@ import repositories.SessionRepository
 import views.html.sa1.HighIncomeChildBenefitDateView
 
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSugar {
 
@@ -117,7 +117,7 @@ class HighIncomeChildBenefitDateControllerSpec extends SpecBase with MockitoSuga
     protected val mockContent                              = "HighIncomeChildBenefitDateView"
     protected val sessionRepository: SessionRepository     = mock
     private val formProvider                               = new HighIncomeChildBenefitDateFormProvider
-    protected val navigator: Navigator                     = mock
+    protected val navigator: Sa1Navigator                  = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

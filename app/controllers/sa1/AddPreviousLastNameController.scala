@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.AddPreviousLastNameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.AddPreviousLastNamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddPreviousLastNameController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   formProvider: AddPreviousLastNameFormProvider,
   val controllerComponents: AppControllerComponents,
   view: AddPreviousLastNameView

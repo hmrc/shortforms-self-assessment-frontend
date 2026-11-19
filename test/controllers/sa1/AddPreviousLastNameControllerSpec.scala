@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.AddPreviousLastNameFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{FakeNavigator, Sa1Navigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -118,7 +118,7 @@ class AddPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
 
     protected lazy val controllerUnderTest = new AddPreviousLastNameController(
       mockSessionRepository,
-      new FakeNavigator(onwardRoute),
+      new Sa1Navigator with FakeNavigator(onwardRoute),
       addPreviousLastNameFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView

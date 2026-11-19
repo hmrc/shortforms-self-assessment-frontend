@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateUntaxedIncomeDirectorFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.CompanyDirector
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DateUntaxedIncomeDirectorPage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
@@ -34,7 +34,7 @@ class DateUntaxedIncomeDirectorController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: DateUntaxedIncomeDirectorFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: DateUntaxedIncomeDirectorView
 ) extends AppController
     with Logging {

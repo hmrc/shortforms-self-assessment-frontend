@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.OtherReasonFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.Other
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.OtherReasonPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class OtherReasonController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: OtherReasonFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: OtherReasonView
 ) extends AppController {
 

@@ -37,7 +37,7 @@ import views.html.sa1.DateCapitalGainsTaxView
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
 
@@ -114,7 +114,7 @@ class DateCapitalGainsTaxControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                              = "DateCapitalGainsTaxView"
     protected val mockSessionRepository: SessionRepository = mock
     private val formProvider                               = new DateCapitalGainsTaxFormProvider
-    protected val navigator: Navigator                     = mock
+    protected val navigator: Sa1Navigator                  = mock
 
     when(mockView.apply(any[String], any[Form[LocalDate]], any)(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

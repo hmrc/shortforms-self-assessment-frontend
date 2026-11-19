@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.ContactDetailsFormProvider
 import models.Mode
 import models.sa1.ContactDetails
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.ContactDetailsPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
@@ -34,7 +34,7 @@ class ContactDetailsController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: ContactDetailsFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: ContactDetailsView
 )(implicit ec: ExecutionContext)
     extends AppController {

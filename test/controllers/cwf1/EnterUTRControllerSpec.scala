@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.cwf1.EnterUTRFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -120,7 +120,7 @@ class EnterUTRControllerSpec extends SpecBase with MockitoSugar {
 
     protected lazy val controllerUnderTest = new EnterUTRController(
       mockSessionRepository,
-      new FakeNavigator(onwardRoute),
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       enterUTRFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView

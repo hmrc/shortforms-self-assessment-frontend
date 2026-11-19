@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.EnterUTRFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import pages.cwf1.EnterUTRPage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EnterUTRController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Cwf1Navigator,
   formProvider: EnterUTRFormProvider,
   val controllerComponents: AppControllerComponents,
   view: EnterUTRView

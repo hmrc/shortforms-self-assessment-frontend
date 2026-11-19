@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{FakeNavigator, Sa1Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -59,7 +59,7 @@ class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSu
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       new EnterNationalInsuranceNumberFormProvider(),
-      new FakeNavigator(onwardRoute),
+      new Sa1Navigator with FakeNavigator(onwardRoute),
       view
     )
   }
