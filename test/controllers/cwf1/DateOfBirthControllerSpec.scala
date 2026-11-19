@@ -97,14 +97,15 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
       "must save the date and redirect after a valid submission" in new Setup {
         when(sessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
 
-
         val request: FakeRequest[AnyContentAsFormUrlEncoded] =
           FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
         private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustEqual Some(controllers.cwf1.routes.DateOfBirthController.onPageLoad(userAnswersId,NormalMode).url)
+        redirectLocation(result) mustEqual Some(
+          controllers.cwf1.routes.DateOfBirthController.onPageLoad(userAnswersId, NormalMode).url
+        )
 
         val captor: ArgumentCaptor[UserAnswers] =
           ArgumentCaptor.forClass(classOf[UserAnswers])
