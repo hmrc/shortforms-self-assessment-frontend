@@ -451,3 +451,16 @@ cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Asse
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
 cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?
+
+cwf1.agentDetails.title = Agent’s details
+cwf1.agentDetails.heading = Agent’s details
+cwf1.agentDetails.fullName = What is the agent’s full name?
+cwf1.agentDetails.clientReference = What is the client reference for this client (optional)?
+cwf1.agentDetails.fullName.checkYourAnswersLabel = Agent’s full name
+cwf1.agentDetails.clientReference.checkYourAnswersLabel = Agent’s client reference
+cwf1.agentDetails.error.fullName.required = Enter the agent’s full name
+cwf1.agentDetails.error.fullName.invalid = The agent’s full name can only contain letters, numbers, hyphens, spaces and apostrophes
+cwf1.agentDetails.error.fullName.length = The agent’s full name must be no more than 100 characters
+cwf1.agentDetails.error.clientReference.length = The client reference must be no more than 50 characters
+cwf1.agentDetails.fullName.change.hidden = Agent’s full name
+cwf1.agentDetails.clientReference.change.hidden = Agent’s client reference

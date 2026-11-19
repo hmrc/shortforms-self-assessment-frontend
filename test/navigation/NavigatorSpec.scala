@@ -135,8 +135,8 @@ class NavigatorSpec extends SpecBase {
           val userAnswers = emptyUserAnswers.set(AreYouAnAgentPage, true).success.value
 
           navigator.nextPage(AreYouAnAgentPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.AreYouAnAgentController
-              .onPageLoad(userAnswersId, NormalMode) // TODO must change controller to route Agent Details controller
+            controllers.cwf1.routes.AgentDetailsController
+              .onPageLoad(userAnswersId, NormalMode)
         }
 
         "must go from authorised agent page to Nino number page when answer is 'no'" in {
