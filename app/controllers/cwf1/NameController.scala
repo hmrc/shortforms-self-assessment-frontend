@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.NameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.{Cwf1Navigator, Navigator}
 import pages.cwf1.NamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class NameController @Inject() (
   sessionRepository: SessionRepository,
   formProvider: NameFormProvider,
   val controllerComponents: AppControllerComponents,
-  navigator: Navigator,
+  navigator: Cwf1Navigator,
   view: NameView
 )(implicit ec: ExecutionContext)
     extends AppController {

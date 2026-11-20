@@ -21,14 +21,14 @@ import controllers.MockAppControllerComponents
 import forms.cwf1.NameFormProvider
 import models.cwf1.Name
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import navigation.Navigator
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, never, verify, when}
 import pages.cwf1.NamePage
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -38,6 +38,8 @@ import views.html.cwf1.NameView
 import scala.concurrent.Future
 
 class NameControllerSpec extends SpecBase {
+
+  def onwardRoute = Call("GET", "/foo")
 
   "NameController" - {
 
@@ -100,7 +102,6 @@ class NameControllerSpec extends SpecBase {
 
   trait Setup {
     protected val givenUserAnswers: UserAnswers  = emptyUserAnswers
-    protected val navigator: Navigator           = mock(classOf[Navigator])
     val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
@@ -113,7 +114,7 @@ class NameControllerSpec extends SpecBase {
       mockSessionRepository,
       new NameFormProvider(),
       new MockAppControllerComponents(givenUserAnswers),
-      navigator,
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       stubView
     )
 
