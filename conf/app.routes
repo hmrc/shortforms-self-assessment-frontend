@@ -168,6 +168,11 @@ POST        /cwf1/unique-taxpayer-reference/:journeyId               controllers
 GET         /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/unique-taxpayer-reference/:journeyId               controllers.cwf1.EnterUTRController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
+GET         /cwf1/move-address/:journeyId                    controllers.cwf1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/move-address/:journeyId                    controllers.cwf1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/move-address/change/:journeyId             controllers.cwf1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/move-address/change/:journeyId             controllers.cwf1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
 GET         /cwf1/name/:journeyId                         controllers.cwf1.NameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /cwf1/name/:journeyId                         controllers.cwf1.NameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/name/change/:journeyId                  controllers.cwf1.NameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
