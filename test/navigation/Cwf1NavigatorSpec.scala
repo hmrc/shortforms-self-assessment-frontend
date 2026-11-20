@@ -19,7 +19,9 @@ package navigation
 import base.SpecBase
 import models.*
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage, MoveAddressPage}
+
+import java.time.LocalDate
 
 class Cwf1NavigatorSpec extends SpecBase {
 
@@ -109,6 +111,36 @@ class Cwf1NavigatorSpec extends SpecBase {
 
         "must go to Index when answer is missing" in {
           navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+      "when did you move to your address" - {
+        "must go to AreYouAnAgentController when the move date is within 3 years" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(1))
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswers.id, NormalMode) // TODO change to previous address page
+        }
+
+        "must go to EnterUTRController when the move date is more than 3 years ago" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(4))
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.EnterUTRController
+              .onPageLoad(userAnswers.id, NormalMode) // TODO change to UK resident page
+        }
+
+        "must go to StartController when MoveAddressPage is empty" in {
+          val userAnswers = emptyUserAnswers
+
+          navigator.nextPage(MoveAddressPage, NormalMode, userAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }
@@ -213,6 +245,65 @@ class Cwf1NavigatorSpec extends SpecBase {
 
         "must go to Index when answer is missing" in {
           navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, CheckMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+
+      "when did you move to your address" - {
+        "must go to AreYouAnAgentController when the move date is within 3 years and AreYouAnAgentPage is empty" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(1))
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswers.id, CheckMode) // TODO previous address page
+        }
+
+        "must go to Check Your Answers when the move date is within 3 years and AreYouAnAgentPage is populated" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(1))
+            .success
+            .value
+            .set(AreYouAnAgentPage, true)
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to EnterUTRController when the move date is more than 3 years ago and EnterUTRPage is empty" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(4))
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.EnterUTRController // TODO change to UK resident page
+              .onPageLoad(userAnswers.id, CheckMode)
+        }
+
+        "must go to Check Your Answers when the move date is more than 3 years ago and EnterUTRPage is populated" in {
+          val userAnswers = emptyUserAnswers
+            .set(MoveAddressPage, LocalDate.now().minusYears(4))
+            .success
+            .value
+            .set(EnterUTRPage, "1234567890")
+            .success
+            .value
+
+          navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to StartController when MoveAddressPage is empty" in {
+          val userAnswers = emptyUserAnswers
+
+          navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }
