@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.EnterPreviousLastNameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import pages.cwf1.EnterPreviousLastNamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EnterPreviousLastNameController @Inject() (
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Cwf1Navigator,
   formProvider: EnterPreviousLastNameFormProvider,
   val controllerComponents: AppControllerComponents,
   view: EnterPreviousLastNameView
