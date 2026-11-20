@@ -68,10 +68,10 @@ class Cwf1Navigator @Inject() () extends Navigator {
       ua =>
         ua.get(MoveAddressPage) match {
           case Some(moveDate) if !LocalDate.parse(moveDate.toString).isBefore(LocalDate.now().minusYears(3)) =>
-            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController // TODO change to previous address
+            controllers.cwf1.routes.AreYouAnAgentController // TODO change to previous address
               .onPageLoad(ua.id, NormalMode)
           case Some(moveDate)                                                                                =>
-            controllers.cwf1.routes.AreYouAnAgentController // TODO change to uk resident controller
+            controllers.cwf1.routes.EnterUTRController // TODO change to uk resident controller
               .onPageLoad(ua.id, NormalMode)
           case _                                                                                             =>
             controllers.cwf1.routes.StartController.onPageLoad()
