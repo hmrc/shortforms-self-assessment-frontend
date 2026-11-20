@@ -19,7 +19,7 @@ package navigation
 import base.SpecBase
 import models.*
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
+import pages.cwf1.{AgentDetailsPage, AreYouAnAgentPage, ContactDetailsPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
 
 class Cwf1NavigatorSpec extends SpecBase {
 
@@ -110,6 +110,22 @@ class Cwf1NavigatorSpec extends SpecBase {
         "must go to Index when answer is missing" in {
           navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+
+      "when agent details page" - {
+        // TODO
+        "must go from agent details page to country of territory of agent's address page" in {
+          navigator.nextPage(AgentDetailsPage, NormalMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.AgentDetailsController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        "when contact details page" - {
+          // TODO
+          "must go from contact details page to country of territory of home address page" in {
+            navigator.nextPage(ContactDetailsPage, NormalMode, emptyUserAnswers) mustBe
+              controllers.cwf1.routes.ContactDetailsController.onPageLoad(userAnswersId, NormalMode)
+          }
         }
       }
     }

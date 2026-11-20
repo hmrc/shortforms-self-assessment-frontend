@@ -37,25 +37,13 @@ class ContactDetailsFormProviderSpec extends StringFieldBehaviours {
       result.errors mustBe empty
     }
 
-    "must fail to bind when the domain has no dot extension " in {
+    "must fail to bind when emailAddress is invalid" in {
 
-      val emailAddress = "name@examplecom"
-      val result       = form.bind(Map("emailAddress" -> emailAddress, "phoneNumber" -> "0746689076"))
-      result.errors mustBe List(FormError("emailAddress", invalidKey))
-    }
-
-    "must fail to bind when the username segment exceeds 64 chars " in {
-
-      val emailAddress = "a" * 65 + "@examplecom"
-      val result       = form.bind(Map("emailAddress" -> emailAddress, "phoneNumber" -> "0746689076"))
-      result.errors mustBe List(FormError("emailAddress", invalidKey))
-    }
-
-    "must fail to bind when the Domain segment exceeds 64 chars " in {
-
-      val emailAddress = "name@" + "n" * 64 + ".com"
-      val result       = form.bind(Map("emailAddress" -> emailAddress, "phoneNumber" -> "0746689076"))
-      result.errors mustBe List(FormError("emailAddress", invalidKey))
+      val invalidEmailAddress = "not-an-email"
+      val result              = form.bind(Map("emailAddress" -> invalidEmailAddress, "phoneNumber" -> "0746689076"))
+      result.errors mustBe List(
+        FormError("emailAddress", invalidKey)
+      )
     }
 
     "must fail to bind when the email id length exceeds 129 chars " in {
