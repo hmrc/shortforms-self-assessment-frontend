@@ -21,6 +21,7 @@ import controllers.MockAppControllerComponents
 import forms.cwf1.AgentDetailsFormProvider
 import models.cwf1.AgentDetails
 import models.{NormalMode, UserAnswers}
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -28,6 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.cwf1.AgentDetailsPage
 import play.api.data.{Form, FormError}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
@@ -37,6 +39,8 @@ import views.html.cwf1.AgentDetailsView
 import scala.concurrent.Future
 
 class AgentDetailsControllerSpec extends SpecBase with MockitoSugar {
+
+  def onwardRoute = Call("GET", "/foo")
 
   "AgentDetails Controller" - {
 
@@ -80,9 +84,7 @@ class AgentDetailsControllerSpec extends SpecBase with MockitoSugar {
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.cwf1.routes.AgentDetailsController
-        .onPageLoad(userAnswersId, NormalMode)
-        .url
+      redirectLocation(result).value mustEqual onwardRoute.url
 
       verify(mockSessionRepository).set(any())
     }
@@ -141,6 +143,7 @@ class AgentDetailsControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       mockSessionRepository,
       formProvider,
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       mockView
     )
   }

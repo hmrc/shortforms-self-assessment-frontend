@@ -19,6 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.AgentDetailsFormProvider
 import models.Mode
+import navigation.Cwf1Navigator
 import pages.cwf1.AgentDetailsPage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -31,6 +32,7 @@ class AgentDetailsController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: AgentDetailsFormProvider,
+  navigator: Cwf1Navigator,
   view: AgentDetailsView
 )(implicit ec: ExecutionContext)
     extends AppController {
@@ -57,7 +59,7 @@ class AgentDetailsController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentDetailsPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.cwf1.routes.AgentDetailsController.onPageLoad(journeyId, mode))
+            } yield Redirect(navigator.nextPage(AgentDetailsPage, mode, updatedAnswers))
         )
   }
 }
