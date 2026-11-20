@@ -115,25 +115,25 @@ class Cwf1NavigatorSpec extends SpecBase {
         }
       }
       "when did you move to your address" - {
-        "must go to DoYouHaveAPreviousLastNameController when the move date is within 3 years" in {
+        "must go to AreYouAnAgentController when the move date is within 3 years" in {
           val userAnswers = emptyUserAnswers
             .set(MoveAddressPage, LocalDate.now().minusYears(1))
             .success
             .value
 
           navigator.nextPage(MoveAddressPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+            controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(userAnswers.id, NormalMode) // TODO change to previous address page
         }
 
-        "must go to AreYouAnAgentController when the move date is more than 3 years ago" in {
+        "must go to EnterUTRController when the move date is more than 3 years ago" in {
           val userAnswers = emptyUserAnswers
             .set(MoveAddressPage, LocalDate.now().minusYears(4))
             .success
             .value
 
           navigator.nextPage(MoveAddressPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.AreYouAnAgentController
+            controllers.cwf1.routes.EnterUTRController
               .onPageLoad(userAnswers.id, NormalMode) // TODO change to UK resident page
         }
 
