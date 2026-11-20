@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.DateOfBirthFormProvider
 import models.{Mode, NormalMode}
-import navigation.{Cwf1Navigator}
+import navigation.Cwf1Navigator
 import pages.cwf1.DateOfBirthPage
 import play.api.mvc.*
 import repositories.SessionRepository
