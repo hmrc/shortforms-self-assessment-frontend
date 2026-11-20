@@ -39,6 +39,10 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case AgentDetailsPage                       =>
+      ua =>
+        controllers.cwf1.routes.AgentDetailsController
+          .onPageLoad(ua.id, NormalMode) // TODO: Redirect to Country of Territory of Agent's Address Page
     case HaveYouRegisteredForSelfAssessmentPage =>
       ua =>
         ua.get(HaveYouRegisteredForSelfAssessmentPage) match {
@@ -63,6 +67,10 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case ContactDetailsPage                     =>
+      ua =>
+        controllers.cwf1.routes.ContactDetailsController
+          .onPageLoad(ua.id, NormalMode) // TODO: Redirect to Country of Territory of Home Address Page
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }

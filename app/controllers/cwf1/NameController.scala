@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.NameFormProvider
 import models.Mode
-import navigation.{Cwf1Navigator, Navigator}
+import navigation.Cwf1Navigator
 import pages.cwf1.NamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository

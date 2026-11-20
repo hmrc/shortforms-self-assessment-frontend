@@ -172,3 +172,8 @@ GET         /cwf1/date-of-birth/:journeyId                       controllers.cwf
 POST        /cwf1/date-of-birth/:journeyId                       controllers.cwf1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/date-of-birth/change/:journeyId                controllers.cwf1.DateOfBirthController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/date-of-birth/change/:journeyId                controllers.cwf1.DateOfBirthController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/contact-details/:journeyId                         controllers.cwf1.ContactDetailsController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/contact-details/:journeyId                         controllers.cwf1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/contact-details/change/:journeyId                  controllers.cwf1.ContactDetailsController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/contact-details/change/:journeyId                  controllers.cwf1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = CheckMode)
