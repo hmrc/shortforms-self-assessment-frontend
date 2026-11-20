@@ -18,44 +18,99 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
+import handlers.ErrorHandler
+import models.{JourneyType, SubmissionConfirmation, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito
 import org.mockito.Mockito.{mock, verify, when}
+import pages.sa1.DeclarationPage
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.mvc.Results.NotFound
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
+import repositories.SessionRepository
 import views.html.sa1.ConfirmationView
 
-import java.time.{Clock, Instant, ZoneOffset}
+import java.time.Instant
+import scala.concurrent.Future
 
 class ConfirmationControllerSpec extends SpecBase {
 
+  val confirmation: SubmissionConfirmation = SubmissionConfirmation(
+    "AB123CD",
+    Instant.now()
+  )
+
   "ConfirmationController" - {
 
-    "must render the page with the current UK date and time" in new Setup {
-      val result = controller.onPageLoad()(FakeRequest())
+    "post successful declaration with valid submission" - {
 
-      status(result) mustBe OK
-      contentAsString(result) mustBe "Confirmation view"
+      val userAnswers: UserAnswers =
+        UserAnswers(userAnswersId, testUserId, JourneyType.SA1, confirmation = Some(confirmation))
+          .set(DeclarationPage, "Jane Doe")
+          .success
+          .value
 
-      verify(view).apply(
-        eqTo("15:45 on 16 October 2026"),
-        eqTo("AB123CD")
-      )(any[Request[?]], any[Messages])
+      "must render the page with the current UK date and time" in new Setup(userAnswers) {
+
+        when(sessionRepository.get(any, any, any)).thenReturn(Future.successful(Some(userAnswers)))
+
+        val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe "Confirmation view"
+
+        verify(view).apply(
+          any,
+          eqTo("AB123CD")
+        )(any[Request[?]], any[Messages])
+      }
+    }
+
+    "check service guard without valid request or userAnswers page" - {
+
+      "must render page not found page when SubmissionConfirmation is none" in new Setup(emptyUserAnswers) {
+        when(sessionRepository.get(any, any, any)).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
+
+        status(result) mustBe NOT_FOUND
+        contentAsString(result) mustBe "Page not found"
+      }
+
+      "must render page not found page when userAnswers is none" in new Setup(emptyUserAnswers) {
+        when(sessionRepository.get(any, any, any)).thenReturn(Future.successful(None))
+
+        val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
+
+        status(result) mustBe NOT_FOUND
+        contentAsString(result) mustBe "Page not found"
+      }
     }
   }
 
-  private class Setup {
-    protected val view: ConfirmationView = mock(classOf[ConfirmationView])
-    private val expectedReferenceNumber  = "AB123CD"
+  private class Setup(userAnswers: UserAnswers) {
+    protected val view: ConfirmationView               = mock(classOf[ConfirmationView])
+    protected val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
+    when(sessionRepository.set(any)).thenReturn(Future.successful(true))
+
+    private val expectedReferenceNumber = "AB123CD"
     when(view.apply(any[String], eqTo(expectedReferenceNumber))(any[Request[?]], any[Messages]))
       .thenReturn(Html("Confirmation view"))
 
+    private val mockErrorHandler: ErrorHandler = mock(classOf[ErrorHandler])
+    protected val mockErrorContent             = "Page not found"
+    when(mockErrorHandler.onClientError(any[RequestHeader], eqTo(NOT_FOUND), any[String])) thenReturn Future.successful(
+      NotFound(Html(mockErrorContent))
+    )
+
     protected val controller = new ConfirmationController(
-      new MockAppControllerComponents(),
-      Clock.fixed(Instant.parse("2026-10-16T14:45:00Z"), ZoneOffset.UTC),
-      view
+      new MockAppControllerComponents(userAnswers = userAnswers),
+      sessionRepository,
+      view,
+      mockErrorHandler
     )
   }
 }
