@@ -182,3 +182,8 @@ GET         /cwf1/enter-previous-last-name/:journeyId            controllers.cwf
 POST        /cwf1/enter-previous-last-name/:journeyId            controllers.cwf1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/move-address/:journeyId                    controllers.cwf1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/move-address/:journeyId                    controllers.cwf1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/move-address/change/:journeyId             controllers.cwf1.MoveAddressController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/move-address/change/:journeyId             controllers.cwf1.MoveAddressController.onSubmit(journeyId: String, mode: Mode = CheckMode)
