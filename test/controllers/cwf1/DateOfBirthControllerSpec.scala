@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.cwf1.DateOfBirthFormProvider
 import models.{Mode, NormalMode, UserAnswers}
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -121,7 +121,7 @@ class DateOfBirthControllerSpec extends SpecBase with MockitoSugar {
   ) {
     protected val mockContent               = "DateOfBirthView"
     protected val mockView: DateOfBirthView = mock
-    protected val navigator: Navigator      = mock
+    protected val navigator: Cwf1Navigator  = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
