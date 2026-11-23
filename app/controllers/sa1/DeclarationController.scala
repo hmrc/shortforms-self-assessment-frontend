@@ -22,10 +22,12 @@ import forms.sa1.DeclarationFormProvider
 import models.{SubmissionConfirmation, UserAnswers}
 import pages.sa1.DeclarationPage
 import play.api.Logging
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, Request, Result}
 import repositories.SessionRepository
 import services.SA1SubmissionMapper
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.ErrorReference
+import views.html.SystemErrorView
 import views.html.sa1.DeclarationView
 
 import javax.inject.Inject
@@ -37,7 +39,8 @@ class DeclarationController @Inject() (
   sessionRepository: SessionRepository,
   formProvider: DeclarationFormProvider,
   submissionConnector: SA1SubmissionConnector,
-  view: DeclarationView
+  view: DeclarationView,
+  systemErrorView: SystemErrorView
 ) extends AppController
     with Logging {
 
@@ -64,11 +67,15 @@ class DeclarationController @Inject() (
         )
     }
 
-  private def submitSA1(journeyId: String, answers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] =
+  private def submitSA1(journeyId: String, answers: UserAnswers)(implicit
+    request: Request[?],
+    hc: HeaderCarrier
+  ): Future[Result] =
     SA1SubmissionMapper.map(answers) match {
       case Left(error)       =>
-        logger.error(s"[DeclarationController][submitSA1] Unable to build SA1 submission: $error")
-        Future.successful(Redirect(controllers.routes.SystemErrorController.onPageLoad()))
+        val reference = ErrorReference.generate()
+        logger.error(s"[DeclarationController][submitSA1] reference=$reference Unable to build SA1 submission: $error")
+        Future.successful(InternalServerError(systemErrorView(Some(reference))))
       case Right(submission) =>
         submissionConnector
           .submit(submission)
@@ -78,8 +85,10 @@ class DeclarationController @Inject() (
               .set(answers.copy(confirmation = Some(confirmation)))
               .map(_ => Redirect(routes.ConfirmationController.onPageLoad(journeyId)))
           }
-          .recover { case NonFatal(_) =>
-            Redirect(controllers.routes.SystemErrorController.onPageLoad())
+          .recover { case NonFatal(e) =>
+            val reference = ErrorReference.generate()
+            logger.error(s"[DeclarationController][submitSA1] reference=$reference SA1 submission failed", e)
+            BadGateway(systemErrorView(Some(reference)))
           }
     }
 }

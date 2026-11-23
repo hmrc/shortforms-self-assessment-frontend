@@ -34,6 +34,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import views.html.SystemErrorView
 import views.html.sa1.DeclarationView
 
 import java.time.Instant
@@ -89,23 +90,24 @@ class DeclarationControllerSpec extends SpecBase {
       savedAnswers.getAllValues.get(0).get(DeclarationPage) mustBe Some("")
     }
 
-    "must redirect to the system error page when the backend submission fails" in new Setup {
+    "must show the system error page with a reference and return 502 when the backend submission fails" in new Setup {
       when(submissionConnector.submit(any[SA1Submission])(any[HeaderCarrier]))
         .thenReturn(Future.failed(new RuntimeException("backend unavailable")))
 
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> "Jane Doe"))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.SystemErrorController.onPageLoad().url
+      status(result) mustBe BAD_GATEWAY
+      contentAsString(result) mustBe "System error view"
+      systemErrorReference() must fullyMatch regex "[A-Z0-9]{16}"
     }
 
-    "must redirect to the system error page without calling the backend when the answers are incomplete" in new Setup {
+    "must show the system error page with a reference without calling the backend when the answers are incomplete" in new Setup {
       override protected val userAnswers: UserAnswers = emptyUserAnswers
 
       val result = controller.onSubmit(userAnswersId)(FakeRequest().withFormUrlEncodedBody("value" -> "Jane Doe"))
 
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.SystemErrorController.onPageLoad().url
+      status(result) mustBe INTERNAL_SERVER_ERROR
+      systemErrorReference() must fullyMatch regex "[A-Z0-9]{16}"
       verify(submissionConnector, never()).submit(any[SA1Submission])(any[HeaderCarrier])
     }
   }
@@ -124,18 +126,29 @@ class DeclarationControllerSpec extends SpecBase {
     when(view.apply(any[Form[String]], any[String])(any[Request[?]], any[Messages]))
       .thenReturn(Html("Declaration view"))
 
+    protected val systemErrorView: SystemErrorView = mock(classOf[SystemErrorView])
+    when(systemErrorView.apply(any[Option[String]])(any[Request[?]], any[Messages]))
+      .thenReturn(Html("System error view"))
+
     protected lazy val controller = new DeclarationController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
       new DeclarationFormProvider(),
       submissionConnector,
-      view
+      view,
+      systemErrorView
     )
 
     protected def capturedForm(): Form[String] = {
       val captor = ArgumentCaptor.forClass(classOf[Form[String]])
       verify(view).apply(captor.capture(), any[String])(any[Request[?]], any[Messages])
       captor.getValue
+    }
+
+    protected def systemErrorReference(): String = {
+      val captor = ArgumentCaptor.forClass(classOf[Option[String]])
+      verify(systemErrorView).apply(captor.capture())(any[Request[?]], any[Messages])
+      captor.getValue.getOrElse(fail("expected a system error reference"))
     }
   }
 }
