@@ -60,9 +60,7 @@ class EnterUTRController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterUTRPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(
-              controllers.cwf1.routes.EnterUTRController.onPageLoad(journeyId, mode).url
-            ) // TODO Name page
+            } yield Redirect(navigator.nextPage(EnterUTRPage, mode, updatedAnswers))
         )
   }
 }

@@ -51,8 +51,8 @@ class Cwf1Navigator @Inject() () extends Navigator {
             controllers.cwf1.routes.EnterUTRController
               .onPageLoad(ua.id, NormalMode)
           case Some(false) =>
-            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController
-              .onPageLoad(ua.id, NormalMode) // TODO NAME page
+            controllers.cwf1.routes.NameController
+              .onPageLoad(ua.id, NormalMode)
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
@@ -63,11 +63,19 @@ class Cwf1Navigator @Inject() () extends Navigator {
             controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
               .onPageLoad(ua.id, NormalMode)
           case Some(false) =>
-            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController
+            controllers.cwf1.routes.DateOfBirthController
               .onPageLoad(ua.id, NormalMode)
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case EnterUTRPage                           =>
+      ua => controllers.cwf1.routes.NameController.onPageLoad(ua.id, NormalMode)
+    case AreYouEUResidentPage                   =>
+      ua =>
+        controllers.cwf1.routes.AreYouEUResidentController
+          .onPageLoad(ua.id, NormalMode) // TODO Business name controller
+    case NamePage                               =>
+      ua => controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(ua.id, NormalMode)
     case MoveAddressPage                        =>
       ua =>
         ua.get(MoveAddressPage) match {

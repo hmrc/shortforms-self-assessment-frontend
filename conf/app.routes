@@ -192,3 +192,8 @@ GET         /cwf1/contact-details/:journeyId                         controllers
 POST        /cwf1/contact-details/:journeyId                         controllers.cwf1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/contact-details/change/:journeyId                  controllers.cwf1.ContactDetailsController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/contact-details/change/:journeyId                  controllers.cwf1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/travel-uk/:journeyId                        controllers.cwf1.AreYouEUResidentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/travel-uk/:journeyId                        controllers.cwf1.AreYouEUResidentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.AreYouEUResidentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.AreYouEUResidentController.onSubmit(journeyId: String, mode: Mode = CheckMode)

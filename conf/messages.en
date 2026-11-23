@@ -583,6 +583,12 @@ cwf1.contactDetails.error.phoneNumber.invalid = The phone number must only inclu
 cwf1.contactDetails.emailAddress.change.hidden = What are your contact details?
 cwf1.contactDetails.phoneNumber.change.hidden = What are your contact details?
 
+cwf1.areYouEUResident.title = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.heading = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.error.required = Select yes if you came to the UK from a non-EU country within the last 12 months
+cwf1.areYouEUResident.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
+
 resubmissionError.title = You have already submitted this application
 resubmissionError.heading = You have already submitted this application
 resubmissionError.p1 = We have successfully received your recent application.

@@ -59,7 +59,7 @@ class NameController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.cwf1.routes.NameController.onPageLoad(journeyId, mode))
+            } yield Redirect(navigator.nextPage(NamePage, mode, updatedAnswers))
         )
     }
 }
