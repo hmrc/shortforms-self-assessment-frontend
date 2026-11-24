@@ -29,8 +29,7 @@
 @(form: Form[Name], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle   = title(form, title = "sa1.name.title", serviceName = "service.sa1.name"),
-    serviceName = Some(messages("service.sa1.name")),
+    pageTitle   = title(form, title = "sa1.name.title", serviceName = "service.sa1.name"),    
     backLinkUrl = Some(controllers.sa1.routes.StartController.onPageLoad().url)
 ) {
 
@@ -48,6 +47,7 @@
                 label = LabelViewModel(messages("sa1.name.firstName"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("off")
         )
 
         @govukInput(
@@ -56,6 +56,7 @@
                 label = LabelViewModel(messages("sa1.name.lastName"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("off")
         )
 
         @govukButton(

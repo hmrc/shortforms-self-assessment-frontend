@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.PreviousNameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.{AddPreviousLastNamePage, PreviousLastNamePage}
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class EnterPreviousLastNameController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: PreviousNameFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: EnterPreviousLastNameView
 )(implicit ec: ExecutionContext)
     extends AppController {

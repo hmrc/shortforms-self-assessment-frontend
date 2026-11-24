@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NameFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.NamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class NameController @Inject() (
   sessionRepository: SessionRepository,
   formProvider: NameFormProvider,
   val controllerComponents: AppControllerComponents,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: NameView
 )(implicit ec: ExecutionContext)
     extends AppController {

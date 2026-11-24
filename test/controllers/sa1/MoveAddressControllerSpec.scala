@@ -36,7 +36,7 @@ import views.html.sa1.MoveAddressView
 import java.time.LocalDate
 import scala.concurrent.Future
 import models.{Mode, NormalMode, UserAnswers}
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class MoveAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -117,7 +117,7 @@ class MoveAddressControllerSpec extends SpecBase with MockitoSugar {
     protected val mockContent                          = "MoveAddressView"
     protected val sessionRepository: SessionRepository = mock
     private val formProvider                           = new MoveAddressFormProvider()
-    protected val navigator: Navigator                 = mock
+    protected val navigator: Sa1Navigator              = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))

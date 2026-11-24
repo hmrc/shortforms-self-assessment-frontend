@@ -37,7 +37,7 @@ import views.html.sa1.OtherReasonView
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class OtherReasonControllerSpec extends SpecBase with MockitoSugar {
 
@@ -127,7 +127,7 @@ class OtherReasonControllerSpec extends SpecBase with MockitoSugar {
     protected val mockView: OtherReasonView            = mock
     protected val mockContent                          = "OtherReasonView"
     protected val sessionRepository: SessionRepository = mock
-    protected val navigator: Navigator                 = mock
+    protected val navigator: Sa1Navigator              = mock
     private val formProvider                           = new OtherReasonFormProvider()
 
     when(mockView.apply(any[Form[OtherReason]], any[String], any[Mode])(any[Request[?]], any[Messages]))

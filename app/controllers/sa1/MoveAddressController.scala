@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.MoveAddressFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.MoveAddressPage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
@@ -33,7 +33,7 @@ class MoveAddressController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: MoveAddressFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: MoveAddressView
 ) extends AppController
     with Logging {

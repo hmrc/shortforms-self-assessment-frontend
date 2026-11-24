@@ -36,7 +36,7 @@ import views.html.sa1.DateLandPropertyView
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
   private val journeyId       = "test-journey-id"
@@ -48,7 +48,7 @@ class DateLandPropertyControllerSpec extends SpecBase with MockitoSugar {
     protected def userAnswers: UserAnswers             = UserAnswers(journeyId, userId, JourneyType.SA1)
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: DateLandPropertyView           = mock[DateLandPropertyView]
-    protected val navigator: Navigator                 = mock[Navigator]
+    protected val navigator: Sa1Navigator              = mock[Sa1Navigator]
 
     private val formProvider      = new DateLandPropertyFormProvider()
     protected lazy val controller = new DateLandPropertyController(

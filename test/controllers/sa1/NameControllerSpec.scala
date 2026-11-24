@@ -35,7 +35,7 @@ import repositories.SessionRepository
 import views.html.sa1.NameView
 
 import scala.concurrent.Future
-import navigation.Navigator
+import navigation.Sa1Navigator
 
 class NameControllerSpec extends SpecBase {
 
@@ -123,7 +123,7 @@ class NameControllerSpec extends SpecBase {
 
   trait Setup {
     protected val givenUserAnswers: UserAnswers  = emptyUserAnswers
-    protected val navigator: Navigator           = mock(classOf[Navigator])
+    protected val navigator: Sa1Navigator        = mock(classOf[Sa1Navigator])
     val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
     when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 

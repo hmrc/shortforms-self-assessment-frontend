@@ -17,10 +17,8 @@
 package controllers
 
 import com.google.inject.{Inject, Singleton}
-import controllers.actions.{DataRequiredAction, IdentifierAction}
-import models.JourneyType.{CWF1ST, SA1}
 import controllers.actions.{DataRequiredAction, IdentifierAction, ReasonRequiredAction}
-import models.JourneyType.SA1
+import models.JourneyType.{CWF1ST, SA1}
 import models.requests.DataRequest
 import play.api.http.FileMimeTypes
 import play.api.i18n.{I18nSupport, Langs, MessagesApi}
@@ -36,6 +34,9 @@ abstract class AppController extends FrontendBaseController with I18nSupport {
 
   protected def SA1DataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
     controllerComponents.identify andThen controllerComponents.getData(journeyId, SA1)
+
+  protected def CWF1STDataAction(journeyId: String): ActionBuilder[DataRequest, AnyContent] =
+    controllerComponents.identify andThen controllerComponents.getData(journeyId, CWF1ST)
 
   protected def ensureReason: ReasonRequiredAction = controllerComponents.requireReason
 
