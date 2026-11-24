@@ -16,6 +16,7 @@
 
 package config
 
+import models.ServiceProps
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{Call, RequestHeader}
@@ -28,15 +29,11 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
 
   /** @param messagePrefix
     *   prefix for the journey-specific page titles and "enter manually" link text, e.g. `sa1.address`
-    * @param serviceNameKey
-    *   message key for the service name shown in the ALF header
     */
-  def apply(callback: Call, landingPage: Call, messagePrefix: String, serviceNameKey: String)(implicit
-    request: RequestHeader
-  ): JsObject = {
-    def appLabels(language: String): JsObject = Json.obj(
-      "appLevelLabels" -> Json.obj("navTitle" -> messagesApi(serviceNameKey)(Lang(language)))
-    )
+  def apply(callback: Call, landingPage: Call, messagePrefix: String)(implicit request: RequestHeader): JsObject = {
+    val service                               = ServiceProps.apply(using request)
+    def appLabels(language: String): JsObject =
+      Json.obj("appLevelLabels" -> Json.obj("navTitle" -> messagesApi(service.name)(Lang(language))))
 
     def labels(language: String): JsObject = {
       def journeyMessage(key: String): String = messagesApi(s"$messagePrefix.$key")(Lang(language))

@@ -77,8 +77,7 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
             verify(mockConfiguration).apply(
               eqTo(callback),
               eqTo(routes.StartController.onPageLoad()),
-              eqTo(messagePrefix),
-              eqTo("service.cwf1st.name")
+              eqTo(messagePrefix)
             )(any[RequestHeader])
             verify(mockConnector).initialise(eqTo(configuration))(any[HeaderCarrier])
             verifyNoInteractions(mockSessionRepository, mockNavigator)
@@ -151,7 +150,7 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
     val mockNavigator: Cwf1Navigator                  = mock(classOf[Cwf1Navigator])
 
-    when(mockConfiguration.apply(any[Call], any[Call], any[String], any[String])(any[RequestHeader]))
+    when(mockConfiguration.apply(any[Call], any[Call], any[String])(any[RequestHeader]))
       .thenReturn(configuration)
     when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier])).thenReturn(Future.successful(alfUrl))
     when(mockConnector.getAddress(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(confirmed))

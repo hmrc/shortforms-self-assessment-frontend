@@ -24,8 +24,7 @@
 @(journeyId: String, personalDetailsSummary: SummaryList, applicationDetailsSummary: SummaryList)(implicit request: Request[?], messages: Messages)
 
 @layout(
- pageTitle = titleNoForm(title = messages("checkYourAnswers.title"), serviceName = messages("service.sa1.name")),
- serviceName = Some(messages("service.sa1.name"))
+ pageTitle = titleNoForm(title = messages("checkYourAnswers.title"), serviceName = messages("service.sa1.name")) 
 ) {
     @formHelper(action = controllers.sa1.routes.CheckYourAnswersController.onSubmit(journeyId)) {
         <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>

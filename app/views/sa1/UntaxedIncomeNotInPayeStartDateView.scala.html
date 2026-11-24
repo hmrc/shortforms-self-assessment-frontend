@@ -25,8 +25,7 @@
 @(form: Form[_], journeyId: String,mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(
-    pageTitle = title(form, title = "sa1.untaxedIncomeNotInPayeStartDate.title", serviceName = "service.sa1.name"),
-    serviceName = Some(messages("service.sa1.name"))
+    pageTitle = title(form, title = "sa1.untaxedIncomeNotInPayeStartDate.title", serviceName = "service.sa1.name")
 ) {
 
     @formHelper(action = controllers.sa1.routes.UntaxedIncomeNotInPayeStartDateController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {

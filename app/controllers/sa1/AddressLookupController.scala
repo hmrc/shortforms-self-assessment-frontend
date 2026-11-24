@@ -48,7 +48,7 @@ class AddressLookupController @Inject() (
   private def initialise(journeyId: String, callback: Call): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
       connector
-        .initialise(configuration(callback, landingPage, "sa1.address", "service.sa1.name"))
+        .initialise(configuration(callback, landingPage, "sa1.address"))
         .map(Redirect(_))
         .andThen { case Failure(ex) =>
           logger.error("Failed to initialise the SA1 address lookup journey", ex)

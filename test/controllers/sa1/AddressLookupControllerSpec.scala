@@ -63,9 +63,7 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
           if (changing) routes.AddressLookupController.callbackChange(userAnswersId)
           else routes.AddressLookupController.callback(userAnswersId)
         verify(mockConfiguration)
-          .apply(eqTo(callback), eqTo(landingPage), eqTo("sa1.address"), eqTo("service.sa1.name"))(
-            any[RequestHeader]
-          )
+          .apply(eqTo(callback), eqTo(landingPage), eqTo("sa1.address"))(any[RequestHeader])
         verify(mockConnector).initialise(eqTo(configuration))(any[HeaderCarrier])
         verifyNoInteractions(mockSessionRepository)
       }
@@ -165,7 +163,7 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
     val mockConnector: AddressLookupConnector         = mock(classOf[AddressLookupConnector])
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
 
-    when(mockConfiguration.apply(any[Call], any[Call], any[String], any[String])(any[RequestHeader]))
+    when(mockConfiguration.apply(any[Call], any[Call], any[String])(any[RequestHeader]))
       .thenReturn(configuration)
     when(mockConnector.initialise(any[JsObject])(any[HeaderCarrier])).thenReturn(Future.successful(alfUrl))
     when(mockConnector.getAddress(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(confirmed))

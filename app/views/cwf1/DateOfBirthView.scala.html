@@ -35,8 +35,7 @@
 }
 
 @layout(
-    pageTitle = title(form, title = "cwf1.dateOfBirth.title", serviceName = "service.cwf1st.name"),
-    serviceName = Some(messages("service.cwf1st.name"))
+    pageTitle = title(form, title = "cwf1.dateOfBirth.title", serviceName = "service.cwf1.name")
 ) {
     @formHelper(
         action = controllers.cwf1.routes.DateOfBirthController.onSubmit(journeyId, mode)

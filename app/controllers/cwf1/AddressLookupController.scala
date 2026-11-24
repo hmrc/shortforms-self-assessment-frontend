@@ -53,7 +53,7 @@ class AddressLookupController @Inject() (
   private def initialise(addressType: AddressType, journeyId: String, callback: Call): Action[AnyContent] =
     CWF1DataAction(journeyId).async { implicit request =>
       connector
-        .initialise(configuration(callback, landingPage, addressType.messagePrefix, "service.cwf1st.name"))
+        .initialise(configuration(callback, landingPage, addressType.messagePrefix))
         .map(Redirect(_))
         .andThen { case Failure(ex) =>
           logger.error(s"Failed to initialise the CWF1 $addressType address lookup journey", ex)

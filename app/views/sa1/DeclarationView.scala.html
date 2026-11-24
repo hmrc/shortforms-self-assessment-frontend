@@ -28,8 +28,7 @@
 @(form: Form[String], journeyId: String)(implicit request: Request[?], messages: Messages)
 
 @layout(
-    pageTitle = title(form, title = "sa1.declaration.title", serviceName = "service.sa1.name"),
-    serviceName = Some(messages("service.sa1.name"))
+    pageTitle = title(form, title = "sa1.declaration.title", serviceName = "service.sa1.name")
 ) {
     @formHelper(action = controllers.sa1.routes.DeclarationController.onSubmit(journeyId)) {
         @if(form.errors.nonEmpty) {
