@@ -63,6 +63,18 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case AreYouAnUKResidentPage                 =>
+      ua =>
+        ua.get(AreYouAnUKResidentPage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.AreYouAnUKResidentController
+              .onPageLoad(ua.id, NormalMode) // TODO route to travel UK Page
+          case Some(false) =>
+            controllers.cwf1.routes.AreYouAnUKResidentController
+              .onPageLoad(ua.id, NormalMode) // TODO route to CYA Page
+          case _           =>
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }

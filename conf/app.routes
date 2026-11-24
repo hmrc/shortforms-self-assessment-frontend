@@ -177,3 +177,8 @@ GET         /cwf1/enter-previous-last-name/:journeyId            controllers.cwf
 POST        /cwf1/enter-previous-last-name/:journeyId            controllers.cwf1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET        /cwf1/uk-resident/:journeyId                        controllers.cwf1.AreYouAnUKResidentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST       /cwf1/uk-resident/:journeyId                        controllers.cwf1.AreYouAnUKResidentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET        /cwf1/uk-resident/change/:journeyId                 controllers.cwf1.AreYouAnUKResidentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST       /cwf1/uk-resident/change/:journeyId                  controllers.cwf1.AreYouAnUKResidentController.onSubmit(journeyId: String, mode: Mode = CheckMode)

@@ -518,3 +518,10 @@ cwf1.enterPreviousLastName.error.length = Your previous last name must be 100 ch
 cwf1.enterPreviousLastName.error.invalid = Your previous last name can only include letters, apostrophes, hyphens or spaces
 cwf1.enterPreviousLastName.checkYourAnswersLabel = What was your previous last name?
 cwf1.enterPreviousLastName.change.hidden = What was your previous last name?
+
+cwf1.areYouAnUKResident.title = Are you a UK resident?
+cwf1.areYouAnUKResident.heading = Are you a UK resident?
+cwf1.areYouAnUKResident.checkYourAnswersLabel = Are you a UK resident?
+cwf1.areYouAnUKResident.error.required = Select yes if you are a UK resident
+cwf1.areYouAnUKResident.change.hidden = Are you a UK resident?
+
