@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
-
+@import models.ServiceProps
 @this(
     appConfig: FrontendAppConfig,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
@@ -30,7 +30,9 @@
     hmrcStandardPage: HmrcStandardPage
 )
 
-@(pageTitle: String, serviceName: Option[String] = None, showBackLink: Boolean = true, backLinkUrl: Option[String] = None, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+@(pageTitle: String, showBackLink: Boolean = true, backLinkUrl: Option[String] = None, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
+
+@service = @{ServiceProps.apply(using rh)}
 
 @head = {
     <link rel="stylesheet" href='@controllers.routes.Assets.versioned("stylesheets/application.css")'>
@@ -45,6 +47,7 @@
             signOutButtonText   = Some(messages("timeout.signOut")),
             title               = Some(messages("timeout.title")),
             message             = Some(messages("timeout.message")),
+            messageSuffix       = Some(messages("timeout.messageSuffix")),
             language            = Some(messages.lang.code)
         ))
     }
@@ -57,12 +60,12 @@
 
 @hmrcStandardPage(HmrcStandardPageParams(
     pageTitle = Some(pageTitle),
-    serviceName = serviceName,
+    serviceName = Some(messages(service.name)),
     templateOverrides = TemplateOverrides(
         additionalHeadBlock = Some(head)
     ),
     serviceURLs = ServiceURLs(
-        serviceUrl = Some(routes.IndexController.onPageLoad().url),
+        serviceUrl = Some(service.landingPage),
         signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut().url) else None
     ),
     banners = Banners(
