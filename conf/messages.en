@@ -603,6 +603,11 @@ resubmissionError.p2 = You can {0} or {1}.
 resubmissionError.p2.linkText1 = start a new application
 resubmissionError.p2.linkText2 = continue to your account
 
+cwf1.doYouHaveBusinessName.title = Does your business have a name?
+cwf1.doYouHaveBusinessName.heading = Does your business have a name?
+cwf1.doYouHaveBusinessName.checkYourAnswersLabel = Does your business have a name?
+cwf1.doYouHaveBusinessName.error.required = Select Yes if your business has a name
+cwf1.doYouHaveBusinessName.change.hidden = Does your business have a name?
 cwf1.selfEmploymentStartDate.title = When did your self-employment start?
 cwf1.selfEmploymentStartDate.heading = When did your self-employment start?
 cwf1.selfEmploymentStartDate.checkYourAnswersLabel = When did your self-employment start?

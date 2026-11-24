@@ -88,6 +88,18 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _                                                                                             =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case DoYouHaveBusinessNamePage              =>
+      ua =>
+        ua.get(DoYouHaveBusinessNamePage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.DoYouHaveBusinessNameController
+              .onPageLoad(ua.id, NormalMode) // TODO change to enter business name
+          case Some(false) =>
+            controllers.cwf1.routes.DoYouHaveBusinessNameController
+              .onPageLoad(ua.id, NormalMode) // TODO change to self employed work
+          case _           =>
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
     case ContactDetailsPage                     =>
       ua =>
         controllers.cwf1.routes.ContactDetailsController
@@ -102,6 +114,7 @@ class Cwf1Navigator @Inject() () extends Navigator {
     case AreYouAnAgentPage                      => areYouAnAgentCheckRoute
     case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
     case MoveAddressPage                        => moveAddressCheckRoute
+    case DoYouHaveBusinessNamePage              => doYouHaveBusinessNameCheckRoute
     case _                                      => checkYourAnswersRoute
   }
 
@@ -150,6 +163,17 @@ class Cwf1Navigator @Inject() () extends Navigator {
       case Some(_) =>
         checkYourAnswersRoute(ua)
       case None    =>
+        controllers.cwf1.routes.StartController.onPageLoad()
+    }
+
+  private def doYouHaveBusinessNameCheckRoute(ua: UserAnswers): Call =
+    ua.get(DoYouHaveBusinessNamePage) match {
+      case Some(true) if ua.get(EnterUTRPage).isEmpty =>
+        controllers.cwf1.routes.EnterUTRController
+          .onPageLoad(ua.id, CheckMode) // TODO change to enter business name page and controller
+      case Some(_)                                    =>
+        checkYourAnswersRoute(ua)
+      case None                                       =>
         controllers.cwf1.routes.StartController.onPageLoad()
     }
 }
