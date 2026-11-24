@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.cwf1
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.cwf1.EnterUTRPage
 import play.api.i18n.Messages

@@ -76,9 +76,9 @@ class MoveAddressControllerSpec extends SpecBase with MockitoSugar {
     "return BAD_REQUEST when the submitted date is invalid" in new Setup {
       val request: FakeRequest[AnyContentAsFormUrlEncoded] =
         FakeRequest(POST, "/").withFormUrlEncodedBody(
-          "moveAddressDate.day" -> "31",
+          "moveAddressDate.day"   -> "31",
           "moveAddressDate.month" -> "2",
-          "moveAddressDate.year" -> "2000"
+          "moveAddressDate.year"  -> "2000"
         )
 
       val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
@@ -93,7 +93,7 @@ class MoveAddressControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(controllers.routes.IndexController.onPageLoad())
 
       val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-        FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq *)
+        FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
 
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
