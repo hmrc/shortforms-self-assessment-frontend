@@ -80,10 +80,8 @@ class ConfirmationControllerSpec extends SpecBase {
   }
 
   private class Setup(userAnswers: UserAnswers) {
-    protected val view: ConfirmationView             = mock(classOf[ConfirmationView])
-    private val pageNotFoundView: PageNotFoundView   = mock(classOf[PageNotFoundView])
-    private val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
-    when(sessionRepository.set(any)).thenReturn(Future.successful(true))
+    protected val view: ConfirmationView           = mock(classOf[ConfirmationView])
+    private val pageNotFoundView: PageNotFoundView = mock(classOf[PageNotFoundView])
 
     private val expectedReferenceNumber = "AB123CD"
     when(view.apply(any[String], eqTo(expectedReferenceNumber))(any[Request[?]], any[Messages]))
@@ -93,7 +91,6 @@ class ConfirmationControllerSpec extends SpecBase {
 
     protected val controller = new ConfirmationController(
       new MockAppControllerComponents(userAnswers = userAnswers),
-      sessionRepository,
       view,
       pageNotFoundView
     )

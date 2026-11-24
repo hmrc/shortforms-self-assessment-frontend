@@ -19,7 +19,7 @@ package controllers.cwf1
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.NameFormProvider
 import models.Mode
-import navigation.{Cwf1Navigator, Navigator}
+import navigation.Cwf1Navigator
 import pages.cwf1.NamePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -40,7 +40,7 @@ class NameController @Inject() (
   private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    CWF1STDataAction(journeyId) { implicit request =>
+    CWF1DataAction(journeyId) { implicit request =>
       val preparedForm = request.userAnswers.get(NamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
@@ -50,7 +50,7 @@ class NameController @Inject() (
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    CWF1STDataAction(journeyId).async { implicit request =>
+    CWF1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

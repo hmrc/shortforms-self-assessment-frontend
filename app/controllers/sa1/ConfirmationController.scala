@@ -17,9 +17,7 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
-import repositories.SessionRepository
 import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
@@ -31,7 +29,6 @@ import scala.concurrent.Future
 
 class ConfirmationController @Inject() (
   val controllerComponents: AppControllerComponents,
-  sessionRepository: SessionRepository,
   view: ConfirmationView,
   pageNotFoundView: PageNotFoundView
 ) extends AppController {
