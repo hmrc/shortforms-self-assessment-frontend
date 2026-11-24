@@ -144,7 +144,7 @@ sa1.confirmation.backToAccount.hidden = account homepage
 sa1.addPreviousLastName.title = Do you have a previous last name?
 sa1.addPreviousLastName.heading = Do you have a previous last name?
 sa1.addPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
-sa1.addPreviousLastName.error.required = Select yes if you have a previous last name
+sa1.addPreviousLastName.error.required = Select Yes if you have a previous last name
 sa1.addPreviousLastName.change.hidden = Do you have a previous last name?
 
 sa1.name.title = What is your name?
@@ -201,7 +201,7 @@ sa1.doYouHaveANino.p2 = If none of these apply to you, you can still register fo
 sa1.doYouHaveANino.p2.linkText = find your National Insurance number (opens in a new tab)
 sa1.doYouHaveANino.subHeading = Do you have a National Insurance number?
 sa1.doYouHaveANino.checkYourAnswersLabel = Do you have a National Insurance number?
-sa1.doYouHaveANino.error.required = Select yes if you have a National Insurance number
+sa1.doYouHaveANino.error.required = Select Yes if you have a National Insurance number
 sa1.doYouHaveANino.change.hidden = Do you have a National Insurance number?
 
 address.countryPicker.label = Country or territory
@@ -445,7 +445,7 @@ cwf1.start.save.form = Ensure you have these before you start. You cannot save t
 cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
-cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
+cwf1.areYouAnAgent.error.required = Select Yes if you are an authorised agent
 cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
 
 cwf1.agentAddress.countryPicker.title = What is the country or territory of the agent’s address?
@@ -484,7 +484,7 @@ cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
-cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
+cwf1.haveRegisteredForSelfAssessment.error.required = Select Yes if you have registered for Self Assessment before
 cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?
 
 cwf1.agentDetails.title = Agent’s details
