@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers.cwf1
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.cwf1.AreYouAnUKResidentPage
 import play.api.i18n.Messages
@@ -24,7 +23,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AreYouAnUKResidentSummary  {
+object AreYouAnUKResidentSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AreYouAnUKResidentPage).map { answer =>

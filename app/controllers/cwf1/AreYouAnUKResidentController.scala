@@ -28,38 +28,38 @@ import views.html.cwf1.AreYouAnUKResidentView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AreYouAnUKResidentController @Inject()(
-                                              sessionRepository: SessionRepository,
-                                              navigator: Cwf1Navigator,
-                                              formProvider: AreYouAnUKResidentFormProvider,
-                                              val controllerComponents: AppControllerComponents,
-                                              view: AreYouAnUKResidentView
-                                 )(implicit ec: ExecutionContext) extends AppController {
+class AreYouAnUKResidentController @Inject() (
+  sessionRepository: SessionRepository,
+  navigator: Cwf1Navigator,
+  formProvider: AreYouAnUKResidentFormProvider,
+  val controllerComponents: AppControllerComponents,
+  view: AreYouAnUKResidentView
+)(implicit ec: ExecutionContext)
+    extends AppController {
 
   val form = formProvider()
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) {
-    implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
-      val preparedForm = request.userAnswers.get(AreYouAnUKResidentPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AreYouAnUKResidentPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, journeyId, mode))
+    Ok(view(preparedForm, journeyId, mode))
   }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouAnUKResidentPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AreYouAnUKResidentPage, mode, updatedAnswers)) )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouAnUKResidentPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AreYouAnUKResidentPage, mode, updatedAnswers))
+        )
   }
 }

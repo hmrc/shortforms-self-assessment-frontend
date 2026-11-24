@@ -22,7 +22,7 @@ import play.api.data.FormError
 class AreYouAnUKResidentFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "cwf1.areYouAnUKResident.error.required"
-  val invalidKey = "error.boolean"
+  val invalidKey  = "error.boolean"
 
   val form = new AreYouAnUKResidentFormProvider()()
 
