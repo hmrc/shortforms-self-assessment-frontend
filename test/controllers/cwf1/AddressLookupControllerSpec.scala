@@ -23,7 +23,7 @@ import controllers.MockAppControllerComponents
 import models.{CheckMode, JourneyType, Mode, NormalMode, UserAnswers}
 import models.cwf1.AddressType
 import models.address.{AddressDetails, ConfirmedAddress, Country}
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, verifyNoInteractions, when}
@@ -149,7 +149,7 @@ class AddressLookupControllerSpec extends SpecBase with LogCapturing {
     val mockConfiguration: AddressLookupConfiguration = mock(classOf[AddressLookupConfiguration])
     val mockConnector: AddressLookupConnector         = mock(classOf[AddressLookupConnector])
     val mockSessionRepository: SessionRepository      = mock(classOf[SessionRepository])
-    val mockNavigator: Navigator                      = mock(classOf[Navigator])
+    val mockNavigator: Cwf1Navigator                  = mock(classOf[Cwf1Navigator])
 
     when(mockConfiguration.apply(any[Call], any[Call], any[String], any[String])(any[RequestHeader]))
       .thenReturn(configuration)

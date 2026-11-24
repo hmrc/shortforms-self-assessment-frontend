@@ -22,7 +22,7 @@ import controllers.{AppController, AppControllerComponents}
 import models.address.ConfirmedAddress
 import models.cwf1.AddressType
 import models.{CheckMode, Mode, NormalMode}
-import navigation.Navigator
+import navigation.Cwf1Navigator
 import pages.QuestionPage
 import pages.cwf1.{AgentAddressPage, HomeAddressPage, PreviousHomeAddressPage}
 import play.api.Logging
@@ -38,7 +38,7 @@ class AddressLookupController @Inject() (
   connector: AddressLookupConnector,
   configuration: AddressLookupConfiguration,
   sessionRepository: SessionRepository,
-  navigator: Navigator
+  navigator: Cwf1Navigator
 ) extends AppController
     with Logging {
 
