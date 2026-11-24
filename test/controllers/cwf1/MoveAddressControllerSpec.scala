@@ -72,42 +72,42 @@ class MoveAddressControllerSpec extends SpecBase with MockitoSugar {
         populatedForm("moveAddressDate.month").value mustBe Some("5")
         populatedForm("moveAddressDate.year").value mustBe Some("1990")
       }
-  }
 
-  "return BAD_REQUEST when the submitted date is invalid" in new Setup {
-    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-      FakeRequest(POST, "/").withFormUrlEncodedBody(
-        "moveAddressDate.day"   -> "31",
-        "moveAddressDate.month" -> "2",
-        "moveAddressDate.year"  -> "2000"
-      )
+    "return BAD_REQUEST when the submitted date is invalid" in new Setup {
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, "/").withFormUrlEncodedBody(
+          "moveAddressDate.day" -> "31",
+          "moveAddressDate.month" -> "2",
+          "moveAddressDate.year" -> "2000"
+        )
 
-    val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+      val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
-    status(result) mustBe BAD_REQUEST
-    contentAsString(result) mustBe mockContent
-  }
+      status(result) mustBe BAD_REQUEST
+      contentAsString(result) mustBe mockContent
+    }
 
-  "save the date and redirect after a valid submission" in new Setup {
-    when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-    when(navigator.nextPage(eqTo(MoveAddressPage), eqTo(NormalMode), any[UserAnswers]))
-      .thenReturn(controllers.routes.IndexController.onPageLoad())
+    "save the date and redirect after a valid submission" in new Setup {
+      when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+      when(navigator.nextPage(eqTo(MoveAddressPage), eqTo(NormalMode), any[UserAnswers]))
+        .thenReturn(controllers.routes.IndexController.onPageLoad())
 
-    val request: FakeRequest[AnyContentAsFormUrlEncoded] =
-      FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
+      val request: FakeRequest[AnyContentAsFormUrlEncoded] =
+        FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq *)
 
-    private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
+      private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
-    status(result) mustBe SEE_OTHER
-    redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
+      status(result) mustBe SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.IndexController.onPageLoad().url)
 
-    val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-    verify(sessionRepository).set(captor.capture())
-    captor.getValue.get(MoveAddressPage) mustBe Some(validDate)
+      val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(sessionRepository).set(captor.capture())
+      captor.getValue.get(MoveAddressPage) mustBe Some(validDate)
 
-    val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
-    verify(navigator).nextPage(eqTo(MoveAddressPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
-    navigatorAnswersCaptor.getValue.get(MoveAddressPage) mustBe Some(validDate)
+      val navigatorAnswersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+      verify(navigator).nextPage(eqTo(MoveAddressPage), eqTo(NormalMode), navigatorAnswersCaptor.capture())
+      navigatorAnswersCaptor.getValue.get(MoveAddressPage) mustBe Some(validDate)
+    }
   }
 
   private class Setup(
