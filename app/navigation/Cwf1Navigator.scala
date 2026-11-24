@@ -21,6 +21,7 @@ import pages.*
 import pages.cwf1.*
 import play.api.mvc.Call
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -63,6 +64,18 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
+    case MoveAddressPage                        =>
+      ua =>
+        ua.get(MoveAddressPage) match {
+          case Some(moveDate) if !LocalDate.parse(moveDate.toString).isBefore(LocalDate.now().minusYears(3)) =>
+            controllers.cwf1.routes.AreYouAnAgentController // TODO change to previous address
+              .onPageLoad(ua.id, NormalMode)
+          case Some(moveDate)                                                                                =>
+            controllers.cwf1.routes.EnterUTRController // TODO change to uk resident controller
+              .onPageLoad(ua.id, NormalMode)
+          case _                                                                                             =>
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }
@@ -70,6 +83,7 @@ class Cwf1Navigator @Inject() () extends Navigator {
   protected val checkRouteMap: Page => UserAnswers => Call = {
     case AreYouAnAgentPage                      => areYouAnAgentCheckRoute
     case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
+    case MoveAddressPage                        => moveAddressCheckRoute
     case _                                      => checkYourAnswersRoute
   }
 
@@ -99,6 +113,25 @@ class Cwf1Navigator @Inject() () extends Navigator {
       case Some(_)                                    =>
         checkYourAnswersRoute(ua)
       case None                                       =>
+        controllers.cwf1.routes.StartController.onPageLoad()
+    }
+
+  private def moveAddressCheckRoute(ua: UserAnswers): Call =
+    ua.get(MoveAddressPage) match {
+      case Some(moveDate)
+          if !LocalDate.parse(moveDate.toString).isBefore(LocalDate.now().minusYears(3)) && ua
+            .get(AreYouAnAgentPage)
+            .isEmpty =>
+        controllers.cwf1.routes.AreYouAnAgentController
+          .onPageLoad(ua.id, CheckMode) // TODO change this controller to previous address Controller
+      case Some(moveDate)
+          if LocalDate.parse(moveDate.toString).isBefore(LocalDate.now().minusYears(3)) &&
+            ua.get(EnterUTRPage).isEmpty => // TODO change this page to UK resident Page
+        controllers.cwf1.routes.EnterUTRController
+          .onPageLoad(ua.id, CheckMode) // TODO change this controller to UK resident Controller
+      case Some(_) =>
+        checkYourAnswersRoute(ua)
+      case None    =>
         controllers.cwf1.routes.StartController.onPageLoad()
     }
 }
