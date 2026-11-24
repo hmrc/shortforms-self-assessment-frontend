@@ -27,30 +27,33 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messagesApi: MessagesApi) {
 
-  def apply(callback: Call, landingPage: Call)(implicit request: RequestHeader): JsObject = {
+  /** @param messagePrefix
+    *   prefix for the journey-specific page titles and "enter manually" link text, e.g. `sa1.address`
+    */
+  def apply(callback: Call, landingPage: Call, messagePrefix: String)(implicit request: RequestHeader): JsObject = {
     val service                               = ServiceProps.apply(using request)
-    def appLabels(language: String): JsObject = Json.obj(
-      "appLevelLabels" -> Json.obj("navTitle" -> messagesApi(service.name)(Lang(language)))
-    )
+    def appLabels(language: String): JsObject =
+      Json.obj("appLevelLabels" -> Json.obj("navTitle" -> messagesApi(service.name)(Lang(language))))
 
     def labels(language: String): JsObject = {
-      def message(key: String): String = messagesApi(s"sa1.address.$key")(Lang(language))
+      def journeyMessage(key: String): String = messagesApi(s"$messagePrefix.$key")(Lang(language))
+      def message(key: String): String        = messagesApi(s"address.$key")(Lang(language))
 
       def visuallyHidden(text: String): String =
         s"""<span class="govuk-visually-hidden">${HtmlFormat.escape(text)}</span>"""
 
       def pageLabels(page: String): JsObject = Json.obj(
-        "title"       -> message(s"$page.title"),
-        "heading"     -> message(s"$page.title"),
+        "title"       -> journeyMessage(s"$page.title"),
+        "heading"     -> journeyMessage(s"$page.title"),
         "submitLabel" -> messagesApi("site.continue")(Lang(language))
       )
 
       val lookupLabels  = pageLabels("lookup") ++ Json.obj(
         "filterLabel"           -> message("lookup.filter"),
         "postcodeLabel"         -> message("postcode"),
-        "manualAddressLinkText" -> message("enterManually")
+        "manualAddressLinkText" -> journeyMessage("enterManually")
       )
-      val selectLabels  = pageLabels("select") ++ Json.obj("editAddressLinkText" -> message("enterManually"))
+      val selectLabels  = pageLabels("select") ++ Json.obj("editAddressLinkText" -> journeyMessage("enterManually"))
       val editLabels    = pageLabels("edit") ++ Json.obj(
         "line1Label"    -> message("line1"),
         "line2Label"    -> message("line2"),
@@ -69,7 +72,9 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
         "editPageLabels"      -> editLabels,
         "confirmPageLabels"   -> confirmLabels,
         "international"       -> Json.obj(
-          "lookupPageLabels"  -> (pageLabels("lookup") ++ Json.obj("manualAddressLinkText" -> message("enterManually"))),
+          "lookupPageLabels"  -> (pageLabels("lookup") ++ Json.obj(
+            "manualAddressLinkText" -> journeyMessage("enterManually")
+          )),
           "selectPageLabels"  -> selectLabels,
           "editPageLabels"    -> editLabels,
           "confirmPageLabels" -> confirmLabels
@@ -106,10 +111,10 @@ class AddressLookupConfiguration @Inject() (appConfig: FrontendAppConfig, messag
           "townMaxLength"          -> 35,
           "maxLengthErrorMessages" -> Json.obj(
             "en" -> Json.obj(
-              "addressLine1" -> messagesApi("sa1.address.line1.error.maxLength")(Lang("en")),
-              "addressLine2" -> messagesApi("sa1.address.line2.error.maxLength")(Lang("en")),
-              "addressLine3" -> messagesApi("sa1.address.line3.error.maxLength")(Lang("en")),
-              "town"         -> messagesApi("sa1.address.town.error.maxLength")(Lang("en"))
+              "addressLine1" -> messagesApi("address.line1.error.maxLength")(Lang("en")),
+              "addressLine2" -> messagesApi("address.line2.error.maxLength")(Lang("en")),
+              "addressLine3" -> messagesApi("address.line3.error.maxLength")(Lang("en")),
+              "town"         -> messagesApi("address.town.error.maxLength")(Lang("en"))
             )
           ),
           "mandatoryFields"        -> Json.obj(

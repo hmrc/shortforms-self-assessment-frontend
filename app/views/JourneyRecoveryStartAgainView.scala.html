@@ -19,7 +19,7 @@
     govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit rh: RequestHeader, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(title = "journeyRecovery.startAgain.title", serviceName = "service.name")
