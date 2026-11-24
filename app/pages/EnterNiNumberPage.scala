@@ -16,12 +16,8 @@
 
 package pages
 
-import scala.language.implicitConversions
+import play.api.libs.json.JsPath
 
-trait Page
-
-object Page {
-
-  implicit def toString(page: Page): String =
-    page.toString
+case object EnterNiNumberPage extends QuestionPage[String] {
+  def path: JsPath = JsPath \ toString
 }
