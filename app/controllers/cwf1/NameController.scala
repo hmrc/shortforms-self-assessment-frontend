@@ -26,7 +26,7 @@ import repositories.SessionRepository
 import views.html.cwf1.NameView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class NameController @Inject() (
   sessionRepository: SessionRepository,
@@ -34,32 +34,28 @@ class NameController @Inject() (
   val controllerComponents: AppControllerComponents,
   navigator: Cwf1Navigator,
   view: NameView
-)(implicit ec: ExecutionContext)
-    extends AppController {
+) extends AppController {
 
   private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
-    CWF1STDataAction(journeyId) { implicit request =>
-      val preparedForm = request.userAnswers.get(NamePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+    CWF1DataAction(journeyId) { implicit request =>
+      val preparedForm = request.userAnswers.get(NamePage).fold(form)(form.fill)
 
       Ok(view(preparedForm, journeyId, mode))
     }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
-    CWF1STDataAction(journeyId).async { implicit request =>
+    CWF1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(NamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.cwf1.routes.NameController.onPageLoad(journeyId, mode))
+            yield Redirect(navigator.nextPage(NamePage, mode, request.userAnswers))
         )
     }
 }

@@ -26,7 +26,7 @@ import repositories.SessionRepository
 import views.html.cwf1.EnterPreviousLastNameView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EnterPreviousLastNameController @Inject() (
   sessionRepository: SessionRepository,
@@ -34,10 +34,9 @@ class EnterPreviousLastNameController @Inject() (
   formProvider: EnterPreviousLastNameFormProvider,
   val controllerComponents: AppControllerComponents,
   view: EnterPreviousLastNameView
-)(implicit ec: ExecutionContext)
-    extends AppController {
+) extends AppController {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
@@ -56,10 +55,10 @@ class EnterPreviousLastNameController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterPreviousLastNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.cwf1.routes.EnterPreviousLastNameController.onPageLoad(journeyId, mode).url)
+            yield Redirect(navigator.nextPage(EnterPreviousLastNamePage, mode, request.userAnswers))
         )
   }
 }

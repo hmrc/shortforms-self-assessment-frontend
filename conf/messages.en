@@ -25,6 +25,10 @@ date.error.day = day
 date.error.month = month
 date.error.year = year
 
+businessName.error.required = Enter your business name
+businessName.error.length   = Your business name must be 100 characters or less
+businessName.error.invalid  = Your business name can only contain letters, numbers, hyphens, and apostrophes
+
 timeout.title = You’re about to be signed out
 timeout.message = Your current session will time out in
 timeout.messageSuffix = You will lose any information you have entered.
@@ -565,3 +569,8 @@ cwf1.moveAddress.date.error.requiredOne = Date of move must include a {0}
 cwf1.moveAddress.date.error.requiredTwo = Date of move must include a {0} and a {1}
 cwf1.moveAddress.date.error.mustBeInPast = Date of move must be on or before {0}
 cwf1.moveAddress.date.error.mustBeOnOrAfter = Date of move must be on or after {0}
+
+cwf1.businessName.title = What is your business name?
+cwf1.businessName.heading = What is the name of your business?
+cwf1.businessName.checkYourAnswersLabel = Business Name
+cwf1.businessName.change.hidden = Business Name

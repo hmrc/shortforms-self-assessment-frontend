@@ -82,8 +82,7 @@ class EnterUTRControllerSpec extends SpecBase with MockitoSugar {
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.cwf1.routes.EnterUTRController.onPageLoad(userAnswersId, NormalMode).url
+      redirectLocation(result).value mustEqual onwardRoute.url
 
       verify(mockSessionRepository).set(any())
     }

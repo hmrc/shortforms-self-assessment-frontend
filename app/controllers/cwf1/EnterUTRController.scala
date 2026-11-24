@@ -26,7 +26,7 @@ import repositories.SessionRepository
 import views.html.cwf1.EnterUTRView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EnterUTRController @Inject() (
   sessionRepository: SessionRepository,
@@ -34,8 +34,7 @@ class EnterUTRController @Inject() (
   formProvider: EnterUTRFormProvider,
   val controllerComponents: AppControllerComponents,
   view: EnterUTRView
-)(implicit ec: ExecutionContext)
-    extends AppController {
+) extends AppController {
 
   private val form = formProvider()
 
@@ -57,12 +56,10 @@ class EnterUTRController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(EnterUTRPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(
-              controllers.cwf1.routes.EnterUTRController.onPageLoad(journeyId, mode).url
-            ) // TODO Name page
+            yield Redirect(navigator.nextPage(EnterUTRPage, mode, request.userAnswers))
         )
   }
 }

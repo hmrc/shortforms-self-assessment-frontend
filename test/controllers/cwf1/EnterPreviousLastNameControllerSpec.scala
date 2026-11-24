@@ -82,8 +82,7 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual
-        controllers.cwf1.routes.EnterPreviousLastNameController.onPageLoad(userAnswersId, NormalMode).url
+      redirectLocation(result).value mustEqual onwardRoute.url
 
       verify(mockSessionRepository).set(any())
     }
@@ -109,14 +108,13 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
   abstract private class Setup {
     protected val userAnswers: UserAnswers
 
-    protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
+    protected val mockSessionRepository: SessionRepository = mock
     protected val mockView: EnterPreviousLastNameView      = mock
     protected val mockContent                              = "EnterPreviousLastName"
     private val enterPreviousLastNameFormProvider          = new EnterPreviousLastNameFormProvider()
     protected val form: Form[String]                       = enterPreviousLastNameFormProvider()
 
-    when(mockView(any(), any(), any())(any(), any()))
-      .thenReturn(Html(mockContent))
+    when(mockView(any(), any(), any())(any(), any())) thenReturn Html(mockContent)
 
     protected lazy val controllerUnderTest = new EnterPreviousLastNameController(
       mockSessionRepository,

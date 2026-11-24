@@ -18,7 +18,7 @@ package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
 import forms.cwf1.DateOfBirthFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation.Cwf1Navigator
 import pages.cwf1.DateOfBirthPage
 import play.api.mvc.*
@@ -51,11 +51,10 @@ class DateOfBirthController @Inject() (
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           dateOfBirth =>
-            for {
+            for
               updatedAnswers <- Future.fromTry(request.userAnswers.set(DateOfBirthPage, dateOfBirth))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(controllers.cwf1.routes.DateOfBirthController.onPageLoad(journeyId, NormalMode).url)
-          // TODO Contact details page
+            yield Redirect(navigator.nextPage(DateOfBirthPage, mode, request.userAnswers))
         )
     }
 }
