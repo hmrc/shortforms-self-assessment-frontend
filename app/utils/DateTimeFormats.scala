@@ -19,6 +19,7 @@ package utils
 import play.api.i18n.Lang
 
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object DateTimeFormats {
 
@@ -29,4 +30,7 @@ object DateTimeFormats {
 
   val dateTimeHintFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d M yyyy")
+
+  val submittedAtFormat: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("HH:mm 'on' d MMMM yyyy", Locale.UK)
 }

@@ -19,12 +19,11 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
+import utils.DateTimeFormats.submittedAtFormat
 import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
-import java.util.Locale
 import javax.inject.Inject
 import scala.concurrent.Future
 
@@ -35,17 +34,18 @@ class ConfirmationController @Inject() (
   pageNotFoundView: PageNotFoundView
 ) extends AppController {
 
-  private val submittedAtFormatter = DateTimeFormatter.ofPattern("HH:mm 'on' d MMMM yyyy", Locale.UK)
-  private val londonTime           = ZoneId.of("Europe/London")
+  private val londonTime = ZoneId.of("Europe/London")
 
   def onPageLoad(journeyId: String): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit request =>
       request.userAnswers.confirmation match {
         case Some(confirmation) =>
-          val submittedAt =
-            LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormatter)
-          Future.successful(Ok(view(submittedAt, confirmation.acknowledgementRef)))
-        case _                  =>
+          val submittedAt      =
+            LocalDateTime.ofInstant(confirmation.receivedTimestamp, londonTime).format(submittedAtFormat)
+          val confirmationView = Ok(view(submittedAt, confirmation.acknowledgementRef))
+          val updatedAnswers   = request.userAnswers.copy(data = Json.obj())
+          sessionRepository.set(updatedAnswers).map(_ => confirmationView)
+        case None               =>
           Future.successful(NotFound(pageNotFoundView()))
       }
     }
