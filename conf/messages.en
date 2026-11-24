@@ -29,7 +29,7 @@ timeout.title = You’re about to be signed out
 timeout.message = Your current session will time out in
 timeout.messageSuffix = You will lose any information you have entered.
 timeout.keepAlive = Continue with form
-timeout.signOut = Return to your account
+timeout.signOut = Sign out
 
 error.title.prefix = Error:
 error.prefix = Error
