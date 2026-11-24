@@ -198,7 +198,12 @@ POST        /cwf1/travel-uk/:journeyId                        controllers.cwf1.H
 GET         /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.HaveYouComeFromNonEuCountryController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.HaveYouComeFromNonEuCountryController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET        /cwf1/self-employment-start/:journeyId                   controllers.cwf1.SelfEmploymentStartDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST       /cwf1/self-employment-start/:journeyId                   controllers.cwf1.SelfEmploymentStartDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET        /cwf1/self-employment-start/change/:journeyId            controllers.cwf1.SelfEmploymentStartDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST       /cwf1/self-employment-start/change/:journeyId            controllers.cwf1.SelfEmploymentStartDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET         /cwf1/self-employment-start/:journeyId                   controllers.cwf1.SelfEmploymentStartDateController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/self-employment-start/:journeyId                   controllers.cwf1.SelfEmploymentStartDateController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/self-employment-start/change/:journeyId            controllers.cwf1.SelfEmploymentStartDateController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/self-employment-start/change/:journeyId            controllers.cwf1.SelfEmploymentStartDateController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/self-employed-work/:journeyId                         controllers.cwf1.SelfEmployedWorkController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/self-employed-work/:journeyId                         controllers.cwf1.SelfEmployedWorkController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/self-employed-work/change/:journeyId                  controllers.cwf1.SelfEmployedWorkController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/self-employed-work/change/:journeyId                  controllers.cwf1.SelfEmployedWorkController.onSubmit(journeyId: String, mode: Mode = CheckMode)
