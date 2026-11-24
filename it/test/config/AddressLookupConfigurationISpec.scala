@@ -26,7 +26,8 @@ class AddressLookupConfigurationISpec extends ISpecBase {
   private val landingPage = controllers.sa1.routes.StartController.onPageLoad()
 
   private val configProviderUnderTest = app.injector.instanceOf[AddressLookupConfiguration]
-  private val configUnderTest         = configProviderUnderTest(callback, landingPage)
+  private val configUnderTest         =
+    configProviderUnderTest(callback, landingPage, "sa1.address")
 
   private given Request[?] = FakeRequest()
 
@@ -60,7 +61,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
       (options \ "signOutHref").as[String] mustBe
         s"http://localhost:10081${_root_.controllers.auth.routes.AuthController.signOut().url}"
       (configUnderTest \ "labels" \ "en" \ "appLevelLabels" \ "navTitle").as[String] mustBe
-        messages(app)("service.sa1.name")
+        messages(app)("service.name")
       (options \ "showBackButtons").as[Boolean] mustBe true
       (options \ "showPhaseBanner").as[Boolean] mustBe false
       (options \ "includeHMRCBranding").as[Boolean] mustBe false
@@ -122,6 +123,34 @@ class AddressLookupConfigurationISpec extends ISpecBase {
     "must provide only English labels while translations are disabled" in {
       (configUnderTest \ "options" \ "disableTranslations").as[Boolean] mustBe true
       (configUnderTest \ "labels" \ "cy").toOption mustBe None
+    }
+
+    "must use the supplied message prefix for CWF1 page wording and keep shared field labels" in {
+      val cwf1Callback =
+        controllers.cwf1.routes.AddressLookupController.callback(models.cwf1.AddressType.Agent, userAnswersId)
+      val cwf1Request  = FakeRequest("GET", s"/self-assessment-forms/cwf1st/address/agent/$userAnswersId")
+      val cwf1Config   = configProviderUnderTest(
+        cwf1Callback,
+        controllers.cwf1.routes.StartController.onPageLoad(),
+        models.cwf1.AddressType.Agent.messagePrefix
+      )(cwf1Request)
+      val labels       = (cwf1Config \ "labels" \ "en").as[JsObject]
+
+      (cwf1Config \ "options" \ "continueUrl").as[String] mustBe s"http://localhost:10081${cwf1Callback.url}"
+      (labels \ "appLevelLabels" \ "navTitle").as[String] mustBe messages(app)("service.cwf1st.name")
+      Map(
+        "countryPickerLabels" -> "What is the country or territory of the agent’s address?",
+        "lookupPageLabels"    -> "Search for the agent’s address",
+        "editPageLabels"      -> "What is the agent’s address?",
+        "selectPageLabels"    -> "Choose the agent’s address",
+        "confirmPageLabels"   -> "Review your address"
+      ).foreach { (page, heading) =>
+        (labels \ page \ "heading").as[String] mustBe heading
+      }
+      (labels \ "lookupPageLabels" \ "manualAddressLinkText").as[String] mustBe "Enter the agent’s address manually"
+      (labels \ "selectPageLabels" \ "editAddressLinkText").as[String] mustBe "Enter the agent’s address manually"
+      (labels \ "confirmPageLabels" \ "changeLinkText").as[String] mustBe "Edit this address manually"
+      (labels \ "editPageLabels" \ "line1Label").as[String] mustBe "Address line 1"
     }
   }
 }

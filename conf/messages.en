@@ -1,6 +1,6 @@
 service.name              = Self Assessment Forms
 service.sa1.name          = Registering for Self Assessment
-service.cwf1st.name       = Registering for Self Assessment
+service.cwf1.name         = Registering for Self Assessment
 service.ceaseTrading.name = Stopping Self-employment
 
 site.back = Back
@@ -26,8 +26,9 @@ date.error.month = month
 date.error.year = year
 
 timeout.title = You’re about to be signed out
-timeout.message = For security reasons, you will be signed out of this service in
-timeout.keepAlive = Stay signed in
+timeout.message = Your current session will time out in
+timeout.messageSuffix = You will lose any information you have entered.
+timeout.keepAlive = Continue with form
 timeout.signOut = Sign out
 
 error.title.prefix = Error:
@@ -143,7 +144,7 @@ sa1.confirmation.backToAccount.hidden = account homepage
 sa1.addPreviousLastName.title = Do you have a previous last name?
 sa1.addPreviousLastName.heading = Do you have a previous last name?
 sa1.addPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
-sa1.addPreviousLastName.error.required = Select yes if you have a previous last name
+sa1.addPreviousLastName.error.required = Select Yes if you have a previous last name
 sa1.addPreviousLastName.change.hidden = Do you have a previous last name?
 
 sa1.name.title = What is your name?
@@ -200,29 +201,30 @@ sa1.doYouHaveANino.p2 = If none of these apply to you, you can still register fo
 sa1.doYouHaveANino.p2.linkText = find your National Insurance number (opens in a new tab)
 sa1.doYouHaveANino.subHeading = Do you have a National Insurance number?
 sa1.doYouHaveANino.checkYourAnswersLabel = Do you have a National Insurance number?
-sa1.doYouHaveANino.error.required = Select yes if you have a National Insurance number
+sa1.doYouHaveANino.error.required = Select Yes if you have a National Insurance number
 sa1.doYouHaveANino.change.hidden = Do you have a National Insurance number?
+
+address.countryPicker.label = Country or territory
+address.lookup.filter = Property name and number (optional)
+address.editManually = Edit this address manually
+address.line1 = Address line 1
+address.line2 = Address line 2
+address.line3 = Address line 3
+address.town = Town or city
+address.postcode = Postcode
+address.country = Country
+address.line1.error.maxLength = Address line 1 must be 35 characters or less
+address.line2.error.maxLength = Address line 2 must be 35 characters or less
+address.line3.error.maxLength = Address line 3 must be 35 characters or less
+address.town.error.maxLength = Town or city must be 35 characters or less
 
 sa1.address.label = Address
 sa1.address.countryPicker.title = What is the country or territory of your home address?
-sa1.address.countryPicker.label = Country or territory
 sa1.address.lookup.title = Search for your address
-sa1.address.lookup.filter = Property name and number (optional)
 sa1.address.edit.title = What is your address?
 sa1.address.select.title = Choose your address
 sa1.address.confirm.title = Review your address
 sa1.address.enterManually = Enter your address manually
-sa1.address.editManually = Edit this address manually
-sa1.address.line1 = Address line 1
-sa1.address.line2 = Address line 2
-sa1.address.line3 = Address line 3
-sa1.address.town = Town or city
-sa1.address.postcode = Postcode
-sa1.address.country = Country
-sa1.address.line1.error.maxLength = Address line 1 must be 35 characters or less
-sa1.address.line2.error.maxLength = Address line 2 must be 35 characters or less
-sa1.address.line3.error.maxLength = Address line 3 must be 35 characters or less
-sa1.address.town.error.maxLength = Town or city must be 35 characters or less
 sa1.address.checkYourAnswersLabel = Home address
 sa1.address.change.hidden = Home address
 
@@ -443,8 +445,29 @@ cwf1.start.save.form = Ensure you have these before you start. You cannot save t
 cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
-cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
+cwf1.areYouAnAgent.error.required = Select Yes if you are an authorised agent
 cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
+
+cwf1.agentAddress.countryPicker.title = What is the country or territory of the agent’s address?
+cwf1.agentAddress.lookup.title = Search for the agent’s address
+cwf1.agentAddress.edit.title = What is the agent’s address?
+cwf1.agentAddress.select.title = Choose the agent’s address
+cwf1.agentAddress.confirm.title = Review your address
+cwf1.agentAddress.enterManually = Enter the agent’s address manually
+
+cwf1.homeAddress.countryPicker.title = What is the country or territory of your home address?
+cwf1.homeAddress.lookup.title = Search for your home address
+cwf1.homeAddress.edit.title = What is your home address?
+cwf1.homeAddress.select.title = Choose your home address
+cwf1.homeAddress.confirm.title = Review your home address
+cwf1.homeAddress.enterManually = Enter your home address manually
+
+cwf1.previousHomeAddress.countryPicker.title = What is the country or territory of your previous home address?
+cwf1.previousHomeAddress.lookup.title = Search for your previous home address
+cwf1.previousHomeAddress.edit.title = What is your previous home address?
+cwf1.previousHomeAddress.select.title = Choose your previous home address
+cwf1.previousHomeAddress.confirm.title = Review your previous home address
+cwf1.previousHomeAddress.enterManually = Enter your previous home address manually
 
 cwf1.enterUTR.title = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.enterUTR.heading = Your Self Assessment Unique Taxpayer Reference (UTR)
@@ -461,7 +484,7 @@ cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
-cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
+cwf1.haveRegisteredForSelfAssessment.error.required = Select Yes if you have registered for Self Assessment before
 cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?
 
 cwf1.agentDetails.title = Agent’s details
@@ -522,3 +545,11 @@ cwf1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
 cwf1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
 cwf1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
 cwf1.dateOfBirth.date.error.tooOld = Date of birth must be on or after {0}
+
+cwf1.enterPreviousLastName.title = 	What was your previous last name?
+cwf1.enterPreviousLastName.heading = What was your previous last name?
+cwf1.enterPreviousLastName.error.required = Enter your previous last name
+cwf1.enterPreviousLastName.error.length = Your previous last name must be 100 characters or less
+cwf1.enterPreviousLastName.error.invalid = Your previous last name can only include letters, apostrophes, hyphens or spaces
+cwf1.enterPreviousLastName.checkYourAnswersLabel = What was your previous last name?
+cwf1.enterPreviousLastName.change.hidden = What was your previous last name?
