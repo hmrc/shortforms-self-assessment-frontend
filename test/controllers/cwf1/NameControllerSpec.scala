@@ -24,7 +24,8 @@ import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{mock, never, verify, when}
+import org.mockito.Mockito.{never, verify, when}
+import org.scalatestplus.mockito.MockitoSugar
 import pages.cwf1.NamePage
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -37,7 +38,7 @@ import views.html.cwf1.NameView
 
 import scala.concurrent.Future
 
-class NameControllerSpec extends SpecBase {
+class NameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -82,10 +83,7 @@ class NameControllerSpec extends SpecBase {
       private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.cwf1.routes.NameController
-        .onPageLoad(journeyId = "test-journey-id", NormalMode)
-        .url // TODO
-
+      redirectLocation(result).value mustEqual onwardRoute.url
     }
 
     "must return a Bad Request and show errors when invalid data is submitted" in new Setup {
@@ -102,13 +100,12 @@ class NameControllerSpec extends SpecBase {
 
   trait Setup {
     protected val givenUserAnswers: UserAnswers  = emptyUserAnswers
-    val mockSessionRepository: SessionRepository = mock(classOf[SessionRepository])
-    when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+    val mockSessionRepository: SessionRepository = mock
+    when(mockSessionRepository.set(any[UserAnswers])) thenReturn Future.successful(true)
 
     val stubContent: String = "Name view"
-    val stubView: NameView  = mock(classOf[NameView])
-    when(stubView.apply(any[Form[Name]], any[String], any[Mode])(any[Request[?]], any[Messages]))
-      .thenReturn(Html(stubContent))
+    val stubView: NameView  = mock
+    when(stubView.apply(any[Form[Name]], any[String], any[Mode])(any, any)) thenReturn Html(stubContent)
 
     protected lazy val controllerUnderTest = new NameController(
       mockSessionRepository,
