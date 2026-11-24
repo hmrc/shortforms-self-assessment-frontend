@@ -18,7 +18,7 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import forms.sa1.EnterNationalInsuranceNumberFormProvider
+import forms.EnterNiNumberFormProvider
 import models.{JourneyType, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Sa1Navigator}
 import org.mockito.ArgumentCaptor
@@ -58,15 +58,16 @@ class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSu
     protected lazy val controllerUnderTest = new EnterNationalInsuranceNumberController(
       new MockAppControllerComponents(userAnswers),
       sessionRepository,
-      new EnterNationalInsuranceNumberFormProvider(),
+      new EnterNiNumberFormProvider(),
       new Sa1Navigator with FakeNavigator(onwardRoute),
       view
     )
+    when(view.apply(any[Form[_]], any[String], any)(any, any)) thenReturn Html(mockViewContent)
   }
 
   "page load handler should" - {
 
-    "must return OK and the correct view for a GET" in new Setup {
+    "return OK and the correct view for a GET" in new Setup {
       private val result = controllerUnderTest.onPageLoad(journeyId, NormalMode)(FakeRequest())
 
       status(result) mustEqual OK
@@ -132,7 +133,8 @@ class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSu
 
     "return BAD_REQUEST when the submitted form is invalid" in new Setup {
       private val request = FakeRequest().withFormUrlEncodedBody("value" -> "")
-      private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+
+      private val result = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe BAD_REQUEST
       contentAsString(result) mustBe mockViewContent
@@ -142,7 +144,8 @@ class EnterNationalInsuranceNumberControllerSpec extends SpecBase with MockitoSu
       when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
 
       private val request = FakeRequest().withFormUrlEncodedBody(validFormData.toSeq*)
-      private val result  = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
+
+      private val result = controllerUnderTest.onSubmit(journeyId, NormalMode)(request)
 
       status(result) mustBe SEE_OTHER
       redirectLocation(result).value mustBe onwardRoute.url

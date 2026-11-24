@@ -17,7 +17,7 @@
 package controllers.sa1
 
 import controllers.{AppController, AppControllerComponents}
-import forms.sa1.EnterNationalInsuranceNumberFormProvider
+import forms.EnterNiNumberFormProvider
 import models.Mode
 import navigation.Sa1Navigator
 import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
@@ -26,22 +26,21 @@ import repositories.SessionRepository
 import views.html.sa1.EnterNationalInsuranceNumberView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class EnterNationalInsuranceNumberController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
-  formProvider: EnterNationalInsuranceNumberFormProvider,
+  formProvider: EnterNiNumberFormProvider,
   navigator: Sa1Navigator,
   view: EnterNationalInsuranceNumberView
-)(implicit ec: ExecutionContext)
-    extends AppController {
-
-  private val form = formProvider()
+) extends AppController {
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] =
     SA1DataAction(journeyId) { implicit req =>
       if req.userAnswers.get(DoYouHaveANinoPage) contains true then
+        val form = formProvider(req.nino)
+
         val preparedForm = req.userAnswers.get(EnterNationalInsuranceNumberPage) match {
           case None        => form
           case Some(value) => form.fill(value)
@@ -54,32 +53,15 @@ class EnterNationalInsuranceNumberController @Inject() (
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
     SA1DataAction(journeyId).async { implicit req =>
       if req.userAnswers.get(DoYouHaveANinoPage) contains true then
-        form
+        formProvider(req.nino)
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
             value =>
-              for {
-                updatedAnswers <-
-                  Future.fromTry(req.userAnswers.set(EnterNationalInsuranceNumberPage, value.replaceAll("\\s", "")))
-              } yield req.nino match {
-                case Some(nino) if nino.replaceAll("\\s", "").equalsIgnoreCase(value.replaceAll("\\s", "")) =>
-                  sessionRepository.set(updatedAnswers)
-                  Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-
-                case None =>
-                  sessionRepository.set(updatedAnswers)
-                  Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
-
-                case _ =>
-                  BadRequest(
-                    view(
-                      form.fill(value).withError("value", "sa1.enterNationalInsuranceNumber.ninoCheck.invalid"),
-                      journeyId,
-                      mode
-                    )
-                  )
-              }
+              for
+                updatedAnswers <- Future.fromTry(req.userAnswers.set(EnterNationalInsuranceNumberPage, value))
+                _              <- sessionRepository.set(updatedAnswers)
+              yield Redirect(navigator.nextPage(EnterNationalInsuranceNumberPage, mode, updatedAnswers))
           )
       else Future.successful(Redirect(routes.DoYouHaveANinoController.onPageLoad(journeyId, mode)))
     }
