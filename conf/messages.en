@@ -545,6 +545,7 @@ cwf1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
 cwf1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
 cwf1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
 cwf1.dateOfBirth.date.error.tooOld = Date of birth must be on or after {0}
+
 cwf1.enterPreviousLastName.title = 	What was your previous last name?
 cwf1.enterPreviousLastName.heading = What was your previous last name?
 cwf1.enterPreviousLastName.error.required = Enter your previous last name
