@@ -193,19 +193,22 @@ class Cwf1NavigatorSpec extends SpecBase {
         }
       }
 
+
       "when do you have a business name page" - {
         "must go to business name page when answer is 'yes'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, true).success.value
 
           navigator.nextPage(DoYouHaveBusinessNamePage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveBusinessNameController.onPageLoad(userAnswersId, NormalMode) //TODO change to enter business name
+            controllers.cwf1.routes.DoYouHaveBusinessNameController
+              .onPageLoad(userAnswersId, NormalMode) // TODO change to enter business name
         }
 
         "must go to self employed work page when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, false).success.value
 
           navigator.nextPage(DoYouHaveBusinessNamePage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveBusinessNameController.onPageLoad(userAnswersId, NormalMode) //TODO change to self employee work
+            controllers.cwf1.routes.DoYouHaveBusinessNameController
+              .onPageLoad(userAnswersId, NormalMode) // TODO change to self employee work
         }
 
         "must go to Index when answer is missing" in {
@@ -386,7 +389,8 @@ class Cwf1NavigatorSpec extends SpecBase {
             .value
 
           navigator.nextPage(DoYouHaveBusinessNamePage, CheckMode, userAnswers) mustBe
-            controllers.cwf1.routes.EnterUTRController.onPageLoad(userAnswersId, CheckMode) // TODO change to enter business name page and controller
+            controllers.cwf1.routes.EnterUTRController
+              .onPageLoad(userAnswersId, CheckMode) // TODO change to enter business name page and controller
         }
 
         "must go to Check Your Answers when yes is selected and business name already exists" in {
@@ -394,7 +398,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             .set(DoYouHaveBusinessNamePage, true)
             .success
             .value
-            .set(EnterUTRPage, "1234567890") //TODO Change to enter business name
+            .set(EnterUTRPage, "1234567890") // TODO Change to enter business name
             .success
             .value
 
