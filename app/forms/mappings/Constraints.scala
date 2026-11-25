@@ -154,4 +154,31 @@ trait Constraints {
       }
     }
 
+  protected def validateEmail(errorKey: String): Constraint[String] = Constraint { email =>
+
+    val regexEmailUserNameRule         = "^([\\w-]+\\S?)*[\\w-]$"
+    val regexEmailDomainValidationRule = "^[a-zA-Z0-9]([a-zA-Z0-9]?-?[a-zA-Z0-9]+)*$"
+    val emailPartsMaxLength            = 64
+
+    def isUsernameValid(username: String): Boolean = {
+      val isUserNameSegmentLengthValid: Boolean = username.length <= emailPartsMaxLength
+      val isEmailUserNameRegexValid: Boolean    = username.matches(regexEmailUserNameRule)
+
+      isUserNameSegmentLengthValid && isEmailUserNameRegexValid
+    }
+
+    def isDomainValid(domain: String): Boolean = {
+      val isDomainSegmentLengthValid: Boolean = domain.length <= emailPartsMaxLength
+      val hasDotExtensionValid: Boolean       = domain.contains(".") && !domain.startsWith(".") && !domain.endsWith(".")
+      val emailDomainParts                    = domain.split("\\.")
+      val isEmailDomainPartsValid: Boolean    = emailDomainParts.nonEmpty &&
+        emailDomainParts.forall(_.matches(regexEmailDomainValidationRule))
+
+      isDomainSegmentLengthValid && hasDotExtensionValid && isEmailDomainPartsValid
+    }
+
+    email.split('@').toList match
+      case username :: domain :: Nil if isUsernameValid(username) && isDomainValid(domain) => Valid
+      case _                                                                               => Invalid(errorKey)
+  }
 }
