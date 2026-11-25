@@ -106,11 +106,11 @@ class HaveYouComeFromNonEuCountryControllerSpec extends SpecBase with MockitoSug
   abstract private class Setup {
     protected val userAnswers: UserAnswers
 
-    protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockView: HaveYouComeFromNonEuCountryView           = mock
-    protected val mockContent                              = "HaveYouComeFromNonEuCountry"
-    private val haveYouComeFromNonEuCountryFormProvider               = new HaveYouComeFromNonEuCountryFormProvider()
-    protected val form: Form[Boolean]                      = haveYouComeFromNonEuCountryFormProvider()
+    protected val mockSessionRepository: SessionRepository  = mock[SessionRepository]
+    protected val mockView: HaveYouComeFromNonEuCountryView = mock
+    protected val mockContent                               = "HaveYouComeFromNonEuCountry"
+    private val haveYouComeFromNonEuCountryFormProvider     = new HaveYouComeFromNonEuCountryFormProvider()
+    protected val form: Form[Boolean]                       = haveYouComeFromNonEuCountryFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))

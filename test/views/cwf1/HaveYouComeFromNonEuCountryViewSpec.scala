@@ -27,7 +27,7 @@ import views.html.cwf1.HaveYouComeFromNonEuCountryView
 class HaveYouComeFromNonEuCountryViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
   private val haveYouComeFromNonEuCountryFormProvider = new HaveYouComeFromNonEuCountryFormProvider()
-  private val form                         = haveYouComeFromNonEuCountryFormProvider()
+  private val form                                    = haveYouComeFromNonEuCountryFormProvider()
 
   "HaveYouComeFromNonEuCountryView" - {
     "must render the page title and main heading" in {
