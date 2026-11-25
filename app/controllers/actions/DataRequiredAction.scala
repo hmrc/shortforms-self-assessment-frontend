@@ -16,13 +16,15 @@
 
 package controllers.actions
 
-import models.JourneyType
+import handlers.ErrorHandler
+import models.{JourneyType, ServiceProps}
 import models.requests.{DataRequest, IdentifierRequest}
+import play.api.http.Status.NOT_FOUND
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.NotFound
+import play.api.mvc.Results.Gone
 import play.api.mvc.{ActionRefiner, RequestHeader, Result}
 import repositories.SessionRepository
-import views.html.ErrorTemplate
+import views.html.ResubmissionErrorView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DataRequiredActionImpl @Inject() (
   sessionRepository: SessionRepository,
-  errorTemplate: ErrorTemplate,
+  errorHandler: ErrorHandler,
+  resubmissionErrorView: ResubmissionErrorView,
   val messagesApi: MessagesApi
 )(implicit ec: ExecutionContext)
     extends DataRequiredAction
@@ -46,9 +49,17 @@ class DataRequiredActionImpl @Inject() (
 
         sessionRepository
           .get(journeyId, request.userId, journeyType)
-          .map {
-            case Some(userAnswers) => Right(new DataRequest(request, userAnswers))
-            case None              => Left(NotFound(errorTemplate("notFound.title", "notFound.heading", "notFound.message")))
+          .flatMap {
+            case Some(userAnswers) =>
+              userAnswers.confirmation match {
+                case Some(confirmation) =>
+                  val service = ServiceProps.apply(using request)
+                  Future.successful(Left(Gone(resubmissionErrorView(service.landingPage))))
+                case None               =>
+                  Future.successful(Right(new DataRequest(request, userAnswers)))
+              }
+            case None              =>
+              errorHandler.onClientError(request, NOT_FOUND).map(Left(_))
           }
     }
 }

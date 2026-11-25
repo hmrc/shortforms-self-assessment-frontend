@@ -17,19 +17,22 @@
 package controllers.actions
 
 import base.SpecBase
+import handlers.ErrorHandler
 import models.JourneyType.SA1
-import models.UserAnswers
 import models.requests.{DataRequest, IdentifierRequest}
+import models.{SubmissionConfirmation, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.i18n.Messages
 import play.api.libs.json.Json
-import play.api.mvc.ActionRefiner
-import play.api.mvc.Results.Ok
+import play.api.mvc.Results.{NotFound, Ok}
+import play.api.mvc.{ActionRefiner, Request, RequestHeader}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.ErrorTemplate
+import views.html.ResubmissionErrorView
 
 import java.time.Instant
 import scala.concurrent.Future
@@ -81,16 +84,77 @@ class DataRequiredActionSpec extends SpecBase with MockitoSugar {
 
       verify(repository).get(journeyId, userId, SA1)
     }
+
+    "must return Gone with Resubmission Error page when confirmation exists in session" in new Setup {
+      when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
+        .thenReturn(
+          Future.successful(
+            Some(
+              userAnswers.copy(
+                confirmation = Some(
+                  SubmissionConfirmation(
+                    acknowledgementRef = "1234567890",
+                    receivedTimestamp = Instant.parse("2026-10-12T10:00:00Z")
+                  )
+                )
+              )
+            )
+          )
+        )
+
+      private val result = actionUnderTest.invokeBlock(
+        identifierRequest,
+        request => Future.successful(Ok(request.userAnswers.id))
+      )
+
+      status(result) mustEqual GONE
+      contentAsString(result) mustEqual mockResubmissionErrorContent
+
+      verify(repository).get(journeyId, userId, SA1)
+    }
+
+    "must provide DataRequest when confirmation does not exists in session" in new Setup {
+      when(repository.get(eqTo(journeyId), eqTo(userId), eqTo(SA1)))
+        .thenReturn(
+          Future.successful(
+            Some(
+              userAnswers.copy(
+                confirmation = None
+              )
+            )
+          )
+        )
+
+      private val result = actionUnderTest.invokeBlock(
+        identifierRequest,
+        request => Future.successful(Ok(request.userAnswers.id))
+      )
+
+      status(result) mustEqual OK
+      contentAsString(result) mustEqual journeyId
+
+      verify(repository).get(journeyId, userId, SA1)
+    }
+
   }
 
   private class Setup {
     protected val repository: SessionRepository = mock
 
-    private val mockErrorTemplate: ErrorTemplate = mock
-    protected val mockErrorContent               = "Error"
-    when(mockErrorTemplate.apply(any, any, any)(any, any)) thenReturn play.twirl.api.Html(mockErrorContent)
+    private val mockErrorHandler: ErrorHandler                   = mock
+    protected val mockErrorContent                               = "Error"
+    private val mockResubmissionErrorView: ResubmissionErrorView = mock[ResubmissionErrorView]
+    protected val mockResubmissionErrorContent                   = "Already submitted"
+
+    when(mockResubmissionErrorView.apply(any)(any[Request[?]], any[Messages])) thenReturn Html(
+      mockResubmissionErrorContent
+    )
+    when(mockErrorHandler.onClientError(any[RequestHeader], eqTo(NOT_FOUND), any[String])) thenReturn Future.successful(
+      NotFound(Html(mockErrorContent))
+    )
 
     protected val actionUnderTest: ActionRefiner[IdentifierRequest, DataRequest] =
-      new DataRequiredActionImpl(repository, mockErrorTemplate, stubMessagesApi()).apply(journeyId, SA1)
+      new DataRequiredActionImpl(repository, mockErrorHandler, mockResubmissionErrorView, stubMessagesApi())
+        .apply(journeyId, SA1)
   }
 }

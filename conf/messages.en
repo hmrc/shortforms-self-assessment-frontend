@@ -582,3 +582,10 @@ cwf1.contactDetails.error.emailAddress.invalid = The email address must only inc
 cwf1.contactDetails.error.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
 cwf1.contactDetails.emailAddress.change.hidden = What are your contact details?
 cwf1.contactDetails.phoneNumber.change.hidden = What are your contact details?
+
+resubmissionError.title = You have already submitted this application
+resubmissionError.heading = You have already submitted this application
+resubmissionError.p1 = We have successfully received your recent application.
+resubmissionError.p2 = You can {0} or {1}.
+resubmissionError.p2.linkText1 = start a new application
+resubmissionError.p2.linkText2 = continue to your account

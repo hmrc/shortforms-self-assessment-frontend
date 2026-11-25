@@ -18,18 +18,19 @@ package controllers.sa1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
+import handlers.ErrorHandler
 import models.{JourneyType, SubmissionConfirmation, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, never, verify, when}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Results.NotFound
+import play.api.mvc.{Request, RequestHeader, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.PageNotFoundView
 import views.html.sa1.ConfirmationView
 
 import java.time.Instant
@@ -74,23 +75,38 @@ class ConfirmationControllerSpec extends SpecBase {
       contentAsString(result) mustBe "Page not found"
       verify(sessionRepository, never()).set(any[UserAnswers])
     }
+
+    "must render page not found page when userAnswers is none" in new Setup(emptyUserAnswers) {
+      when(sessionRepository.get(any, any, any)).thenReturn(Future.successful(None))
+
+      val result: Future[Result] = controller.onPageLoad(userAnswersId)(FakeRequest())
+
+      status(result) mustBe NOT_FOUND
+      contentAsString(result) mustBe "Page not found"
+    }
   }
 
   private class Setup(userAnswers: UserAnswers) {
-    protected val view: ConfirmationView               = mock(classOf[ConfirmationView])
-    private val pageNotFoundView: PageNotFoundView     = mock(classOf[PageNotFoundView])
+    protected val view: ConfirmationView = mock(classOf[ConfirmationView])
+
     protected val sessionRepository: SessionRepository = mock(classOf[SessionRepository])
+    when(sessionRepository.get(any, any, any)).thenReturn(Future.successful(Some(userAnswers)))
     when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+
     when(view.apply(any[String], any[String])(any[Request[?]], any[Messages]))
       .thenReturn(Html("Confirmation view"))
-    when(pageNotFoundView.apply()(any[Request[?]], any[Messages]))
-      .thenReturn(Html("Page not found"))
+
+    private val mockErrorHandler: ErrorHandler = mock(classOf[ErrorHandler])
+    private val mockErrorContent               = "Page not found"
+    when(mockErrorHandler.onClientError(any[RequestHeader], eqTo(NOT_FOUND), any[String])) thenReturn Future.successful(
+      NotFound(Html(mockErrorContent))
+    )
 
     protected val controller = new ConfirmationController(
       new MockAppControllerComponents(userAnswers = userAnswers),
       sessionRepository,
       view,
-      pageNotFoundView
+      mockErrorHandler
     )
   }
 }
