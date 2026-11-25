@@ -19,9 +19,9 @@ package pages.cwf1
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AreYouEUResidentPage extends QuestionPage[Boolean] {
+case object HaveYouComeFromNonEuCountryPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "areYouEUResident"
+  override def toString: String = "haveYouComeFromNonEuCountry"
 }

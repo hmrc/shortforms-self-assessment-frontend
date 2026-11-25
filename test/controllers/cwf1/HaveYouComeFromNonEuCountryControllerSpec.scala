@@ -18,28 +18,28 @@ package controllers.cwf1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import forms.cwf1.AreYouEUResidentFormProvider
+import forms.cwf1.HaveYouComeFromNonEuCountryFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.cwf1.AreYouEUResidentPage
+import pages.cwf1.HaveYouComeFromNonEuCountryPage
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.cwf1.AreYouEUResidentView
+import views.html.cwf1.HaveYouComeFromNonEuCountryView
 
 import scala.concurrent.Future
 
-class AreYouEUResidentControllerSpec extends SpecBase with MockitoSugar {
+class HaveYouComeFromNonEuCountryControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  "AreYouEUResident Controller" - {
+  "HaveYouComeFromNonEuCountry Controller" - {
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
 
@@ -56,7 +56,7 @@ class AreYouEUResidentControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(AreYouEUResidentPage, true).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, true).success.value
 
       private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
@@ -107,18 +107,18 @@ class AreYouEUResidentControllerSpec extends SpecBase with MockitoSugar {
     protected val userAnswers: UserAnswers
 
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockView: AreYouEUResidentView           = mock
-    protected val mockContent                              = "AreYouEUResident"
-    private val areYouEUResidentFormProvider               = new AreYouEUResidentFormProvider()
-    protected val form: Form[Boolean]                      = areYouEUResidentFormProvider()
+    protected val mockView: HaveYouComeFromNonEuCountryView           = mock
+    protected val mockContent                              = "HaveYouComeFromNonEuCountry"
+    private val haveYouComeFromNonEuCountryFormProvider               = new HaveYouComeFromNonEuCountryFormProvider()
+    protected val form: Form[Boolean]                      = haveYouComeFromNonEuCountryFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controllerUnderTest = new AreYouEUResidentController(
+    protected lazy val controllerUnderTest = new HaveYouComeFromNonEuCountryController(
       mockSessionRepository,
       new Cwf1Navigator with FakeNavigator(onwardRoute),
-      areYouEUResidentFormProvider,
+      haveYouComeFromNonEuCountryFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView
     )

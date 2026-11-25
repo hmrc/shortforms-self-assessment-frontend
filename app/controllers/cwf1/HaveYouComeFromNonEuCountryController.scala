@@ -17,24 +17,24 @@
 package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
-import forms.cwf1.AreYouEUResidentFormProvider
+import forms.cwf1.HaveYouComeFromNonEuCountryFormProvider
 import models.Mode
 import navigation.Cwf1Navigator
-import pages.cwf1.AreYouEUResidentPage
+import pages.cwf1.HaveYouComeFromNonEuCountryPage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import views.html.cwf1.AreYouEUResidentView
+import views.html.cwf1.HaveYouComeFromNonEuCountryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AreYouEUResidentController @Inject() (
+class HaveYouComeFromNonEuCountryController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Cwf1Navigator,
-  formProvider: AreYouEUResidentFormProvider,
+  formProvider: HaveYouComeFromNonEuCountryFormProvider,
   val controllerComponents: AppControllerComponents,
-  view: AreYouEUResidentView
+  view: HaveYouComeFromNonEuCountryView
 )(implicit ec: ExecutionContext)
     extends AppController {
 
@@ -42,7 +42,7 @@ class AreYouEUResidentController @Inject() (
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
-    val preparedForm = request.userAnswers.get(AreYouEUResidentPage) match {
+    val preparedForm = request.userAnswers.get(HaveYouComeFromNonEuCountryPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -58,9 +58,9 @@ class AreYouEUResidentController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AreYouEUResidentPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(HaveYouComeFromNonEuCountryPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(AreYouEUResidentPage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(HaveYouComeFromNonEuCountryPage, mode, updatedAnswers))
         )
   }
 }

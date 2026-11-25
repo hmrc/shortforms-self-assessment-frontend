@@ -17,22 +17,22 @@
 package views.cwf1
 
 import base.SpecBase
-import forms.cwf1.AreYouEUResidentFormProvider
+import forms.cwf1.HaveYouComeFromNonEuCountryFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
-import views.html.cwf1.AreYouEUResidentView
+import views.html.cwf1.HaveYouComeFromNonEuCountryView
 
-class AreYouEUResidentViewSpec extends SpecBase with GuiceOneAppPerSuite {
+class HaveYouComeFromNonEuCountryViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
-  private val areYouEUResidentFormProvider = new AreYouEUResidentFormProvider()
-  private val form                         = areYouEUResidentFormProvider()
+  private val haveYouComeFromNonEuCountryFormProvider = new HaveYouComeFromNonEuCountryFormProvider()
+  private val form                         = haveYouComeFromNonEuCountryFormProvider()
 
-  "AreYOuEUResidentNameView" - {
+  "HaveYouComeFromNonEuCountryView" - {
     "must render the page title and main heading" in {
 
-      val view    = app.injector.instanceOf[AreYouEUResidentView]
+      val view    = app.injector.instanceOf[HaveYouComeFromNonEuCountryView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -41,15 +41,15 @@ class AreYouEUResidentViewSpec extends SpecBase with GuiceOneAppPerSuite {
           view(form, userAnswersId, NormalMode)(request, msgs).body
         )
 
-      doc.title() must include(msgs("cwf1.areYouEUResident.title"))
+      doc.title() must include(msgs("cwf1.haveYouComeFromNonEuCountry.title"))
 
       doc.select("h1").size() mustEqual 1
-      doc.select("h1").text() mustEqual msgs("cwf1.areYouEUResident.heading")
+      doc.select("h1").text() mustEqual msgs("cwf1.haveYouComeFromNonEuCountry.heading")
     }
 
     "must render yes and no radio buttons" in {
 
-      val view    = app.injector.instanceOf[AreYouEUResidentView]
+      val view    = app.injector.instanceOf[HaveYouComeFromNonEuCountryView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -66,7 +66,7 @@ class AreYouEUResidentViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render the continue button" in {
 
-      val view    = app.injector.instanceOf[AreYouEUResidentView]
+      val view    = app.injector.instanceOf[HaveYouComeFromNonEuCountryView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -80,7 +80,7 @@ class AreYouEUResidentViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render an error summary when the form contains errors" in {
 
-      val view    = app.injector.instanceOf[AreYouEUResidentView]
+      val view    = app.injector.instanceOf[HaveYouComeFromNonEuCountryView]
       val request = FakeRequest()
       val msgs    = messages(app)
 

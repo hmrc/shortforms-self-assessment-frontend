@@ -69,12 +69,12 @@ class DoYouHaveAPreviousLastNameSummarySpec extends SpecBase {
         actionItem.attributes.get("id") mustBe Some("do-you-have-a-previous-last-name")
       }
     }
-  }
 
-  "when the answer is not present" - {
-    "must return None" in {
+    "when the answer is not present" - {
+      "must return None" in {
 
-      DoYouHaveAPreviousLastNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
+        DoYouHaveAPreviousLastNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
+      }
     }
   }
 }

@@ -24,6 +24,7 @@ import pages.cwf1.{AreYouAnAgentPage, AreYouEUResidentPage, DoYouHaveAPreviousLa
 import pages.cwf1.{AgentDetailsPage, AreYouAnAgentPage, ContactDetailsPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage, MoveAddressPage}
 
 import java.time.LocalDate
+import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouComeFromNonEuCountryPage, HaveYouRegisteredForSelfAssessmentPage, NamePage}
 
 class Cwf1NavigatorSpec extends SpecBase {
 
@@ -104,7 +105,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
         }
 
-        "must go to the previous last name form when answer is 'no'" in {
+        "must go to date of birth page when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveAPreviousLastNamePage, false).success.value
 
           navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, userAnswers) mustBe
@@ -124,18 +125,18 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.NameController.onPageLoad(userAnswersId, NormalMode)
         }
       }
-      "when are you EU resident page" - {
-        "must go to are you EU resident page when answer is 'yes'" in { // TODO business name controller
-          val userAnswers = emptyUserAnswers.set(AreYouEUResidentPage, true).success.value
+      "when have you come from non Eu country page" - {
+        "must go to have you come from non Eu country page when answer is 'yes'" in { // TODO business name controller
+          val userAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, true).success.value
 
-          navigator.nextPage(AreYouEUResidentPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.AreYouEUResidentController.onPageLoad(userAnswersId, NormalMode)
+          navigator.nextPage(HaveYouComeFromNonEuCountryPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(userAnswersId, NormalMode)
         }
-        "must go to are you EU resident page when answer is 'no'" in { // TODO business name controller
-          val userAnswers = emptyUserAnswers.set(AreYouEUResidentPage, false).success.value
+        "must go to have you come from non Eu country page when answer is 'no'" in { // TODO business name controller
+          val userAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, false).success.value
 
-          navigator.nextPage(AreYouEUResidentPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.AreYouEUResidentController.onPageLoad(userAnswersId, NormalMode)
+          navigator.nextPage(HaveYouComeFromNonEuCountryPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(userAnswersId, NormalMode)
         }
       }
       "when enter name page" - {

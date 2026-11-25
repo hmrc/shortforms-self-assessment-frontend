@@ -70,9 +70,9 @@ class Cwf1Navigator @Inject() () extends Navigator {
         }
     case EnterUTRPage                           =>
       ua => controllers.cwf1.routes.NameController.onPageLoad(ua.id, NormalMode)
-    case AreYouEUResidentPage                   =>
+    case HaveYouComeFromNonEuCountryPage        =>
       ua =>
-        controllers.cwf1.routes.AreYouEUResidentController
+        controllers.cwf1.routes.HaveYouComeFromNonEuCountryController
           .onPageLoad(ua.id, NormalMode) // TODO Business name controller
     case NamePage                               =>
       ua => controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(ua.id, NormalMode)

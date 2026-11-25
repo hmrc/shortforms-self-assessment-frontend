@@ -16,15 +16,30 @@
 
 package forms.cwf1
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import javax.inject.Inject
+class HaveYouComeFromNonEuCountryFormProviderSpec extends BooleanFieldBehaviours {
 
-class AreYouEUResidentFormProvider @Inject() extends Mappings {
+  val requiredKey = "cwf1.haveYouComeFromNonEuCountry.error.required"
+  val invalidKey  = "error.boolean"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("cwf1.areYouEUResident.error.required")
+  val form = new HaveYouComeFromNonEuCountryFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
     )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

@@ -17,28 +17,28 @@
 package viewmodels.checkAnswers.cwf1
 
 import models.{CheckMode, UserAnswers}
-import pages.cwf1.AreYouEUResidentPage
+import pages.cwf1.HaveYouComeFromNonEuCountryPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AreYouEUResidentSummary {
+object HaveYouComeFromNonEuCountrySummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AreYouEUResidentPage).map { answer =>
+    answers.get(HaveYouComeFromNonEuCountryPage).map { answer =>
 
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "cwf1.areYouEUResident.checkYourAnswersLabel",
+        key = "cwf1.haveYouComeFromNonEuCountry.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.cwf1.routes.AreYouEUResidentController.onPageLoad(answers.id, CheckMode).url
+            controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(answers.id, CheckMode).url
           )
-            .withVisuallyHiddenText(messages("cwf1.areYouEUResident.change.hidden"))
+            .withVisuallyHiddenText(messages("cwf1.haveYouComeFromNonEuCountry.change.hidden"))
             .withAttribute("id" -> "travel-uk")
         )
       )

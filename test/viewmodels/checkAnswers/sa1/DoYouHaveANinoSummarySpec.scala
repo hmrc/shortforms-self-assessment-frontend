@@ -69,12 +69,12 @@ class DoYouHaveANinoSummarySpec extends SpecBase {
 
       }
     }
-  }
 
-  "when the answer is not present" - {
-    "must return None" in {
+    "when the answer is not present" - {
+      "must return None" in {
 
-      DoYouHaveANinoSummary.row(emptyUserAnswers).isEmpty mustEqual true
+        DoYouHaveANinoSummary.row(emptyUserAnswers).isEmpty mustEqual true
+      }
     }
   }
 }
