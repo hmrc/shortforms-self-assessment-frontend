@@ -20,7 +20,6 @@ import base.SpecBase
 import models.*
 import models.cwf1.Name
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, DoYouHaveBusinessNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage}
 import pages.cwf1.*
 
 import java.time.LocalDate
@@ -196,23 +195,23 @@ class Cwf1NavigatorSpec extends SpecBase {
 
       "when do you have a business name page" - {
         "must go to business name page when answer is 'yes'" in {
-          val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, true).success.value
+          val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, true).success.value
 
-          navigator.nextPage(DoYouHaveBusinessNamePage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveBusinessNameController
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
               .onPageLoad(userAnswersId, NormalMode) // TODO change to enter business name
         }
 
         "must go to self employed work page when answer is 'no'" in {
-          val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, false).success.value
+          val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, false).success.value
 
-          navigator.nextPage(DoYouHaveBusinessNamePage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveBusinessNameController
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
               .onPageLoad(userAnswersId, NormalMode) // TODO change to self employee work
         }
 
         "must go to Index when answer is missing" in {
-          navigator.nextPage(DoYouHaveBusinessNamePage, NormalMode, emptyUserAnswers) mustBe
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }
@@ -380,46 +379,46 @@ class Cwf1NavigatorSpec extends SpecBase {
         }
       }
 
-      "when have business name" - {
+      "when have a business name" - {
 
-        "must go to Enter business name when yes is selected and business name is missing" in {
+        "must go to enter business name when yes is selected and business name is missing" in {
           val userAnswers = emptyUserAnswers
-            .set(DoYouHaveBusinessNamePage, true)
+            .set(DoYouHaveABusinessNamePage, true)
             .success
             .value
 
-          navigator.nextPage(DoYouHaveBusinessNamePage, CheckMode, userAnswers) mustBe
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
             controllers.cwf1.routes.EnterUTRController
               .onPageLoad(userAnswersId, CheckMode) // TODO change to enter business name page and controller
         }
 
         "must go to Check Your Answers when yes is selected and business name already exists" in {
           val userAnswers = emptyUserAnswers
-            .set(DoYouHaveBusinessNamePage, true)
+            .set(DoYouHaveABusinessNamePage, true)
             .success
             .value
             .set(EnterUTRPage, "1234567890") // TODO Change to enter business name
             .success
             .value
 
-          navigator.nextPage(DoYouHaveBusinessNamePage, CheckMode, userAnswers) mustBe
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
             controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
         }
 
         "must go to Check Your Answers when no is selected" in {
           val userAnswers = emptyUserAnswers
-            .set(DoYouHaveBusinessNamePage, false)
+            .set(DoYouHaveABusinessNamePage, false)
             .success
             .value
 
-          navigator.nextPage(DoYouHaveBusinessNamePage, CheckMode, userAnswers) mustBe
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
             controllers.cwf1.routes.AreYouAnAgentController
               .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
         }
 
         "must go to Index when answer is missing" in {
-          navigator.nextPage(DoYouHaveBusinessNamePage, CheckMode, emptyUserAnswers) mustBe
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }

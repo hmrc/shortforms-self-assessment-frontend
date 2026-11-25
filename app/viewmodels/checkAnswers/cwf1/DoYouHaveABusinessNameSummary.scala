@@ -17,28 +17,28 @@
 package viewmodels.checkAnswers.cwf1
 
 import models.{CheckMode, UserAnswers}
-import pages.cwf1.DoYouHaveBusinessNamePage
+import pages.cwf1.DoYouHaveABusinessNamePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object DoYouHaveBusinessNameSummary {
+object DoYouHaveABusinessNameSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(DoYouHaveBusinessNamePage).map { answer =>
+    answers.get(DoYouHaveABusinessNamePage).map { answer =>
 
       val value = if (answer) "site.yes" else "site.no"
 
       SummaryListRowViewModel(
-        key = "cwf1.doYouHaveBusinessName.checkYourAnswersLabel",
+        key = "cwf1.doYouHaveABusinessName.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.cwf1.routes.DoYouHaveBusinessNameController.onPageLoad(answers.id, CheckMode).url
+            controllers.cwf1.routes.DoYouHaveABusinessNameController.onPageLoad(answers.id, CheckMode).url
           )
-            .withVisuallyHiddenText(messages("cwf1.doYouHaveBusinessName.change.hidden"))
+            .withVisuallyHiddenText(messages("cwf1.doYouHaveABusinessName.change.hidden"))
             .withAttribute("id" -> "business-name")
         )
       )

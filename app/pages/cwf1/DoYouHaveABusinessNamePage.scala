@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package forms.cwf1
+package pages.cwf1
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-import javax.inject.Inject
+case object DoYouHaveABusinessNamePage extends QuestionPage[Boolean] {
 
-class DoYouHaveBusinessNameFormProvider @Inject() extends Mappings {
+  override def path: JsPath = JsPath \ toString
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("cwf1.doYouHaveBusinessName.error.required")
-    )
+  override def toString: String = "doYouHaveABusinessName"
 }

@@ -186,10 +186,10 @@ POST        /cwf1/enter-previous-last-name/:journeyId            controllers.cwf
 GET         /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/enter-previous-last-name/change/:journeyId     controllers.cwf1.EnterPreviousLastNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET         /cwf1/does-business-have-name/:journeyId                        controllers.cwf1.DoYouHaveBusinessNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
-POST        /cwf1/does-business-have-name/:journeyId                        controllers.cwf1.DoYouHaveBusinessNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
-GET         /cwf1/does-business-have-name/change/:journeyId                  controllers.cwf1.DoYouHaveBusinessNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
-POST        /cwf1/does-business-have-name/change/:journeyId                  controllers.cwf1.DoYouHaveBusinessNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+GET         /cwf1/does-business-have-name/:journeyId                        controllers.cwf1.DoYouHaveABusinessNameController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/does-business-have-name/:journeyId                        controllers.cwf1.DoYouHaveABusinessNameController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/does-business-have-name/change/:journeyId                  controllers.cwf1.DoYouHaveABusinessNameController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/does-business-have-name/change/:journeyId                  controllers.cwf1.DoYouHaveABusinessNameController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
 GET         /cwf1/contact-details/:journeyId                         controllers.cwf1.ContactDetailsController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
 POST        /cwf1/contact-details/:journeyId                         controllers.cwf1.ContactDetailsController.onSubmit(journeyId: String, mode: Mode = NormalMode)

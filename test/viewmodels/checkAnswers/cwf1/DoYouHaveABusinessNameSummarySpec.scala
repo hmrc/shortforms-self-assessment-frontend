@@ -19,65 +19,66 @@ package viewmodels.checkAnswers.cwf1
 import base.SpecBase
 import models.CheckMode
 import org.scalatest.LoneElement.convertToCollectionLoneElementWrapper
-import pages.cwf1.DoYouHaveBusinessNamePage
+import pages.cwf1.DoYouHaveABusinessNamePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
-class DoYouHaveBusinessNameSummarySpec extends SpecBase {
+class DoYouHaveABusinessNameSummarySpec extends SpecBase {
 
   private given Messages = play.api.test.Helpers.stubMessages()
 
-  "DoYouHaveBusinessNameSummary" - {
+  "DoYouHaveABusinessNameSummary" - {
     "when the answer is present" - {
       "must return a SummaryListRow with 'yes' text and change link" in {
 
-        val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, true).success.value
+        val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, true).success.value
 
-        val row = DoYouHaveBusinessNameSummary.row(userAnswers).value
+        val row = DoYouHaveABusinessNameSummary.row(userAnswers).value
 
-        row.key.content.asHtml.toString() mustEqual "cwf1.doYouHaveBusinessName.checkYourAnswersLabel"
+        row.key.content.asHtml.toString() mustEqual "cwf1.doYouHaveABusinessName.checkYourAnswersLabel"
 
         val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
         contentString mustEqual "site.yes"
 
         val actionItem = row.actions.get.items.loneElement
-        actionItem.href mustEqual controllers.cwf1.routes.DoYouHaveBusinessNameController
+        actionItem.href mustEqual controllers.cwf1.routes.DoYouHaveABusinessNameController
           .onPageLoad(userAnswersId, CheckMode)
           .url
 
         actionItem.content.asHtml.toString() must include("site.change")
-        actionItem.visuallyHiddenText.value mustEqual "cwf1.doYouHaveBusinessName.change.hidden"
+        actionItem.visuallyHiddenText.value mustEqual "cwf1.doYouHaveABusinessName.change.hidden"
         actionItem.attributes("id")          must include("business-name")
 
       }
 
       "must return a SummaryListRow with 'no' text and change link" in {
 
-        val userAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, false).success.value
+        val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, false).success.value
 
-        val row = DoYouHaveBusinessNameSummary.row(userAnswers).value
+        val row = DoYouHaveABusinessNameSummary.row(userAnswers).value
 
-        row.key.content.asHtml.toString() mustEqual "cwf1.doYouHaveBusinessName.checkYourAnswersLabel"
+        row.key.content.asHtml.toString() mustEqual "cwf1.doYouHaveABusinessName.checkYourAnswersLabel"
 
         val contentString = row.value.content.asInstanceOf[Text].asHtml.toString()
         contentString mustEqual "site.no"
 
         val actionItem = row.actions.get.items.loneElement
-        actionItem.href mustEqual controllers.cwf1.routes.DoYouHaveBusinessNameController
+        actionItem.href mustEqual controllers.cwf1.routes.DoYouHaveABusinessNameController
           .onPageLoad(userAnswersId, CheckMode)
           .url
 
         actionItem.content.asHtml.toString() must include("site.change")
-        actionItem.visuallyHiddenText.value mustEqual "cwf1.doYouHaveBusinessName.change.hidden"
+        actionItem.visuallyHiddenText.value mustEqual "cwf1.doYouHaveABusinessName.change.hidden"
         actionItem.attributes("id")          must include("business-name")
 
       }
-    }
-  }
 
-  "when the answer is not present" - {
-    "must return None" in {
-      DoYouHaveBusinessNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
+    }
+
+    "when the answer is not present" - {
+      "must return None" in {
+        DoYouHaveABusinessNameSummary.row(emptyUserAnswers).isEmpty mustEqual true
+      }
     }
   }
 }

@@ -17,22 +17,22 @@
 package views.cwf1
 
 import base.SpecBase
-import forms.cwf1.DoYouHaveBusinessNameFormProvider
+import forms.cwf1.DoYouHaveABusinessNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.FakeRequest
-import views.html.cwf1.DoYouHaveBusinessNameView
+import views.html.cwf1.DoYouHaveABusinessNameView
 
-class DoYouHaveBusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
+class DoYouHaveABusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
-  private val doYouHaveBusinessNameFormProvider = new DoYouHaveBusinessNameFormProvider()
-  private val form                              = doYouHaveBusinessNameFormProvider()
+  private val doYouHaveABusinessNameFormProvider = new DoYouHaveABusinessNameFormProvider()
+  private val form                               = doYouHaveABusinessNameFormProvider()
 
-  "DoYouHaveBusinessNameView" - {
+  "DoYouHaveABusinessNameView" - {
     "must render the page title and main heading" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveBusinessNameView]
+      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -41,15 +41,15 @@ class DoYouHaveBusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
           view(form, userAnswersId, NormalMode)(request, msgs).body
         )
 
-      doc.title() must include(msgs("cwf1.doYouHaveBusinessName.title"))
+      doc.title() must include(msgs("cwf1.doYouHaveABusinessName.title"))
 
       doc.select("h1").size() mustEqual 1
-      doc.select("h1").text() mustEqual msgs("cwf1.doYouHaveBusinessName.heading")
+      doc.select("h1").text() mustEqual msgs("cwf1.doYouHaveABusinessName.heading")
     }
 
     "must render yes and no radio buttons" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveBusinessNameView]
+      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -66,7 +66,7 @@ class DoYouHaveBusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render the continue button" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveBusinessNameView]
+      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
       val request = FakeRequest()
       val msgs    = messages(app)
 
@@ -80,7 +80,7 @@ class DoYouHaveBusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render an error summary when the form contains errors" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveBusinessNameView]
+      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
       val request = FakeRequest()
       val msgs    = messages(app)
 

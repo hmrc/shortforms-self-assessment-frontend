@@ -17,24 +17,24 @@
 package controllers.cwf1
 
 import controllers.{AppController, AppControllerComponents}
-import forms.cwf1.DoYouHaveBusinessNameFormProvider
+import forms.cwf1.DoYouHaveABusinessNameFormProvider
 import models.Mode
 import navigation.Cwf1Navigator
-import pages.cwf1.DoYouHaveBusinessNamePage
+import pages.cwf1.DoYouHaveABusinessNamePage
 import play.api.data.Form
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
-import views.html.cwf1.DoYouHaveBusinessNameView
+import views.html.cwf1.DoYouHaveABusinessNameView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DoYouHaveBusinessNameController @Inject() (
+class DoYouHaveABusinessNameController @Inject() (
   sessionRepository: SessionRepository,
   navigator: Cwf1Navigator,
-  formProvider: DoYouHaveBusinessNameFormProvider,
+  formProvider: DoYouHaveABusinessNameFormProvider,
   val controllerComponents: AppControllerComponents,
-  view: DoYouHaveBusinessNameView
+  view: DoYouHaveABusinessNameView
 )(implicit ec: ExecutionContext)
     extends AppController {
 
@@ -42,7 +42,7 @@ class DoYouHaveBusinessNameController @Inject() (
 
   def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
-    val preparedForm = request.userAnswers.get(DoYouHaveBusinessNamePage) match {
+    val preparedForm = request.userAnswers.get(DoYouHaveABusinessNamePage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -58,9 +58,9 @@ class DoYouHaveBusinessNameController @Inject() (
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
           value =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveBusinessNamePage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(DoYouHaveABusinessNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(DoYouHaveBusinessNamePage, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(DoYouHaveABusinessNamePage, mode, updatedAnswers))
         )
   }
 }

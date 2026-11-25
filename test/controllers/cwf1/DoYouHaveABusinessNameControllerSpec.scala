@@ -18,28 +18,28 @@ package controllers.cwf1
 
 import base.SpecBase
 import controllers.MockAppControllerComponents
-import forms.cwf1.DoYouHaveBusinessNameFormProvider
+import forms.cwf1.DoYouHaveABusinessNameFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.cwf1.DoYouHaveBusinessNamePage
+import pages.cwf1.DoYouHaveABusinessNamePage
 import play.api.data.Form
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
-import views.html.cwf1.DoYouHaveBusinessNameView
+import views.html.cwf1.DoYouHaveABusinessNameView
 
 import scala.concurrent.Future
 
-class DoYouHaveBusinessNameControllerSpec extends SpecBase with MockitoSugar {
+class DoYouHaveABusinessNameControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  "DoYouHaveBusinessName Controller" - {
+  "DoYouHaveABusinessName Controller" - {
     "must return OK and the correct view for a GET" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers
 
@@ -56,7 +56,7 @@ class DoYouHaveBusinessNameControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in new Setup {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(DoYouHaveBusinessNamePage, true).success.value
+      val userAnswers: UserAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, true).success.value
 
       private val result = controllerUnderTest.onPageLoad(userAnswersId, NormalMode)(FakeRequest())
 
@@ -107,18 +107,18 @@ class DoYouHaveBusinessNameControllerSpec extends SpecBase with MockitoSugar {
     protected val userAnswers: UserAnswers
 
     protected val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    protected val mockView: DoYouHaveBusinessNameView      = mock
-    protected val mockContent                              = "DoYouHaveBusinessName"
-    private val doYouHaveBusinessNameFormProvider          = new DoYouHaveBusinessNameFormProvider()
-    protected val form: Form[Boolean]                      = doYouHaveBusinessNameFormProvider()
+    protected val mockView: DoYouHaveABusinessNameView     = mock
+    protected val mockContent                              = "DoYouHaveABusinessName"
+    private val doYouHaveABusinessNameFormProvider         = new DoYouHaveABusinessNameFormProvider()
+    protected val form: Form[Boolean]                      = doYouHaveABusinessNameFormProvider()
 
     when(mockView(any(), any(), any())(any(), any()))
       .thenReturn(Html(mockContent))
 
-    protected lazy val controllerUnderTest = new DoYouHaveBusinessNameController(
+    protected lazy val controllerUnderTest = new DoYouHaveABusinessNameController(
       mockSessionRepository,
       new Cwf1Navigator with FakeNavigator(onwardRoute),
-      doYouHaveBusinessNameFormProvider,
+      doYouHaveABusinessNameFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView
     )

@@ -88,14 +88,14 @@ class Cwf1Navigator @Inject() () extends Navigator {
           case _                                                                                             =>
             controllers.cwf1.routes.StartController.onPageLoad()
         }
-    case DoYouHaveBusinessNamePage              =>
+    case DoYouHaveABusinessNamePage             =>
       ua =>
-        ua.get(DoYouHaveBusinessNamePage) match {
+        ua.get(DoYouHaveABusinessNamePage) match {
           case Some(true)  =>
-            controllers.cwf1.routes.DoYouHaveBusinessNameController
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
               .onPageLoad(ua.id, NormalMode) // TODO change to enter business name
           case Some(false) =>
-            controllers.cwf1.routes.DoYouHaveBusinessNameController
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
               .onPageLoad(ua.id, NormalMode) // TODO change to self employed work
           case _           =>
             controllers.cwf1.routes.StartController.onPageLoad()
@@ -113,8 +113,8 @@ class Cwf1Navigator @Inject() () extends Navigator {
   protected val checkRouteMap: Page => UserAnswers => Call = {
     case AreYouAnAgentPage                      => areYouAnAgentCheckRoute
     case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
+    case DoYouHaveABusinessNamePage             => doYouHaveABusinessNameCheckRoute
     case MoveAddressPage                        => moveAddressCheckRoute
-    case DoYouHaveBusinessNamePage              => doYouHaveBusinessNameCheckRoute
     case _                                      => checkYourAnswersRoute
   }
 
@@ -166,8 +166,8 @@ class Cwf1Navigator @Inject() () extends Navigator {
         controllers.cwf1.routes.StartController.onPageLoad()
     }
 
-  private def doYouHaveBusinessNameCheckRoute(ua: UserAnswers): Call =
-    ua.get(DoYouHaveBusinessNamePage) match {
+  private def doYouHaveABusinessNameCheckRoute(ua: UserAnswers): Call =
+    ua.get(DoYouHaveABusinessNamePage) match {
       case Some(true) if ua.get(EnterUTRPage).isEmpty =>
         controllers.cwf1.routes.EnterUTRController
           .onPageLoad(ua.id, CheckMode) // TODO change to enter business name page and controller

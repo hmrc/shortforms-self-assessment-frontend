@@ -19,12 +19,12 @@ package forms.cwf1
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class DoYouHaveBusinessNameFormProviderSpec extends BooleanFieldBehaviours {
+class DoYouHaveABusinessNameFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "cwf1.doYouHaveBusinessName.error.required"
+  val requiredKey = "cwf1.doYouHaveABusinessName.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new DoYouHaveBusinessNameFormProvider()()
+  val form = new DoYouHaveABusinessNameFormProvider()()
 
   ".value" - {
 
