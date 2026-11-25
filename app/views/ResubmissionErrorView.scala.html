@@ -23,7 +23,7 @@
         p: Paragraph,
 )
 
-@()(implicit rh: RequestHeader, messages: Messages)
+@(landingPage: String)(implicit rh: RequestHeader, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("resubmissionError.title"), serviceName = "service.name"),
@@ -37,7 +37,7 @@
         @Html(
             messages(
                 "resubmissionError.p2",
-                s"""<a class="govuk-link" href="/self-assessment-forms/sa1/start">${messages("resubmissionError.p2.linkText1")}</a>""",
+                s"""<a class="govuk-link" href="$landingPage">${messages("resubmissionError.p2.linkText1")}</a>""",
                 s"""<a class="govuk-link" href="/home">${messages("resubmissionError.p2.linkText2")}</a>"""
             )
         )

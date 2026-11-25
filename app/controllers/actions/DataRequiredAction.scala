@@ -17,7 +17,7 @@
 package controllers.actions
 
 import handlers.ErrorHandler
-import models.JourneyType
+import models.{JourneyType, ServiceProps}
 import models.requests.{DataRequest, IdentifierRequest}
 import play.api.http.Status.NOT_FOUND
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -53,7 +53,8 @@ class DataRequiredActionImpl @Inject() (
             case Some(userAnswers) =>
               userAnswers.confirmation match {
                 case Some(confirmation) =>
-                  Future.successful(Left(Gone(resubmissionErrorView())))
+                  val service = ServiceProps.apply(using request)
+                  Future.successful(Left(Gone(resubmissionErrorView(service.landingPage))))
                 case None               =>
                   Future.successful(Right(new DataRequest(request, userAnswers)))
               }

@@ -146,7 +146,7 @@ class DataRequiredActionSpec extends SpecBase with MockitoSugar {
     private val mockResubmissionErrorView: ResubmissionErrorView = mock[ResubmissionErrorView]
     protected val mockResubmissionErrorContent                   = "Already submitted"
 
-    when(mockResubmissionErrorView.apply()(any[Request[?]], any[Messages])) thenReturn Html(
+    when(mockResubmissionErrorView.apply(any)(any[Request[?]], any[Messages])) thenReturn Html(
       mockResubmissionErrorContent
     )
     when(mockErrorHandler.onClientError(any[RequestHeader], eqTo(NOT_FOUND), any[String])) thenReturn Future.successful(

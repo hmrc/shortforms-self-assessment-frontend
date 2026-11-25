@@ -24,13 +24,14 @@ import views.html.ResubmissionErrorView
 
 class ResubmissionErrorViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
-  private val view    = app.injector.instanceOf[ResubmissionErrorView]
-  private val request = FakeRequest()
-  val msgs            = messages(app)
+  private val view        = app.injector.instanceOf[ResubmissionErrorView]
+  private val request     = FakeRequest()
+  val msgs                = messages(app)
+  private val landingPage = "/self-assessment-forms/sa1/start"
 
   "ResubmissionErrorView" - {
     "render the page title and main heading" in {
-      val doc = Jsoup.parse(view()(request, msgs).body)
+      val doc = Jsoup.parse(view(landingPage)(request, msgs).body)
 
       doc.title() must include(msgs("resubmissionError.title"))
       doc.select("h1").size() mustBe 1
@@ -38,7 +39,7 @@ class ResubmissionErrorViewSpec extends SpecBase with GuiceOneAppPerSuite {
     }
 
     "must render the paragraphs" in {
-      val doc        = Jsoup.parse(view()(request, msgs).body)
+      val doc        = Jsoup.parse(view(landingPage)(request, msgs).body)
       val paragraphs = doc.select("p").eachText().toArray.toSeq
 
       paragraphs must contain(msgs("resubmissionError.p1"))
@@ -49,10 +50,10 @@ class ResubmissionErrorViewSpec extends SpecBase with GuiceOneAppPerSuite {
     }
 
     "must render the embedded links" in {
-      val doc = Jsoup.parse(view()(request, msgs).body)
+      val doc = Jsoup.parse(view(landingPage)(request, msgs).body)
 
       val link1 = doc.select(
-        """a[href="/self-assessment-forms/sa1/start"]"""
+        s"""a[href="$landingPage"]"""
       )
       link1.size() mustBe 1
       link1.text() mustBe msgs("resubmissionError.p2.linkText1")
