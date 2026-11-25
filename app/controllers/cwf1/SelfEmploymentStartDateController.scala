@@ -28,25 +28,24 @@ import views.html.cwf1.SelfEmploymentStartDateView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class SelfEmploymentStartDateController @Inject()(
-                                                   val controllerComponents: AppControllerComponents,
-                                                   formProvider: SelfEmploymentStartDateFormProvider,
-                                                   sessionRepository: SessionRepository,
-                                                   navigator: Cwf1Navigator,
-                                                   view: SelfEmploymentStartDateView
-                                      )extends AppController {
+class SelfEmploymentStartDateController @Inject() (
+  val controllerComponents: AppControllerComponents,
+  formProvider: SelfEmploymentStartDateFormProvider,
+  sessionRepository: SessionRepository,
+  navigator: Cwf1Navigator,
+  view: SelfEmploymentStartDateView
+) extends AppController {
 
-  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) {
-    implicit request =>
+  def onPageLoad(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId) { implicit request =>
 
-      val form = formProvider()
+    val form = formProvider()
 
-      val preparedForm = request.userAnswers.get(SelfEmploymentStartDatePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(SelfEmploymentStartDatePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, journeyId, mode))
+    Ok(view(preparedForm, journeyId, mode))
   }
 
   def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = CWF1DataAction(journeyId).async {
@@ -54,15 +53,15 @@ class SelfEmploymentStartDateController @Inject()(
 
       val form = formProvider()
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelfEmploymentStartDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(SelfEmploymentStartDatePage, mode, updatedAnswers))
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, journeyId, mode))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(SelfEmploymentStartDatePage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(SelfEmploymentStartDatePage, mode, updatedAnswers))
+        )
   }
 }

@@ -30,18 +30,18 @@ class SelfEmploymentStartDateFormProvider @Inject() extends Mappings {
   def apply()(implicit messages: Messages): Form[LocalDate] =
     val minimumDate = LocalDate.of(1753, 1, 3)
     Form(
-        "selfEmploymentStartDate" -> localDate(
-          invalidKey = "cwf1.selfEmploymentStartDate.date.error.invalid",
-          allRequiredKey = "cwf1.selfEmploymentStartDate.date.error.required",
-          twoRequiredKey = "cwf1.selfEmploymentStartDate.date.error.requiredTwo",
-          requiredKey = "cwf1.selfEmploymentStartDate.date.error.requiredOne",
-          numericOnly = true
-        ).verifying(
-          minDate(
-            minimumDate,
-            "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum",
-            minimumDate.format(dateFormatter)
-          )
+      "selfEmploymentStartDate" -> localDate(
+        invalidKey = "cwf1.selfEmploymentStartDate.date.error.invalid",
+        allRequiredKey = "cwf1.selfEmploymentStartDate.date.error.required",
+        twoRequiredKey = "cwf1.selfEmploymentStartDate.date.error.requiredTwo",
+        requiredKey = "cwf1.selfEmploymentStartDate.date.error.requiredOne",
+        numericOnly = true
+      ).verifying(
+        minDate(
+          minimumDate,
+          "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum",
+          minimumDate.format(dateFormatter)
         )
       )
-} 
+    )
+}

@@ -52,7 +52,9 @@ class SelfEmploymentStartDateSummarySpec extends SpecBase {
         .onPageLoad(userAnswersId, CheckMode)
         .url
       result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
-      result.head.actions.value.items.head.visuallyHiddenText.value must include(msgs("cwf1.selfEmploymentStartDate.change.hidden"))
+      result.head.actions.value.items.head.visuallyHiddenText.value must include(
+        msgs("cwf1.selfEmploymentStartDate.change.hidden")
+      )
       result.head.actions.value.items.head.attributes("id")         must include("self-employment-start")
     }
   }

@@ -16,24 +16,22 @@
 
 package viewmodels.checkAnswers.cwf1
 
-import controllers.routes
 import models.{CheckMode, UserAnswers}
 import pages.cwf1.SelfEmploymentStartDatePage
-import play.api.i18n.{Lang, Messages}
+import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 import java.time.format.DateTimeFormatter
 
-object SelfEmploymentStartDateSummary  {
+object SelfEmploymentStartDateSummary {
 
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def rows(
-            answers: UserAnswers
-          )(implicit messages: Messages): Seq[SummaryListRow] =
+    answers: UserAnswers
+  )(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(SelfEmploymentStartDatePage).toSeq.flatMap { answer =>
       Seq(
         SummaryListRowViewModel(
@@ -50,4 +48,3 @@ object SelfEmploymentStartDateSummary  {
       )
     }
 }
-

@@ -26,11 +26,11 @@ import java.time.LocalDate
 class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
 
   private val formProvider = new SelfEmploymentStartDateFormProvider()
-  private val msgs = stubMessages()
-  private val minimumDate             = LocalDate.of(1753, 1, 3)
+  private val msgs         = stubMessages()
+  private val minimumDate  = LocalDate.of(1753, 1, 3)
 
   private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  private val form = formProvider()(msgs)
+  private val form          = formProvider()(msgs)
 
   private val minimumDateError = FormError(
     "selfEmploymentStartDate",
@@ -40,14 +40,14 @@ class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
 
   "SelfEmploymentStartDateFormProvider" - {
 
-    "selfEmploymentStartDate" - {      
+    "selfEmploymentStartDate" - {
 
       mandatoryDateField(
         form,
         "selfEmploymentStartDate",
         "cwf1.selfEmploymentStartDate.date.error.required"
       )
-    
+
       "accept the minimum date" in {
         val result = form.bind(dateData(minimumDate))
 
@@ -57,7 +57,7 @@ class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
 
       "reject a date before the minimum date" in {
         val dateBeforeMinimum = minimumDate.minusDays(1)
-        val result = form.bind(dateData(dateBeforeMinimum))
+        val result            = form.bind(dateData(dateBeforeMinimum))
 
         result.errors must contain only minimumDateError
       }
@@ -66,8 +66,8 @@ class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
 
   private def dateData(date: LocalDate): Map[String, String] =
     Map(
-      "selfEmploymentStartDate.day" -> date.getDayOfMonth.toString,
+      "selfEmploymentStartDate.day"   -> date.getDayOfMonth.toString,
       "selfEmploymentStartDate.month" -> date.getMonthValue.toString,
-      "selfEmploymentStartDate.year" -> date.getYear.toString
+      "selfEmploymentStartDate.year"  -> date.getYear.toString
     )
 }
