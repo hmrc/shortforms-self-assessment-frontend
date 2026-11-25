@@ -602,3 +602,14 @@ resubmissionError.p1 = We have successfully received your recent application.
 resubmissionError.p2 = You can {0} or {1}.
 resubmissionError.p2.linkText1 = start a new application
 resubmissionError.p2.linkText2 = continue to your account
+
+cwf1.selfEmploymentStartDate.title = When did your self-employment start?
+cwf1.selfEmploymentStartDate.heading = When did your self-employment start?
+cwf1.selfEmploymentStartDate.checkYourAnswersLabel = When did your self-employment start?
+cwf1.selfEmploymentStartDate.change.hidden = When did your self-employment start?
+cwf1.selfEmploymentStartDate.hint = For example, 19 3 2002
+cwf1.selfEmploymentStartDate.date.error.required = Enter the start date
+cwf1.selfEmploymentStartDate.date.error.invalid = Start date must be a real date
+cwf1.selfEmploymentStartDate.date.error.requiredOne = Start date must include a {0}
+cwf1.selfEmploymentStartDate.date.error.requiredTwo = Start date must include a {0} and {1}
+cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum = Start date must be on or after 3 January 1753
