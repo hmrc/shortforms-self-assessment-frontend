@@ -27,8 +27,7 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, title = "cwf1.haveYouComeFromNonEuCountry.title", serviceName = "service.cwf1st.name"),
-    serviceName = Some(messages("service.cwf1st.name"))) {
+@layout(pageTitle = title(form, title = "cwf1.haveYouComeFromNonEuCountry.title", serviceName = "service.cwf1.name")) {
 
     @formHelper(action = controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {
 

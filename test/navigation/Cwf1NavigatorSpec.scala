@@ -20,11 +20,9 @@ import base.SpecBase
 import models.*
 import models.cwf1.Name
 import pages.*
-import pages.cwf1.{AreYouAnAgentPage, AreYouEUResidentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage, NamePage}
-import pages.cwf1.{AgentDetailsPage, AreYouAnAgentPage, ContactDetailsPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage, MoveAddressPage}
+import pages.cwf1.*
 
 import java.time.LocalDate
-import pages.cwf1.{AreYouAnAgentPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouComeFromNonEuCountryPage, HaveYouRegisteredForSelfAssessmentPage, NamePage}
 
 class Cwf1NavigatorSpec extends SpecBase {
 
