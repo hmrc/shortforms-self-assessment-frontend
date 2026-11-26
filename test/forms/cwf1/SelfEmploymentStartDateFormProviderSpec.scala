@@ -20,7 +20,6 @@ import forms.behaviours.DateBehaviours
 import play.api.data.FormError
 import play.api.test.Helpers.stubMessages
 
-import java.time.format.DateTimeFormatter
 import java.time.LocalDate
 
 class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
@@ -29,13 +28,11 @@ class SelfEmploymentStartDateFormProviderSpec extends DateBehaviours {
   private val msgs         = stubMessages()
   private val minimumDate  = LocalDate.of(1753, 1, 3)
 
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  private val form          = formProvider()(msgs)
+  private val form = formProvider()(msgs)
 
   private val minimumDateError = FormError(
     "selfEmploymentStartDate",
-    "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum",
-    Seq(minimumDate.format(dateFormatter))
+    "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum"
   )
 
   "SelfEmploymentStartDateFormProvider" - {

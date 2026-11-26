@@ -20,12 +20,10 @@ import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.i18n.Messages
 
-import java.time.format.DateTimeFormatter
 import java.time.LocalDate
 import javax.inject.Inject
 
 class SelfEmploymentStartDateFormProvider @Inject() extends Mappings {
-  private val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
     val minimumDate = LocalDate.of(1753, 1, 3)
@@ -39,8 +37,7 @@ class SelfEmploymentStartDateFormProvider @Inject() extends Mappings {
       ).verifying(
         minDate(
           minimumDate,
-          "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum",
-          minimumDate.format(dateFormatter)
+          "cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum"
         )
       )
     )
