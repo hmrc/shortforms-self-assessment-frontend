@@ -74,13 +74,6 @@ class NameViewSpec extends SpecBase with GuiceOneAppPerSuite {
         controllers.cwf1.routes.NameController.onSubmit(journeyId, CheckMode).url
     }
 
-    "must link back to the SA1 start page" in {
-      val doc = Jsoup.parse(view(form, journeyId, NormalMode)(FakeRequest(), msgs).body)
-
-      doc.select("a.govuk-back-link").attr("href") mustBe
-        controllers.cwf1.routes.StartController.onPageLoad().url
-    }
-
     "must show an error summary and error messages when the form has errors" in {
       val invalidForm = form.bind(Map("firstName" -> "", "lastName" -> ""))
 

@@ -18,8 +18,9 @@ package navigation
 
 import base.SpecBase
 import models.*
+import models.cwf1.Name
 import pages.*
-import pages.cwf1.{AgentDetailsPage, AreYouAnAgentPage, ContactDetailsPage, DoYouHaveAPreviousLastNamePage, EnterUTRPage, HaveYouRegisteredForSelfAssessmentPage, MoveAddressPage}
+import pages.cwf1.*
 
 import java.time.LocalDate
 
@@ -77,11 +78,11 @@ class Cwf1NavigatorSpec extends SpecBase {
             .onPageLoad(journeyId = userAnswersId, mode = NormalMode)
         }
 
-        "must go from have you registered before page to have you registered before when answer is 'no'" in {
+        "must go from have you registered before page to enter name when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(HaveYouRegisteredForSelfAssessmentPage, false).success.value
 
           navigator.nextPage(HaveYouRegisteredForSelfAssessmentPage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.HaveYouRegisteredForSelfAssessmentController.onPageLoad(userAnswersId, NormalMode)
+            controllers.cwf1.routes.NameController.onPageLoad(userAnswersId, NormalMode)
         }
 
         "must go from have you registered before page to Index when answer is empty" in {
@@ -102,16 +103,46 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
         }
 
-        "must go to the previous last name form when answer is 'no'" in {
+        "must go to date of birth page when answer is 'no'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveAPreviousLastNamePage, false).success.value
 
           navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, userAnswers) mustBe
-            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
+            controllers.cwf1.routes.DateOfBirthController.onPageLoad(userAnswersId, NormalMode)
         }
 
         "must go to Index when answer is missing" in {
           navigator.nextPage(DoYouHaveAPreviousLastNamePage, NormalMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+      "when enter UTR page" - {
+        "must go to enter name page" in {
+          val userAnswers = emptyUserAnswers.set(EnterUTRPage, "1234567890").success.value
+
+          navigator.nextPage(EnterUTRPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.NameController.onPageLoad(userAnswersId, NormalMode)
+        }
+      }
+      "when have you come from non Eu country page" - {
+        "must go to have you come from non Eu country page when answer is 'yes'" in { // TODO business name controller
+          val userAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, true).success.value
+
+          navigator.nextPage(HaveYouComeFromNonEuCountryPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(userAnswersId, NormalMode)
+        }
+        "must go to have you come from non Eu country page when answer is 'no'" in { // TODO business name controller
+          val userAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, false).success.value
+
+          navigator.nextPage(HaveYouComeFromNonEuCountryPage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(userAnswersId, NormalMode)
+        }
+      }
+      "when enter name page" - {
+        "must go to do you have previous page" in {
+          val userAnswers = emptyUserAnswers.set(NamePage, Name("John", "Joe")).success.value
+
+          navigator.nextPage(NamePage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
         }
       }
       "when did you move to your address" - {

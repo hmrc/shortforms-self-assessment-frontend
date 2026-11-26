@@ -480,6 +480,7 @@ cwf1.enterUTR.error.length = Your UTR should be 10 digits long
 cwf1.enterUTR.error.invalid = Your UTR can only contain numbers
 cwf1.enterUTR.change.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
+
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
@@ -553,6 +554,12 @@ cwf1.enterPreviousLastName.error.invalid = Your previous last name can only incl
 cwf1.enterPreviousLastName.checkYourAnswersLabel = What was your previous last name?
 cwf1.enterPreviousLastName.change.hidden = What was your previous last name?
 
+cwf1.haveYouComeFromNonEuCountry.title = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.heading = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.error.required = Select Yes if you came to the UK from a non-EU country within the last 12 months
+cwf1.haveYouComeFromNonEuCountry.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
+
 cwf1.moveAddress.title = When did you move to your address?
 cwf1.moveAddress.heading = When did you move to your address?
 cwf1.moveAddress.checkYourAnswersLabel = When did you move to your address?
@@ -582,6 +589,12 @@ cwf1.contactDetails.error.emailAddress.invalid = The email address must only inc
 cwf1.contactDetails.error.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
 cwf1.contactDetails.emailAddress.change.hidden = What are your contact details?
 cwf1.contactDetails.phoneNumber.change.hidden = What are your contact details?
+
+cwf1.areYouEUResident.title = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.heading = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.error.required = Select yes if you came to the UK from a non-EU country within the last 12 months
+cwf1.areYouEUResident.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
 
 resubmissionError.title = You have already submitted this application
 resubmissionError.heading = You have already submitted this application
