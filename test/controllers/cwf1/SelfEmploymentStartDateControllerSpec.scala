@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.cwf1.SelfEmploymentStartDateFormProvider
 import models.{Mode, NormalMode, UserAnswers}
-import navigation.Cwf1Navigator
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -98,8 +98,6 @@ class SelfEmploymentStartDateControllerSpec extends SpecBase with MockitoSugar {
       "must save the date and redirect after a valid submission" in new Setup {
 
         when(sessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-        when(navigator.nextPage(eqTo(SelfEmploymentStartDatePage), eqTo(NormalMode), any[UserAnswers]))
-          .thenReturn(controllers.routes.IndexController.onPageLoad())
 
         val request: FakeRequest[AnyContentAsFormUrlEncoded] =
           FakeRequest(POST, "/").withFormUrlEncodedBody(validDateData.toSeq*)
@@ -107,7 +105,7 @@ class SelfEmploymentStartDateControllerSpec extends SpecBase with MockitoSugar {
         private val result = controllerUnderTest.onSubmit(userAnswersId, NormalMode)(request)
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustEqual Some(controllers.routes.IndexController.onPageLoad().url)
+        redirectLocation(result) mustEqual Some(onwardRoute.url)
 
         val captor: ArgumentCaptor[UserAnswers] =
           ArgumentCaptor.forClass(classOf[UserAnswers])
@@ -123,7 +121,6 @@ class SelfEmploymentStartDateControllerSpec extends SpecBase with MockitoSugar {
   ) {
     protected val mockContent                           = "SelfEmploymentStartDateView"
     protected val mockView: SelfEmploymentStartDateView = mock
-    protected val navigator: Cwf1Navigator              = mock
 
     when(mockView.apply(any[Form[LocalDate]], any[String], any[Mode])(any[Request[?]], any[Messages]))
       .thenReturn(Html(mockContent))
@@ -135,7 +132,7 @@ class SelfEmploymentStartDateControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       formProvider,
       sessionRepository,
-      navigator,
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       mockView
     )
   }

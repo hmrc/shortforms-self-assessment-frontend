@@ -18,6 +18,7 @@ package viewmodels.checkAnswers.cwf1
 
 import base.SpecBase
 import models.CheckMode
+import org.scalatest.LoneElement.convertToCollectionLoneElementWrapper
 import pages.cwf1.SelfEmploymentStartDatePage
 import play.api.test.Helpers.stubMessages
 
@@ -29,13 +30,13 @@ class SelfEmploymentStartDateSummarySpec extends SpecBase {
 
   "SelfEmploymentStartDateSummary" - {
 
-    "must return no rows when the date of birth answer does not exist" in {
+    "must return no rows when the selfEmploymentStartDate answer does not exist" in {
       val result = SelfEmploymentStartDateSummary.rows(emptyUserAnswers)(msgs)
 
       result mustBe empty
     }
 
-    "must return one row when the date of birth answer exists" in {
+    "must return one row when the selfEmploymentStartDate answer exists" in {
       val selfEmploymentStartDate = LocalDate.of(1990, 5, 10)
 
       val userAnswers = emptyUserAnswers
@@ -45,17 +46,20 @@ class SelfEmploymentStartDateSummarySpec extends SpecBase {
 
       val result = SelfEmploymentStartDateSummary.rows(userAnswers)(msgs)
 
-      result                                                        must have size 1
-      result.head.value.content.toString                            must include("10 May 1990")
-      result.head.key.content.toString                              must include(msgs("cwf1.selfEmploymentStartDate.checkYourAnswersLabel"))
-      result.head.actions.value.items.head.href mustBe controllers.cwf1.routes.SelfEmploymentStartDateController
+      result                                      must have size 1
+      result.head.key.content.asHtml.toString()   must include(msgs("cwf1.selfEmploymentStartDate.checkYourAnswersLabel"))
+      result.head.value.content.asHtml.toString() must include("10 May 1990")
+
+      val actionItem = result.head.actions.value.items.loneElement
+
+      actionItem.href mustBe controllers.cwf1.routes.SelfEmploymentStartDateController
         .onPageLoad(userAnswersId, CheckMode)
         .url
-      result.head.actions.value.items.head.content.toString         must include(msgs("site.change"))
-      result.head.actions.value.items.head.visuallyHiddenText.value must include(
+      actionItem.content.asHtml.toString() must include(msgs("site.change"))
+      actionItem.visuallyHiddenText.value  must include(
         msgs("cwf1.selfEmploymentStartDate.change.hidden")
       )
-      result.head.actions.value.items.head.attributes("id")         must include("self-employment-start")
+      actionItem.attributes("id")          must include("self-employment-start")
     }
   }
 }

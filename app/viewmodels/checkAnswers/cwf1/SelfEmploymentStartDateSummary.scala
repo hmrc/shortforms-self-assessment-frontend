@@ -32,18 +32,16 @@ object SelfEmploymentStartDateSummary {
   def rows(
     answers: UserAnswers
   )(implicit messages: Messages): Seq[SummaryListRow] =
-    answers.get(SelfEmploymentStartDatePage).toSeq.flatMap { answer =>
-      Seq(
-        SummaryListRowViewModel(
-          key = "cwf1.selfEmploymentStartDate.checkYourAnswersLabel",
-          value = ValueViewModel(answer.format(dateFormatter)),
-          actions = Seq(
-            ActionItemViewModel(
-              "site.change",
-              controllers.cwf1.routes.SelfEmploymentStartDateController.onPageLoad(answers.id, CheckMode).url
-            ).withVisuallyHiddenText(messages("cwf1.selfEmploymentStartDate.change.hidden"))
-              .withAttribute("id" -> "self-employment-start")
-          )
+    answers.get(SelfEmploymentStartDatePage).toSeq.map { answer =>
+      SummaryListRowViewModel(
+        key = "cwf1.selfEmploymentStartDate.checkYourAnswersLabel",
+        value = ValueViewModel(answer.format(dateFormatter)),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.cwf1.routes.SelfEmploymentStartDateController.onPageLoad(answers.id, CheckMode).url
+          ).withVisuallyHiddenText(messages("cwf1.selfEmploymentStartDate.change.hidden"))
+            .withAttribute("id" -> "self-employment-start")
         )
       )
     }
