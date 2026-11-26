@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.TrustSettlementDateFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.TrustIncome
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.TrustSettlementDatePage
 import play.api.Logging
 import play.api.mvc.{Action, AnyContent}
@@ -34,7 +34,7 @@ class TrustSettlementDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: TrustSettlementDateFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: TrustSettlementDateView
 ) extends AppController
     with Logging {

@@ -41,7 +41,6 @@ import java.time.Instant
 import scala.concurrent.Future
 
 class DeclarationControllerSpec extends SpecBase {
-
   "DeclarationController" - {
 
     "must pre-populate the name when loading an answered declaration" in new Setup {

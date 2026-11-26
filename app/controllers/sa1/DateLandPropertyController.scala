@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateLandPropertyFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.UkPropertyIncome
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DateLandPropertyPage
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class DateLandPropertyController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateLandPropertyFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: DateLandPropertyView
 ) extends AppController {
 

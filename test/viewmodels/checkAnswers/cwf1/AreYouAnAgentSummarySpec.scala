@@ -73,12 +73,12 @@ class AreYouAnAgentSummarySpec extends SpecBase {
 
       }
     }
-  }
 
-  "when the answer is not present" - {
-    "must return None" in {
+    "when the answer is not present" - {
+      "must return None" in {
 
-      AreYouAnAgentSummary.row(emptyUserAnswers).isEmpty mustEqual true
+        AreYouAnAgentSummary.row(emptyUserAnswers).isEmpty mustEqual true
+      }
     }
   }
 }

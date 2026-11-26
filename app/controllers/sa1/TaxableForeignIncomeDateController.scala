@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.TaxableForeignIncomeDateFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.ForeignIncome
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.TaxableForeignIncomeDatePage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class TaxableForeignIncomeDateController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: TaxableForeignIncomeDateFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: TaxableForeignIncomeDateView
 )(implicit ec: ExecutionContext)
     extends AppController {

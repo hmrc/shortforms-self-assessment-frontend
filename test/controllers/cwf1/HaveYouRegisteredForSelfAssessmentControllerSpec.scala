@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.MockAppControllerComponents
 import forms.cwf1.HaveYouRegisteredForSelfAssessmentFormProvider
 import models.{NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{Cwf1Navigator, FakeNavigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -118,7 +118,7 @@ class HaveYouRegisteredForSelfAssessmentControllerSpec extends SpecBase with Moc
 
     protected lazy val controllerUnderTest = new HaveYouRegisteredForSelfAssessmentController(
       mockSessionRepository,
-      new FakeNavigator(onwardRoute),
+      new Cwf1Navigator with FakeNavigator(onwardRoute),
       haveYouRegisteredForSelfAssessmentFormProvider,
       new MockAppControllerComponents(userAnswers),
       mockView

@@ -20,7 +20,7 @@ import controllers.MockAppControllerComponents
 import forms.sa1.ContactDetailsFormProvider
 import models.sa1.ContactDetails
 import models.{JourneyType, NormalMode, UserAnswers}
-import navigation.Navigator
+import navigation.Sa1Navigator
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.{verify, when}
 import org.scalatest.TryValues
@@ -62,7 +62,7 @@ class ContactDetailsControllerSpec extends AnyWordSpec with Matchers with TryVal
 
     protected val sessionRepository: SessionRepository = mock[SessionRepository]
     protected val view: ContactDetailsView             = mock[ContactDetailsView]
-    protected val navigator: Navigator                 = mock[Navigator]
+    protected val navigator: Sa1Navigator              = mock[Sa1Navigator]
 
     protected lazy val controllerUnderTest = new ContactDetailsController(
       new MockAppControllerComponents(userAnswers),

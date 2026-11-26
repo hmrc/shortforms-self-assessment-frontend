@@ -1,6 +1,6 @@
 service.name              = Self Assessment Forms
 service.sa1.name          = Registering for Self Assessment
-service.cwf1st.name       = Registering for Self Assessment
+service.cwf1.name         = Registering for Self Assessment
 service.ceaseTrading.name = Stopping Self-employment
 
 site.back = Back
@@ -26,8 +26,9 @@ date.error.month = month
 date.error.year = year
 
 timeout.title = You’re about to be signed out
-timeout.message = For security reasons, you will be signed out of this service in
-timeout.keepAlive = Stay signed in
+timeout.message = Your current session will time out in
+timeout.messageSuffix = You will lose any information you have entered.
+timeout.keepAlive = Continue with form
 timeout.signOut = Sign out
 
 error.title.prefix = Error:
@@ -143,7 +144,7 @@ sa1.confirmation.backToAccount.hidden = account homepage
 sa1.addPreviousLastName.title = Do you have a previous last name?
 sa1.addPreviousLastName.heading = Do you have a previous last name?
 sa1.addPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
-sa1.addPreviousLastName.error.required = Select yes if you have a previous last name
+sa1.addPreviousLastName.error.required = Select Yes if you have a previous last name
 sa1.addPreviousLastName.change.hidden = Do you have a previous last name?
 
 sa1.name.title = What is your name?
@@ -165,7 +166,7 @@ sa1.name.lastName.change.hidden = Last name
 sa1.declaration.title = Declaration
 sa1.declaration.heading = Declaration
 sa1.declaration.statement = I confirm that the information I have given is correct and complete to the best of my knowledge. I will tell HMRC straight away if my circumstances change in a way that affects the answers I have given.
-sa1.declaration.name = Full name of person completing this form
+sa1.declaration.name = Full name of person completing this form (optional)
 sa1.declaration.name.error.length = Your name must be 100 characters or less
 sa1.declaration.confirmAndSubmit = Confirm and submit
 sa1.declaration.confirmAndSubmit.hidden = your Self Assessment registration
@@ -200,29 +201,30 @@ sa1.doYouHaveANino.p2 = If none of these apply to you, you can still register fo
 sa1.doYouHaveANino.p2.linkText = find your National Insurance number (opens in a new tab)
 sa1.doYouHaveANino.subHeading = Do you have a National Insurance number?
 sa1.doYouHaveANino.checkYourAnswersLabel = Do you have a National Insurance number?
-sa1.doYouHaveANino.error.required = Select yes if you have a National Insurance number
+sa1.doYouHaveANino.error.required = Select Yes if you have a National Insurance number
 sa1.doYouHaveANino.change.hidden = Do you have a National Insurance number?
+
+address.countryPicker.label = Country or territory
+address.lookup.filter = Property name and number (optional)
+address.editManually = Edit this address manually
+address.line1 = Address line 1
+address.line2 = Address line 2
+address.line3 = Address line 3
+address.town = Town or city
+address.postcode = Postcode
+address.country = Country
+address.line1.error.maxLength = Address line 1 must be 35 characters or less
+address.line2.error.maxLength = Address line 2 must be 35 characters or less
+address.line3.error.maxLength = Address line 3 must be 35 characters or less
+address.town.error.maxLength = Town or city must be 35 characters or less
 
 sa1.address.label = Address
 sa1.address.countryPicker.title = What is the country or territory of your home address?
-sa1.address.countryPicker.label = Country or territory
 sa1.address.lookup.title = Search for your address
-sa1.address.lookup.filter = Property name and number (optional)
 sa1.address.edit.title = What is your address?
 sa1.address.select.title = Choose your address
 sa1.address.confirm.title = Review your address
 sa1.address.enterManually = Enter your address manually
-sa1.address.editManually = Edit this address manually
-sa1.address.line1 = Address line 1
-sa1.address.line2 = Address line 2
-sa1.address.line3 = Address line 3
-sa1.address.town = Town or city
-sa1.address.postcode = Postcode
-sa1.address.country = Country
-sa1.address.line1.error.maxLength = Address line 1 must be 35 characters or less
-sa1.address.line2.error.maxLength = Address line 2 must be 35 characters or less
-sa1.address.line3.error.maxLength = Address line 3 must be 35 characters or less
-sa1.address.town.error.maxLength = Town or city must be 35 characters or less
 sa1.address.checkYourAnswersLabel = Home address
 sa1.address.change.hidden = Home address
 
@@ -241,7 +243,6 @@ sa1.contactDetails.phoneNumber.change.hidden = Phone number
 sa1.contactDetails.emailAddress.hint = We will use this to send you a receipt of your registration
 sa1.contactDetails.phoneNumber.hint = This can be a home, work or mobile telephone number
 sa1.contactDetails.emailAddress.invalid = The email address must only include letters, numbers, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
-sa1.contactDetails.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
 sa1.contactDetails.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
 
 sa1.noNinoReason.title = Why do you not have a National Insurance number?
@@ -443,11 +444,161 @@ cwf1.start.save.form = Ensure you have these before you start. You cannot save t
 cwf1.areYouAnAgent.title = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.heading = Are you an authorised agent representing a client?
 cwf1.areYouAnAgent.checkYourAnswersLabel = Are you an authorised agent representing a client?
-cwf1.areYouAnAgent.error.required = Select yes if you are an authorised agent
+cwf1.areYouAnAgent.error.required = Select Yes if you are an authorised agent
 cwf1.areYouAnAgent.change.hidden = Are you an authorised agent representing a client?
+
+cwf1.agentAddress.countryPicker.title = What is the country or territory of the agent’s address?
+cwf1.agentAddress.lookup.title = Search for the agent’s address
+cwf1.agentAddress.edit.title = What is the agent’s address?
+cwf1.agentAddress.select.title = Choose the agent’s address
+cwf1.agentAddress.confirm.title = Review your address
+cwf1.agentAddress.enterManually = Enter the agent’s address manually
+
+cwf1.homeAddress.countryPicker.title = What is the country or territory of your home address?
+cwf1.homeAddress.lookup.title = Search for your home address
+cwf1.homeAddress.edit.title = What is your home address?
+cwf1.homeAddress.select.title = Choose your home address
+cwf1.homeAddress.confirm.title = Review your home address
+cwf1.homeAddress.enterManually = Enter your home address manually
+
+cwf1.previousHomeAddress.countryPicker.title = What is the country or territory of your previous home address?
+cwf1.previousHomeAddress.lookup.title = Search for your previous home address
+cwf1.previousHomeAddress.edit.title = What is your previous home address?
+cwf1.previousHomeAddress.select.title = Choose your previous home address
+cwf1.previousHomeAddress.confirm.title = Review your previous home address
+cwf1.previousHomeAddress.enterManually = Enter your previous home address manually
+
+cwf1.enterUTR.title = Your Self Assessment Unique Taxpayer Reference (UTR)
+cwf1.enterUTR.heading = Your Self Assessment Unique Taxpayer Reference (UTR)
+cwf1.enterUTR.content = You can find it in your Personal Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
+cwf1.enterUTR.linkText = Get more help to find your UTR (opens in new tab)
+cwf1.enterUTR.subHeading = What is your Self Assessment UTR?
+cwf1.enterUTR.hint = Your UTR is 10 digits long.
+cwf1.enterUTR.checkYourAnswersLabel = Self Assessment UTR
+cwf1.enterUTR.error.required = Enter your UTR
+cwf1.enterUTR.error.length = Your UTR should be 10 digits long
+cwf1.enterUTR.error.invalid = Your UTR can only contain numbers
+cwf1.enterUTR.change.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
+cwf1.enterUTR.hidden = Your Self Assessment Unique Taxpayer Reference (UTR)
 
 cwf1.haveRegisteredForSelfAssessment.title = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.heading = Have you registered for Self Assessment before?
 cwf1.haveRegisteredForSelfAssessment.checkYourAnswersLabel = Have you registered for Self Assessment before?
-cwf1.haveRegisteredForSelfAssessment.error.required = Select yes if you have registered for Self Assessment before
+cwf1.haveRegisteredForSelfAssessment.error.required = Select Yes if you have registered for Self Assessment before
 cwf1.haveRegisteredForSelfAssessment.change.hidden = Have you registered for Self Assessment before?
+
+cwf1.agentDetails.title = Agent’s details
+cwf1.agentDetails.heading = Agent’s details
+cwf1.agentDetails.fullName = What is the agent’s full name?
+cwf1.agentDetails.clientReference = What is the client reference for this client (optional)?
+cwf1.agentDetails.fullName.checkYourAnswersLabel = Agent’s full name
+cwf1.agentDetails.clientReference.checkYourAnswersLabel = Agent’s client reference
+cwf1.agentDetails.error.fullName.required = Enter the agent’s full name
+cwf1.agentDetails.error.fullName.invalid = The agent’s full name can only contain letters, numbers, hyphens, spaces and apostrophes
+cwf1.agentDetails.error.fullName.length = The agent’s full name must be no more than 100 characters
+cwf1.agentDetails.error.clientReference.length = The client reference must be no more than 50 characters
+cwf1.agentDetails.fullName.change.hidden = Agent’s full name
+cwf1.agentDetails.clientReference.change.hidden = Agent’s client reference
+
+cwf1.doYouHaveAPreviousLastName.title = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.heading = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.checkYourAnswersLabel = Do you have a previous last name?
+cwf1.doYouHaveAPreviousLastName.error.required = Select Yes if you have a previous last name
+cwf1.doYouHaveAPreviousLastName.change.hidden = Do you have a previous last name?
+
+cwf1.moveAddress.title = When did you move to your home address?
+cwf1.moveAddress.heading = When did you move to your home address?
+cwf1.moveAddress.checkYourAnswersLabel = When did you move to your home address?
+cwf1.moveAddress.change.hidden = When did you move to your home address?
+cwf1.moveAddress.hint = For example, 19 3 2002
+cwf1.moveAddress.date.error.required = Enter the date you moved to your address
+cwf1.moveAddress.date.error.invalid = Date of move must be a real date
+cwf1.moveAddress.date.error.requiredOne = Date of move must include a {0}
+cwf1.moveAddress.date.error.requiredTwo = Date of move must include a {0} and a {1}
+cwf1.moveAddress.date.error.mustBeInPast = Date of move must be on or before {0}
+cwf1.moveAddress.date.error.mustBeOnOrAfter = Date of move must be on or after {0}
+
+cwf1.name.title = What is your name?
+cwf1.name.heading = What is your name?
+cwf1.name.caption = Registering for Self Assessment
+cwf1.name.firstName = First name
+cwf1.name.lastName = Last name
+cwf1.name.firstName.error.required = Enter your first name
+cwf1.name.firstName.error.length = Your first name must be 100 characters or less
+cwf1.name.firstName.error.invalid = Your first name must only include letters, apostrophes, hyphens or spaces
+cwf1.name.lastName.error.required = Enter your last name
+cwf1.name.lastName.error.length = Your last name must be 100 characters or less
+cwf1.name.lastName.error.invalid = Your last name must only include letters, apostrophes, hyphens or spaces
+cwf1.name.firstName.checkYourAnswersLabel = First name
+cwf1.name.lastName.checkYourAnswersLabel = Last name
+cwf1.name.firstName.change.hidden = First name
+cwf1.name.lastName.change.hidden = Last name
+
+cwf1.dateOfBirth.title = What is your date of birth?
+cwf1.dateOfBirth.heading = What is your date of birth?
+cwf1.dateOfBirth.checkYourAnswersLabel = Date of birth
+cwf1.dateOfBirth.change.hidden = Date of birth
+cwf1.dateOfBirth.hint = For example, 19 3 2002
+cwf1.dateOfBirth.date.error.required = Enter your date of birth
+cwf1.dateOfBirth.date.error.invalid = Date of birth must be a real date
+cwf1.dateOfBirth.date.error.requiredOne = Date of birth must include a {0}
+cwf1.dateOfBirth.date.error.requiredTwo = Date of birth must include a {0} and {1}
+cwf1.dateOfBirth.date.error.mustBeInPast = Date of birth must be on or before {0}
+cwf1.dateOfBirth.date.error.tooOld = Date of birth must be on or after {0}
+
+cwf1.enterPreviousLastName.title = 	What was your previous last name?
+cwf1.enterPreviousLastName.heading = What was your previous last name?
+cwf1.enterPreviousLastName.error.required = Enter your previous last name
+cwf1.enterPreviousLastName.error.length = Your previous last name must be 100 characters or less
+cwf1.enterPreviousLastName.error.invalid = Your previous last name can only include letters, apostrophes, hyphens or spaces
+cwf1.enterPreviousLastName.checkYourAnswersLabel = What was your previous last name?
+cwf1.enterPreviousLastName.change.hidden = What was your previous last name?
+
+cwf1.haveYouComeFromNonEuCountry.title = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.heading = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.haveYouComeFromNonEuCountry.error.required = Select Yes if you came to the UK from a non-EU country within the last 12 months
+cwf1.haveYouComeFromNonEuCountry.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
+
+cwf1.moveAddress.title = When did you move to your address?
+cwf1.moveAddress.heading = When did you move to your address?
+cwf1.moveAddress.checkYourAnswersLabel = When did you move to your address?
+cwf1.moveAddress.change.hidden = When did you move to your address?
+cwf1.moveAddress.hint = For example, 19 3 2002
+cwf1.moveAddress.date.error.required = Enter the date you moved to your address
+cwf1.moveAddress.date.error.invalid = Date of move must be a real date
+cwf1.moveAddress.date.error.requiredOne = Date of move must include a {0}
+cwf1.moveAddress.date.error.requiredTwo = Date of move must include a {0} and a {1}
+cwf1.moveAddress.date.error.mustBeInPast = Date of move must be on or before {0}
+cwf1.moveAddress.date.error.mustBeOnOrAfter = Date of move must be on or after {0}
+
+cwf1.contactDetails.title = What are your contact details?
+cwf1.contactDetails.heading = What are your contact details?
+cwf1.contactDetails.emailAddress = Email address
+cwf1.contactDetails.emailAddress.hint = We will use this to send you a receipt of your registration
+cwf1.contactDetails.phoneNumber = Phone number
+cwf1.contactDetails.phoneNumber.hint = This can be a home, work or mobile telephone number
+cwf1.contactDetails.emailAddress.checkYourAnswersLabel = Email address
+cwf1.contactDetails.phoneNumber.checkYourAnswersLabel = Phone number
+cwf1.contactDetails.checkYourAnswersLabel = ContactDetails
+cwf1.contactDetails.error.emailAddress.required = Enter an email address for this business
+cwf1.contactDetails.error.phoneNumber.required = Enter your phone number
+cwf1.contactDetails.error.emailAddress.length = The email address must be 129 characters or less
+cwf1.contactDetails.error.phoneNumber.length = The phone number must be 40 characters or less
+cwf1.contactDetails.error.emailAddress.invalid = The email address must only include letters, numbers, dots, hyphens or underscores, with one @ symbol in the middle, like name@example.com
+cwf1.contactDetails.error.phoneNumber.invalid = The phone number must only include numbers, spaces and the special characters ( ) + and -
+cwf1.contactDetails.emailAddress.change.hidden = What are your contact details?
+cwf1.contactDetails.phoneNumber.change.hidden = What are your contact details?
+
+cwf1.areYouEUResident.title = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.heading = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
+cwf1.areYouEUResident.error.required = Select yes if you came to the UK from a non-EU country within the last 12 months
+cwf1.areYouEUResident.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
+
+resubmissionError.title = You have already submitted this application
+resubmissionError.heading = You have already submitted this application
+resubmissionError.p1 = We have successfully received your recent application.
+resubmissionError.p2 = You can {0} or {1}.
+resubmissionError.p2.linkText1 = start a new application
+resubmissionError.p2.linkText2 = continue to your account

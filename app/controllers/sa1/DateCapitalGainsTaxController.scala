@@ -20,7 +20,7 @@ import controllers.{AppController, AppControllerComponents}
 import forms.sa1.DateCapitalGainsTaxFormProvider
 import models.Mode
 import models.sa1.WhyTaxReturn.CapitalGainsTax
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.DateCapitalGainsTaxPage
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -33,7 +33,7 @@ class DateCapitalGainsTaxController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: DateCapitalGainsTaxFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: DateCapitalGainsTaxView
 )(implicit ec: ExecutionContext)
     extends AppController {

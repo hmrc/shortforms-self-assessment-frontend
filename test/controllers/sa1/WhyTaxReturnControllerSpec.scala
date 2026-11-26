@@ -21,7 +21,7 @@ import controllers.MockAppControllerComponents
 import forms.sa1.WhyTaxReturnFormProvider
 import models.sa1.{OtherReason, WhyTaxReturn}
 import models.{NormalMode, UserAnswers}
-import navigation.Navigator
+import navigation.Sa1Navigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -165,7 +165,7 @@ class WhyTaxReturnControllerSpec extends SpecBase with MockitoSugar {
     protected val answer: Set[WhyTaxReturn] = Set(WhyTaxReturn.CompanyDirector, WhyTaxReturn.Other)
 
     protected val mockSessionRepository: SessionRepository = mock
-    protected val mockNavigator: Navigator                 = mock
+    protected val mockNavigator: Sa1Navigator              = mock
     protected val mockView: WhyTaxReturnView               = mock
     protected val mockContent                              = "WhyTaxReturnView"
 

@@ -259,4 +259,103 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
 
   }
+
+  "exactLength" - {
+
+    "must return Valid for a string equal to the allowed length" in {
+      val result = exactLength(10, "error.length")("a" * 10)
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a string shorter than the allowed length" in {
+      val result = exactLength(10, "error.length")("a" * 9)
+      result mustEqual Invalid("error.length", 10)
+    }
+
+    "must return Invalid for an empty string" in {
+      val result = exactLength(10, "error.length")("")
+      result mustEqual Invalid("error.length", 10)
+    }
+
+    "must return Invalid for a string longer than the allowed length" in {
+      val result = exactLength(10, "error.length")("a" * 11)
+      result mustEqual Invalid("error.length", 10)
+    }
+  }
+
+  "validateEmail" - {
+    "must return Valid for a valid email address" in {
+      val validEmail = "name@example.com"
+
+      validateEmail("error.invalid")(validEmail) mustEqual Valid
+    }
+
+    "must return Valid when username is exactly 64 chars" in {
+      val emailAddress =
+        s"${"a" * 64}@example.com"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual Valid
+    }
+
+    "must return Valid when domain is exactly 64 chars" in {
+      val domain = ("a" * 60) + ".com"
+
+      validateEmail("error.invalid")(s"name@$domain") mustEqual Valid
+    }
+
+    "must return Invalid when the domain has no dot extension" in {
+      val emailAddress = "name@examplecom"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when email contains no @" in {
+      val emailAddress = "name.example.com"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when email contains multiple @" in {
+      val emailAddress = "name@@example.com"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when the domain starts with a dot" in {
+      val emailAddress = "name@.example.com"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when the domain ends with a dot" in {
+      val emailAddress = "name@example.com."
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when the domain contains consecutive dots" in {
+      val emailAddress = "name@example..com"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+
+    "must return Invalid when the username segment exceeds 64 chars" in {
+      val emailAddress = "a" * 65 + "@examplecom"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+    "must return Invalid when the Domain segment exceeds 64 chars" in {
+      val emailAddress = s"name@${"n" * 64}"
+
+      validateEmail("error.invalid")(emailAddress) mustEqual
+        Invalid("error.invalid")
+    }
+  }
 }

@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.EnterNationalInsuranceNumberFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.{DoYouHaveANinoPage, EnterNationalInsuranceNumberPage}
 import play.api.mvc.{Action, AnyContent}
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class EnterNationalInsuranceNumberController @Inject() (
   val controllerComponents: AppControllerComponents,
   sessionRepository: SessionRepository,
   formProvider: EnterNationalInsuranceNumberFormProvider,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: EnterNationalInsuranceNumberView
 )(implicit ec: ExecutionContext)
     extends AppController {

@@ -21,7 +21,7 @@ import controllers.MockAppControllerComponents
 import forms.sa1.PreviousNameFormProvider
 import models.sa1.PreviousName
 import models.{JourneyType, Mode, NormalMode, UserAnswers}
-import navigation.FakeNavigator
+import navigation.{FakeNavigator, Sa1Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
@@ -69,7 +69,7 @@ class EnterPreviousLastNameControllerSpec extends SpecBase with MockitoSugar {
       new MockAppControllerComponents(userAnswers),
       new PreviousNameFormProvider(),
       sessionRepository,
-      new FakeNavigator(fakeOnwardRoute),
+      new Sa1Navigator with FakeNavigator(fakeOnwardRoute),
       view
     )
   }

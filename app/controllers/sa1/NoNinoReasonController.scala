@@ -19,7 +19,7 @@ package controllers.sa1
 import controllers.{AppController, AppControllerComponents}
 import forms.sa1.NoNinoReasonFormProvider
 import models.Mode
-import navigation.Navigator
+import navigation.Sa1Navigator
 import pages.sa1.{DoYouHaveANinoPage, NoNinoReasonPage}
 import play.api.mvc.*
 import repositories.SessionRepository
@@ -32,7 +32,7 @@ class NoNinoReasonController @Inject() (
   val controllerComponents: AppControllerComponents,
   formProvider: NoNinoReasonFormProvider,
   sessionRepository: SessionRepository,
-  navigator: Navigator,
+  navigator: Sa1Navigator,
   view: NoNinoReasonView
 ) extends AppController {
 
