@@ -192,7 +192,6 @@ class Cwf1NavigatorSpec extends SpecBase {
         }
       }
 
-
       "when do you have a business name page" - {
         "must go to business name page when answer is 'yes'" in {
           val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, true).success.value
