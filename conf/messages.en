@@ -622,3 +622,9 @@ cwf1.selfEmployedWork.error.required = Tell us what you do
 cwf1.selfEmployedWork.error.length = Your work description must be no more than 100 characters
 cwf1.selfEmployedWork.error.invalid = Your work description can only contain letters, numbers, single and double quotes, commas, full stops and hyphens
 cwf1.selfEmployedWork.change.hidden = What self-employed work to you do?
+
+cwf1.areYouUkResident.title = Are you a UK resident?
+cwf1.areYouUkResident.heading = Are you a UK resident?
+cwf1.areYouUkResident.checkYourAnswersLabel = Are you a UK resident?
+cwf1.areYouUkResident.error.required = Select Yes if you are a UK resident
+cwf1.areYouUkResident.change.hidden = Are you a UK resident?

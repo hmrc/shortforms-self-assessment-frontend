@@ -106,6 +106,17 @@ class Cwf1Navigator @Inject() () extends Navigator {
           .onPageLoad(ua.id, NormalMode) // TODO: Redirect to Country of Territory of Home Address Page
     case SelfEmploymentStartDatePage            =>
       ua => controllers.cwf1.routes.SelfEmploymentStartDateController.onPageLoad(ua.id, NormalMode) // TODO
+    case AreYouUkResidentPage                   =>
+      ua =>
+        ua.get(AreYouUkResidentPage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.DoYouHaveABusinessNameController.onPageLoad(ua.id, NormalMode)
+          case Some(false) =>
+            // TODO: Redirect to Have You Come From A Non EU page
+            controllers.cwf1.routes.AreYouUkResidentController.onPageLoad(ua.id, NormalMode)
+          case _           =>
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }
@@ -115,6 +126,7 @@ class Cwf1Navigator @Inject() () extends Navigator {
     case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
     case DoYouHaveABusinessNamePage             => doYouHaveABusinessNameCheckRoute
     case MoveAddressPage                        => moveAddressCheckRoute
+    case AreYouUkResidentPage                   => areYouUkResidentCheckRoute
     case _                                      => checkYourAnswersRoute
   }
 
@@ -174,6 +186,17 @@ class Cwf1Navigator @Inject() () extends Navigator {
       case Some(_)                                    =>
         checkYourAnswersRoute(ua)
       case None                                       =>
+        controllers.cwf1.routes.StartController.onPageLoad()
+    }
+
+  private def areYouUkResidentCheckRoute(ua: UserAnswers): Call =
+    ua.get(AreYouUkResidentPage) match {
+      case Some(false) if ua.get(AreYouAnAgentPage).isEmpty => // TODO: Change to Did you come from the EU answer
+        controllers.cwf1.routes.AreYouAnAgentController
+          .onPageLoad(ua.id, CheckMode)
+      case Some(_)                                          =>
+        checkYourAnswersRoute(ua)
+      case None                                             =>
         controllers.cwf1.routes.StartController.onPageLoad()
     }
 }
