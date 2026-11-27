@@ -49,9 +49,9 @@ class IsBusinessAddressSameAsHomeAddressController @Inject() (
       }
 
       Ok(view(preparedForm, journeyId, mode))
-  }
+    }
 
-  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] = 
+  def onSubmit(journeyId: String, mode: Mode): Action[AnyContent] =
     CWF1DataAction(journeyId).async { implicit request =>
       form
         .bindFromRequest()
@@ -63,5 +63,5 @@ class IsBusinessAddressSameAsHomeAddressController @Inject() (
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(IsBusinessAddressSameAsHomeAddressPage, mode, updatedAnswers))
         )
-  }
+    }
 }
