@@ -92,6 +92,18 @@ class Cwf1Navigator @Inject() () extends Navigator {
       ua =>
         controllers.cwf1.routes.ContactDetailsController
           .onPageLoad(ua.id, NormalMode) // TODO: Redirect to Country of Territory of Home Address Page
+    case IsBusinessAddressSameAsHomeAddressPage =>
+      ua =>
+        ua.get(IsBusinessAddressSameAsHomeAddressPage) match {
+          case Some(true)  =>
+            controllers.cwf1.routes.IsBusinessAddressSameAsHomeAddressController
+              .onPageLoad(ua.id, NormalMode) // TODO: Redirect to work for another person or firm page
+          case Some(false) =>
+            controllers.cwf1.routes.IsBusinessAddressSameAsHomeAddressController
+              .onPageLoad(ua.id, NormalMode) // TODO: Redirect to business address lookup
+          case _           =>
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }
@@ -100,6 +112,7 @@ class Cwf1Navigator @Inject() () extends Navigator {
     case AreYouAnAgentPage                      => areYouAnAgentCheckRoute
     case HaveYouRegisteredForSelfAssessmentPage => haveYouRegisteredForSelfAssessmentCheckRoute
     case MoveAddressPage                        => moveAddressCheckRoute
+    case IsBusinessAddressSameAsHomeAddressPage => isBusinessAddressSameAsHomeAddressCheckRoute
     case _                                      => checkYourAnswersRoute
   }
 
@@ -148,6 +161,17 @@ class Cwf1Navigator @Inject() () extends Navigator {
       case Some(_) =>
         checkYourAnswersRoute(ua)
       case None    =>
+        controllers.cwf1.routes.StartController.onPageLoad()
+    }
+
+  private def isBusinessAddressSameAsHomeAddressCheckRoute(ua: UserAnswers): Call =
+    ua.get(IsBusinessAddressSameAsHomeAddressPage) match {
+      case Some(false) if ua.get(BusinessAddressPage).isEmpty =>
+        controllers.cwf1.routes.IsBusinessAddressSameAsHomeAddressController
+          .onPageLoad(ua.id, CheckMode) // TODO: Redirect to business address lookup
+      case Some(_)                                            =>
+        checkYourAnswersRoute(ua)
+      case None                                               =>
         controllers.cwf1.routes.StartController.onPageLoad()
     }
 }

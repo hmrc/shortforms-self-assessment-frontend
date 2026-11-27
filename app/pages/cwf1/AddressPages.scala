@@ -26,6 +26,12 @@ case object AgentAddressPage extends QuestionPage[ConfirmedAddress] {
   override def toString: String = "agentAddress"
 }
 
+case object BusinessAddressPage extends QuestionPage[ConfirmedAddress] {
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "businessAddress"
+}
+
 case object HomeAddressPage extends QuestionPage[ConfirmedAddress] {
   override def path: JsPath = JsPath \ toString
 

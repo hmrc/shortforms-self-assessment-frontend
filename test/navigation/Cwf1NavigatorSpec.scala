@@ -18,6 +18,7 @@ package navigation
 
 import base.SpecBase
 import models.*
+import models.address.{AddressDetails, ConfirmedAddress}
 import models.cwf1.Name
 import pages.*
 import pages.cwf1.*
@@ -351,6 +352,44 @@ class Cwf1NavigatorSpec extends SpecBase {
           val userAnswers = emptyUserAnswers
 
           navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+
+      "when is business address same as home address page" - {
+        "must go to the business address lookup when no is selected and business address is missing" in {
+          val userAnswers = emptyUserAnswers.set(IsBusinessAddressSameAsHomeAddressPage, false).success.value
+
+          navigator.nextPage(IsBusinessAddressSameAsHomeAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.IsBusinessAddressSameAsHomeAddressController
+              .onPageLoad(userAnswersId, CheckMode) // TODO change to business address lookup
+        }
+
+        "must go to Check Your Answers when no is selected and business address already exists" in {
+          val businessAddress = ConfirmedAddress(AddressDetails(Seq("1 Test Street")), auditRef = "audit-reference")
+          val userAnswers     = emptyUserAnswers
+            .set(IsBusinessAddressSameAsHomeAddressPage, false)
+            .success
+            .value
+            .set(BusinessAddressPage, businessAddress)
+            .success
+            .value
+
+          navigator.nextPage(IsBusinessAddressSameAsHomeAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Check Your Answers when yes is selected" in {
+          val userAnswers = emptyUserAnswers.set(IsBusinessAddressSameAsHomeAddressPage, true).success.value
+
+          navigator.nextPage(IsBusinessAddressSameAsHomeAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to StartController when answer is missing" in {
+          navigator.nextPage(IsBusinessAddressSameAsHomeAddressPage, CheckMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }

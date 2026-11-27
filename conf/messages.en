@@ -596,6 +596,12 @@ cwf1.areYouEUResident.checkYourAnswersLabel = Have you come to the UK from a non
 cwf1.areYouEUResident.error.required = Select yes if you came to the UK from a non-EU country within the last 12 months
 cwf1.areYouEUResident.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
 
+cwf1.isBusinessAddressSameAsHomeAddress.title = Is your business address the same as your home address?
+cwf1.isBusinessAddressSameAsHomeAddress.heading = Is your business address the same as your home address?
+cwf1.isBusinessAddressSameAsHomeAddress.checkYourAnswersLabel = Is your business address the same as your home address?
+cwf1.isBusinessAddressSameAsHomeAddress.error.required = Select yes if your business address is the same as your home address
+cwf1.isBusinessAddressSameAsHomeAddress.change.hidden = Is your business address the same as your home address?
+
 resubmissionError.title = You have already submitted this application
 resubmissionError.heading = You have already submitted this application
 resubmissionError.p1 = We have successfully received your recent application.
