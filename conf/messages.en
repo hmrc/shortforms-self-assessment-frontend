@@ -613,3 +613,12 @@ cwf1.selfEmploymentStartDate.date.error.invalid = Start date must be a real date
 cwf1.selfEmploymentStartDate.date.error.requiredOne = Start date must include a {0}
 cwf1.selfEmploymentStartDate.date.error.requiredTwo = Start date must include a {0} and {1}
 cwf1.selfEmploymentStartDate.date.error.mustBeAfterMinimum = Start date must be on or after 3 January 1753
+
+cwf1.selfEmployedWork.title = What self-employed work to you do?
+cwf1.selfEmployedWork.heading = What self-employed work to you do?
+cwf1.selfEmployedWork.hint = For example, plumbing or hairdressing
+cwf1.selfEmployedWork.checkYourAnswersLabel = What self-employed work to you do?
+cwf1.selfEmployedWork.error.required = Tell us what you do
+cwf1.selfEmployedWork.error.length = Your work description must be no more than 100 characters
+cwf1.selfEmployedWork.error.invalid = Your work description can only contain letters, numbers, single and double quotes, commas, full stops and hyphens
+cwf1.selfEmployedWork.change.hidden = What self-employed work to you do?
