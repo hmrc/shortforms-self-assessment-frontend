@@ -92,6 +92,8 @@ class Cwf1Navigator @Inject() () extends Navigator {
       ua =>
         controllers.cwf1.routes.ContactDetailsController
           .onPageLoad(ua.id, NormalMode) // TODO: Redirect to Country of Territory of Home Address Page
+    case SelfEmploymentStartDatePage            =>
+      ua => controllers.cwf1.routes.SelfEmploymentStartDateController.onPageLoad(ua.id, NormalMode) // TODO
     case _                                      =>
       _ => controllers.cwf1.routes.StartController.onPageLoad()
   }
