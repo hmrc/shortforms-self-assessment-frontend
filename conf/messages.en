@@ -25,6 +25,12 @@ date.error.day = day
 date.error.month = month
 date.error.year = year
 
+nino = National Insurance number
+nino.error.required = Enter your National Insurance number
+nino.error.length = Your National Insurance number can only contain 9 letters and numbers
+nino.error.invalid  = Enter National Insurance number in the correct format
+nino.error.mismatch = Your National Insurance number does not match the one stored in your Government Gateway account
+
 timeout.title = You’re about to be signed out
 timeout.message = Your current session will time out in
 timeout.messageSuffix = You will lose any information you have entered.
@@ -467,6 +473,10 @@ cwf1.previousHomeAddress.edit.title = What is your previous home address?
 cwf1.previousHomeAddress.select.title = Choose your previous home address
 cwf1.previousHomeAddress.confirm.title = Review your previous home address
 cwf1.previousHomeAddress.enterManually = Enter your previous home address manually
+
+cwf1.enterNino.title = What is your National Insurance number?
+cwf1.enterNino.heading = What is your National Insurance number?
+cwf1.enterNino.hint = It’s on your National Insurance card, benefit letter, payslip or P60 – for example, ‘QQ 12 34 56 C’
 
 cwf1.enterUTR.title = Your Self Assessment Unique Taxpayer Reference (UTR)
 cwf1.enterUTR.heading = Your Self Assessment Unique Taxpayer Reference (UTR)
