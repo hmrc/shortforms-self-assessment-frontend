@@ -29,12 +29,12 @@ class DoYouHaveABusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
   private val doYouHaveABusinessNameFormProvider = new DoYouHaveABusinessNameFormProvider()
   private val form                               = doYouHaveABusinessNameFormProvider()
 
+  private val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
+  private val request = FakeRequest()
+  private val msgs    = messages(app)
+
   "DoYouHaveABusinessNameView" - {
     "must render the page title and main heading" in {
-
-      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
-      val request = FakeRequest()
-      val msgs    = messages(app)
 
       val doc =
         Jsoup.parse(
@@ -49,10 +49,6 @@ class DoYouHaveABusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render yes and no radio buttons" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
-      val request = FakeRequest()
-      val msgs    = messages(app)
-
       val doc =
         Jsoup.parse(
           view(form, userAnswersId, NormalMode)(request, msgs).body
@@ -66,10 +62,6 @@ class DoYouHaveABusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
 
     "must render the continue button" in {
 
-      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
-      val request = FakeRequest()
-      val msgs    = messages(app)
-
       val doc =
         Jsoup.parse(
           view(form, userAnswersId, NormalMode)(request, msgs).body
@@ -79,10 +71,6 @@ class DoYouHaveABusinessNameViewSpec extends SpecBase with GuiceOneAppPerSuite {
     }
 
     "must render an error summary when the form contains errors" in {
-
-      val view    = app.injector.instanceOf[DoYouHaveABusinessNameView]
-      val request = FakeRequest()
-      val msgs    = messages(app)
 
       val formWithErrors =
         form.bind(Map("value" -> ""))
