@@ -198,4 +198,4 @@ POST        /cwf1/travel-uk/:journeyId                        controllers.cwf1.H
 GET         /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.HaveYouComeFromNonEuCountryController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/travel-uk/change/:journeyId                  controllers.cwf1.HaveYouComeFromNonEuCountryController.onSubmit(journeyId: String, mode: Mode = CheckMode)
 
-GET         /cwf1/business-activities-help                                   controllers.cwf1.BusinessActivitiesHelpController.onPageLoad(journeyId: String)
+GET         /cwf1/business-activities-help                                 controllers.cwf1.BusinessActivitiesHelpController.onPageLoad()

@@ -60,6 +60,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, env: Environmen
   lazy val formSA402Url: String                    = configuration.get[String]("urls.sa402")
   lazy val guidanceOnPropertyTradingUrl: String    = configuration.get[String]("urls.guidanceOnPropertyTrading")
   lazy val getHelpUTR: String                      = configuration.get[String]("urls.getHelpUTR")
+  lazy val supplementaryPages: String              = configuration.get[String]("urls.supplementaryPages")
   val identityVerificationFrontend: String         = loadConfig("urls.iv-uplift-entry")
   val agentEnrolments: Seq[String]                 = configuration.get[Seq[String]]("agent-restricted.enrolments")
   val requiredConfidenceLevel: Int                 = configuration.get[Int]("requiredConfidenceLevel")

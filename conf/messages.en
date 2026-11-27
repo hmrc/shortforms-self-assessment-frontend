@@ -606,51 +606,51 @@ resubmissionError.p2.linkText2 = continue to your account
 cwf1.businessActivitiesHelp.title = Business activities help
 cwf1.businessActivitiesHelp.heading = Business activities help
 cwf1.businessActivitiesHelp.contents = Contents
-cwf1.businessActivitiesHelp.contents.cis.linkText
-cwf1.businessActivitiesHelp.contents.shareFishermen.linkText
-cwf1.businessActivitiesHelp.contents.landAndProperty.linkText
-cwf1.businessActivitiesHelp.contents.lloydsUnderwriter.linkText
-cwf1.businessActivitiesHelp.contents.directors.linkText
-cwf1.businessActivitiesHelp.contents.examiners.linkText
-cwf1.businessActivitiesHelp.contents.ministerOfReligion.linkText
-cwf1.businessActivitiesHelp.contents.investment.linkText
+cwf1.businessActivitiesHelp.contents.cis.linkText = Subcontractor under the Construction Industry Scheme (CIS)
+cwf1.businessActivitiesHelp.contents.shareFishermen.linkText = Share fisherman
+cwf1.businessActivitiesHelp.contents.landAndProperty.linkText = Land and property
+cwf1.businessActivitiesHelp.contents.lloydsUnderwriter.linkText = Lloyds underwriter
+cwf1.businessActivitiesHelp.contents.directors.linkText = Directors
+cwf1.businessActivitiesHelp.contents.examiners.linkText = Examiners, invigilators or those that set examination or test questions under a ‘Contract of Service’
+cwf1.businessActivitiesHelp.contents.ministerOfReligion.linkText = Minister of religion
+cwf1.businessActivitiesHelp.contents.investment.linkText = Investment
 cwf1.businessActivitiesHelp.cis.heading = Subcontractor under the Construction Industry Scheme (CIS)
 cwf1.businessActivitiesHelp.cis.content = No further notes.
 cwf1.businessActivitiesHelp.shareFishermen.heading = Share fisherman
-cwf1.businessActivitiesHelp.shareFishermen.content = A share fisherman is someone who works in the fishing industry and is paid from a share of the boat's profits.
+cwf1.businessActivitiesHelp.shareFishermen.content = A share fisherman is someone who works in the fishing industry and is paid from a share of the boat’s profits.
 cwf1.businessActivitiesHelp.landAndProperty.heading = Land and property
 cwf1.businessActivitiesHelp.landAndProperty.content.p1 = HMRC treat profits from UK land or property for tax purposes as arising from a business. But for National Insurance contributions (NICs) purposes, to be classed as a self-employed earner, you need to show that the level of activities you carry out amount to running a business as opposed to carrying out the duties of a landlord.
-cwf1.businessActivitiesHelp.landAndProperty.content.p2 = If you tell HMRC that you are in land and property, we will register you for Self Assessment. When you send your return, you will also need to fill in
+cwf1.businessActivitiesHelp.landAndProperty.content.p2 = If you tell HMRC that you are in land and property, we will register you for Self Assessment. When you send your return, you will also need to fill in <a href="{0}" class="govuk-link">{1}</a>.
 cwf1.businessActivitiesHelp.landAndProperty.linkText = additional sections known as supplementary pages
 cwf1.businessActivitiesHelp.landAndProperty.content.p3 = For National Insurance purposes, HMRC will send you a bill once a year to pay Class 2 NICs voluntarily.
 cwf1.businessActivitiesHelp.lloydsUnderwriter.heading = Lloyds underwriter
 cwf1.businessActivitiesHelp.lloydsUnderwriter.content.p1 = Lloyds is not an insurance company. It is a market that independent insurance underwriters join together in syndicates to sell insurance, mainly through brokers. It operates under the umbrella of the Lloyds brand name.
-cwf1.businessActivitiesHelp.lloydsUnderwriter.content.p2 = The common terms used are 'Working names' and 'External names' for National Insurance purposes. Since the 1997 to 1998 tax year, both have potential liability for Class 2 and Class 4 National Insurance contributions.
+cwf1.businessActivitiesHelp.lloydsUnderwriter.content.p2 = The common terms used are ‘Working names’ and ‘External names’ for National Insurance purposes. Since the 1997 to 1998 tax year, both have potential liability for Class 2 and Class 4 National Insurance contributions.
 cwf1.businessActivitiesHelp.lloydsUnderwriter.content.p3 = No new individual members have been admitted to the market since 1 January 2003.
 cwf1.businessActivitiesHelp.directors.heading = Directors
 cwf1.businessActivitiesHelp.directors.content.p1 = A director is a person appointed by the company members to run the company on their behalf. You must be registered as a director of the company with Companies House.
 cwf1.businessActivitiesHelp.directors.content.p2 = You cannot be classed as self-employed as a director.
-cwf1.businessActivitiesHelp.directors.content.p3 = You can still register for Self Assessment if you want to declare untaxed earnings. For that, you should fill in
+cwf1.businessActivitiesHelp.directors.content.p3 = You can still register for Self Assessment if you want to declare untaxed earnings. For that, you should fill in <a href="{0}" class="govuk-link">{1}</a>.
 cwf1.businessActivitiesHelp.directors.content.linkText = form SA1
-cwf1.businessActivitiesHelp.examiners.heading = Examiners, invigilators or those that set examination or test questions under a 'Contract of Service'
+cwf1.businessActivitiesHelp.examiners.heading = Examiners, invigilators or those that set examination or test questions under a ‘Contract of Service’
 cwf1.businessActivitiesHelp.examiners.content.p1 = You are treated as self-employed for National Insurance if you work as an examiner, moderator or invigilator, or set questions, for any exam that leads to a:
 cwf1.businessActivitiesHelp.examiners.content.b1 = certificate
 cwf1.businessActivitiesHelp.examiners.content.b2 = diploma
 cwf1.businessActivitiesHelp.examiners.content.b3 = degree
 cwf1.businessActivitiesHelp.examiners.content.b4 = professional qualification
 cwf1.businessActivitiesHelp.examiners.content.p2 = This is provided that the work you do under the contract is performed in less than 12 months.
-cwf1.businessActivitiesHelp.examiners.content.p3 = If the examining board employs you directly under a 'Contract of service', you are chargeable for tax as an employed earner. You can choose to pay Class 2 NICs voluntarily. HMRC will send you a bill once a year.
-cwf1.businessActivitiesHelp.examiners.content.p4 = HMRC will not register you for Self Assessment. If you need to register for Self Assessment for another reason, fill in
+cwf1.businessActivitiesHelp.examiners.content.p3 = If the examining board employs you directly under a ‘Contract of service’, you are chargeable for tax as an employed earner. You can choose to pay Class 2 NICs voluntarily. HMRC will send you a bill once a year.
+cwf1.businessActivitiesHelp.examiners.content.p4 = HMRC will not register you for Self Assessment. If you need to register for Self Assessment for another reason, fill in <a href="{0}" class="govuk-link">{1}</a>.
 cwf1.businessActivitiesHelp.examiners.content.linkText = form SA1
-cwf1.businessActivitiesHelp.directors.heading = Minister of religion
-cwf1.businessActivitiesHelp.directors.content.p1 = You are treated as self-employed for National Insurance if you work as a minister of religion and most of your pay is not a stipend or salary.
-cwf1.businessActivitiesHelp.directors.content.p2 = You can choose to pay Class 2 NICs voluntarily. HMRC will send you a bill once a year.
-cwf1.businessActivitiesHelp.directors.content.p3 = HMRC will register you for Self Assessment. When you send your return, you will also need to fill in
-cwf1.businessActivitiesHelp.directors.content.linkText = additional sections known as supplementary pages
+cwf1.businessActivitiesHelp.ministerOfReligion.heading = Minister of religion
+cwf1.businessActivitiesHelp.ministerOfReligion.content.p1 = You are treated as self-employed for National Insurance if you work as a minister of religion and most of your pay is not a stipend or salary.
+cwf1.businessActivitiesHelp.ministerOfReligion.content.p2 = You can choose to pay Class 2 NICs voluntarily. HMRC will send you a bill once a year.
+cwf1.businessActivitiesHelp.ministerOfReligion.content.p3 = HMRC will register you for Self Assessment. When you send your return, you will also need to fill in <a href="{0}" class="govuk-link">{1}</a>.
+cwf1.businessActivitiesHelp.ministerOfReligion.content.linkText = additional sections known as supplementary pages
 cwf1.businessActivitiesHelp.investment.heading = Investment
 cwf1.businessActivitiesHelp.investment.content.p1 = If you are involved in an investment business as a trade, profession or vocation, HMRC class you as gainfully self-employed for Class 2 and Class 4 National Insurance contributions (NICs) and Income tax purposes.
 cwf1.businessActivitiesHelp.investment.content.p2 = Do not tick the Investment box as you will be registered for National Insurance and Self Assessment as a self-employed earner.
 cwf1.businessActivitiesHelp.investment.content.p3 = Only tick the Investment box if you are not operating as a trade, profession or vocation.
 cwf1.businessActivitiesHelp.investment.content.p4 = HMRC will send you a bill once a year so you can pay Class 2 NICs voluntarily if you wish.
-cwf1.businessActivitiesHelp.investment.content.p5 = HMRC will register you for Self Assessment. When you send your return, you will also need to fill in
+cwf1.businessActivitiesHelp.investment.content.p5 = HMRC will register you for Self Assessment. When you send your return, you will also need to fill in <a href="{0}" class="govuk-link">{1}</a>.
 cwf1.businessActivitiesHelp.investment.content.linkText = additional sections known as supplementary pages

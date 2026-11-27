@@ -25,9 +25,9 @@ import javax.inject.Inject
 class BusinessActivitiesHelpController @Inject() (
   val controllerComponents: AppControllerComponents,
   view: BusinessActivitiesHelpView
-)() extends AppController {
-  def onPageLoad(journeyId: String): Action[AnyContent] =
-    CWF1DataAction(journeyId) { implicit request =>
-      Ok(view(journeyId))
+) extends AppController {
+  def onPageLoad(): Action[AnyContent] =
+    IdentifierAction { implicit request =>
+      Ok(view())
     }
 }
