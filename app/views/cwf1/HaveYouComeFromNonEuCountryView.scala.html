@@ -14,15 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    h1: h1
+    govukButton: GovukButton
 )
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
