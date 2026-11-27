@@ -602,3 +602,37 @@ resubmissionError.p1 = We have successfully received your recent application.
 resubmissionError.p2 = You can {0} or {1}.
 resubmissionError.p2.linkText1 = start a new application
 resubmissionError.p2.linkText2 = continue to your account
+
+cwf1.businessActivitiesHelp.title = Business activities help
+cwf1.businessActivitiesHelp.heading = Business activities help
+cwf1.businessActivitiesHelp.contents = Contents
+cwf1.businessActivitiesHelp.contents.cis.linkText
+cwf1.businessActivitiesHelp.contents.shareFishermen.linkText
+cwf1.businessActivitiesHelp.contents.landAndProperty.linkText
+cwf1.businessActivitiesHelp.contents.lloydsUnderwriter.linkText
+cwf1.businessActivitiesHelp.contents.directors.linkText
+cwf1.businessActivitiesHelp.contents.examiners.linkText
+cwf1.businessActivitiesHelp.contents.ministerOfReligion.linkText
+cwf1.businessActivitiesHelp.contents.investment.linkText
+cwf1.businessActivitiesHelp.cis.heading = Subcontractor under the Construction Industry Scheme (CIS)
+cwf1.businessActivitiesHelp.cis.content = No further notes.
+cwf1.businessActivitiesHelp.shareFishermen.heading = Share fisherman
+cwf1.businessActivitiesHelp.shareFishermen.content = A share fisherman is someone who works in the fishing industry and is paid from a share of the boat's profits.
+cwf1.businessActivitiesHelp.directors.linkText = form SA1
+cwf1.businessActivitiesHelp.partners.heading = Partners
+cwf1.businessActivitiesHelp.partners.content = Partners should not register with this service, but should instead should fill in:
+cwf1.businessActivitiesHelp.partners.sa400.linkText = form SA400
+cwf1.businessActivitiesHelp.partners.sa400 = , if you are a new partnership
+cwf1.businessActivitiesHelp.partners.sa401.linkText = form SA401
+cwf1.businessActivitiesHelp.partners.sa401 = , if you are a partner joining a partnership
+cwf1.businessActivitiesHelp.partners.sa402.linkText = form SA402
+cwf1.businessActivitiesHelp.partners.sa402 = , if you are partners who are not individuals
+cwf1.businessActivitiesHelp.tradingAllowance.heading = Trading allowance
+cwf1.businessActivitiesHelp.tradingAllowance.content.prefix = If your annual gross income from self-employment was £1,000 or less, then you may not need to register your self-employment for that year. Read the
+cwf1.businessActivitiesHelp.tradingAllowance.linkText= guidance on property and trading income (opens in a new tab)
+cwf1.businessActivitiesHelp.tradingAllowance.content.suffix = before you start.
+cwf1.businessActivitiesHelp.requirements.heading = What you will need to register
+cwf1.businessActivitiesHelp.requirements.intro = To use this service, you will need:
+cwf1.businessActivitiesHelp.requirements.nationalInsuranceNumber = your National Insurance number, if you have one
+cwf1.businessActivitiesHelp.requirements.utr = your Unique Taxpayer Reference (UTR), if you have one
+cwf1.businessActivitiesHelp.save.form = Ensure you have these before you start. You cannot save the form and complete it later.
