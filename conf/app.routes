@@ -210,3 +210,8 @@ GET         /cwf1/self-employed-work/:journeyId                         controll
 POST        /cwf1/self-employed-work/:journeyId                         controllers.cwf1.SelfEmployedWorkController.onSubmit(journeyId: String, mode: Mode = NormalMode)
 GET         /cwf1/self-employed-work/change/:journeyId                  controllers.cwf1.SelfEmployedWorkController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
 POST        /cwf1/self-employed-work/change/:journeyId                  controllers.cwf1.SelfEmployedWorkController.onSubmit(journeyId: String, mode: Mode = CheckMode)
+
+GET         /cwf1/uk-resident/:journeyId                             controllers.cwf1.AreYouUkResidentController.onPageLoad(journeyId: String, mode: Mode = NormalMode)
+POST        /cwf1/uk-resident/:journeyId                             controllers.cwf1.AreYouUkResidentController.onSubmit(journeyId: String, mode: Mode = NormalMode)
+GET         /cwf1/uk-resident/change/:journeyId                      controllers.cwf1.AreYouUkResidentController.onPageLoad(journeyId: String, mode: Mode = CheckMode)
+POST        /cwf1/uk-resident/change/:journeyId                      controllers.cwf1.AreYouUkResidentController.onSubmit(journeyId: String, mode: Mode = CheckMode)

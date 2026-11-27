@@ -115,6 +115,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }
+
       "when enter UTR page" - {
         "must go to enter name page" in {
           val userAnswers = emptyUserAnswers.set(EnterUTRPage, "1234567890").success.value
@@ -123,6 +124,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.NameController.onPageLoad(userAnswersId, NormalMode)
         }
       }
+
       "when have you come from non Eu country page" - {
         "must go to have you come from non Eu country page when answer is 'yes'" in { // TODO business name controller
           val userAnswers = emptyUserAnswers.set(HaveYouComeFromNonEuCountryPage, true).success.value
@@ -137,6 +139,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.HaveYouComeFromNonEuCountryController.onPageLoad(userAnswersId, NormalMode)
         }
       }
+
       "when enter name page" - {
         "must go to do you have previous page" in {
           val userAnswers = emptyUserAnswers.set(NamePage, Name("John", "Joe")).success.value
@@ -145,6 +148,7 @@ class Cwf1NavigatorSpec extends SpecBase {
             controllers.cwf1.routes.DoYouHaveAPreviousLastNameController.onPageLoad(userAnswersId, NormalMode)
         }
       }
+
       "when did you move to your address" - {
         "must go to AreYouAnAgentController when the move date is within 3 years" in {
           val userAnswers = emptyUserAnswers
@@ -182,13 +186,40 @@ class Cwf1NavigatorSpec extends SpecBase {
           navigator.nextPage(AgentDetailsPage, NormalMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.AgentDetailsController.onPageLoad(userAnswersId, NormalMode)
         }
+      }
 
-        "when contact details page" - {
-          // TODO
-          "must go from contact details page to country of territory of home address page" in {
-            navigator.nextPage(ContactDetailsPage, NormalMode, emptyUserAnswers) mustBe
-              controllers.cwf1.routes.ContactDetailsController.onPageLoad(userAnswersId, NormalMode)
-          }
+      "when contact details page" - {
+        // TODO
+        "must go from contact details page to country of territory of home address page" in {
+          navigator.nextPage(ContactDetailsPage, NormalMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.ContactDetailsController.onPageLoad(userAnswersId, NormalMode)
+        }
+      }
+
+      "when are you uk resident page" - {
+        // TODO
+        "must go from are you uk resident page to does your business have a name page when answer is 'yes'" in {
+          navigator.nextPage(
+            AreYouUkResidentPage,
+            NormalMode,
+            emptyUserAnswers.set(AreYouUkResidentPage, true).success.value
+          ) mustBe
+            controllers.cwf1.routes.DoYouHaveABusinessNameController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        // TODO
+        "must go from are you uk resident page to Did you come from the EU page when answer is 'no'" in {
+          navigator.nextPage(
+            AreYouUkResidentPage,
+            NormalMode,
+            emptyUserAnswers.set(AreYouUkResidentPage, false).success.value
+          ) mustBe
+            controllers.cwf1.routes.AreYouUkResidentController.onPageLoad(userAnswersId, NormalMode)
+        }
+
+        "must go from are you uk resident page to Index when answer is empty" in {
+          navigator.nextPage(AreYouUkResidentPage, NormalMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
         }
       }
 
