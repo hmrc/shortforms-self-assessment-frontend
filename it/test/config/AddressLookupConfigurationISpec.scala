@@ -128,7 +128,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
     "must use the supplied message prefix for CWF1 page wording and keep shared field labels" in {
       val cwf1Callback =
         controllers.cwf1.routes.AddressLookupController.callback(models.cwf1.AddressType.Agent, userAnswersId)
-      val cwf1Request  = FakeRequest("GET", s"/self-assessment-forms/cwf1st/address/agent/$userAnswersId")
+      val cwf1Request  = FakeRequest("GET", s"/self-assessment-forms/cwf1/address/agent/$userAnswersId")
       val cwf1Config   = configProviderUnderTest(
         cwf1Callback,
         controllers.cwf1.routes.StartController.onPageLoad(),
@@ -137,7 +137,7 @@ class AddressLookupConfigurationISpec extends ISpecBase {
       val labels       = (cwf1Config \ "labels" \ "en").as[JsObject]
 
       (cwf1Config \ "options" \ "continueUrl").as[String] mustBe s"http://localhost:10081${cwf1Callback.url}"
-      (labels \ "appLevelLabels" \ "navTitle").as[String] mustBe messages(app)("service.cwf1st.name")
+      (labels \ "appLevelLabels" \ "navTitle").as[String] mustBe messages(app)("service.cwf1.name")
       Map(
         "countryPickerLabels" -> "What is the country or territory of the agent’s address?",
         "lookupPageLabels"    -> "Search for the agent’s address",

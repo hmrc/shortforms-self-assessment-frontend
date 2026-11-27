@@ -28,7 +28,7 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("cwf1.contactDetails.title"), serviceName = "service.cwf1st.name")
+@layout(pageTitle = title(form, messages("cwf1.contactDetails.title"), serviceName = "service.cwf1.name")
 ){
 
     @formHelper(action = controllers.cwf1.routes.ContactDetailsController.onSubmit(journeyId, mode), Symbol("autoComplete") -> "off") {

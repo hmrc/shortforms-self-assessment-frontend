@@ -26,7 +26,7 @@
 
 @(form: Form[_], journeyId: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, title = "cwf1.selfEmployedWork.title", serviceName = "service.cwf1st.name")
+@layout(pageTitle = title(form, title = "cwf1.selfEmployedWork.title", serviceName = "service.cwf1.name")
 ){
 
     @formHelper(action = controllers.cwf1.routes.SelfEmployedWorkController.onSubmit(journeyId, mode)) {
