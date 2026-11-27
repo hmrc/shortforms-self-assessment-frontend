@@ -16,7 +16,7 @@
 
 package controllers.cwf1
 
-import controllers.{AppController, AppControllerComponents, routes}
+import controllers.{AppController, AppControllerComponents}
 import play.api.mvc.{Action, AnyContent}
 import views.html.cwf1.BusinessActivitiesHelpView
 

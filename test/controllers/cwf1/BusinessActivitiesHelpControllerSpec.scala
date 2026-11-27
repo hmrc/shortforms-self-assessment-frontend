@@ -17,15 +17,13 @@
 package controllers.cwf1
 
 import base.SpecBase
-import controllers.{MockAppControllerComponents, routes}
+import controllers.MockAppControllerComponents
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.cwf1.BusinessActivitiesHelpView
-
-import scala.concurrent.Future
 
 class BusinessActivitiesHelpControllerSpec extends SpecBase with MockitoSugar {
 
