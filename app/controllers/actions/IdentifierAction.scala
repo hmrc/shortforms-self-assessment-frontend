@@ -27,13 +27,10 @@ import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
-import uk.gov.hmrc.http.UnauthorizedException
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IdentifierAction
-    extends ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent]
 
 class AuthenticatedIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
@@ -57,60 +54,43 @@ class AuthenticatedIdentifierAction @Inject() (
         Retrievals.allEnrolments and
         Retrievals.internalId and
         Retrievals.nino
-    ) {
+    ) { case affinityGroup ~ confidenceLevel ~ enrolments ~ internalId ~ nino =>
+      affinityGroup.get match
 
-      case Some(affinityGroup) ~ confidenceLevel ~ enrolments ~ Some(internalId) ~ nino =>
-        val hasValidAgentEnrolment = config.agentEnrolments.exists(enrolmentName =>
-          enrolments
-            .getEnrolment(enrolmentName)
-            .exists(_.isActivated)
-        )
-
-        (affinityGroup, hasValidAgentEnrolment, confidenceLevel.level) match {
-          case (AffinityGroup.Agent, true, _) =>
-            block(new IdentifierRequest(request, internalId, None))
-
-          case (AffinityGroup.Agent, false, _) =>
-            logger.info(
-              "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Enrolments of Agent"
-            )
-            throw InsufficientEnrolments("The agent has no valid enrolments")
-
-          case (AffinityGroup.Individual, _, cl) if cl >= config.requiredConfidenceLevel =>
-            block(new IdentifierRequest(request, internalId, nino))
-
-          case (AffinityGroup.Organisation, _, cl) if cl >= config.requiredConfidenceLevel =>
-            block(new IdentifierRequest(request, internalId, nino))
-
-          case (AffinityGroup.Individual, _, _) | (AffinityGroup.Organisation, _, _) =>
-            logger.info(
-              "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level below required confidential level"
-            )
+        case AffinityGroup.Individual | AffinityGroup.Organisation =>
+          if confidenceLevel.level >= config.requiredConfidenceLevel
+          then block(new IdentifierRequest(request, internalId.get, nino))
+          else
+            logger.info("[AuthenticatedIdentifierAction] Insufficient Confidence Level")
             throw InsufficientConfidenceLevel(s"Confidence level below ${config.requiredConfidenceLevel}")
 
-          case _ =>
-            throw UnsupportedAffinityGroup("Unsupported user type or group configuration")
-        }
-      case _                                                                            =>
-        throw new UnauthorizedException("Unable to retrieve internalId")
+        case AffinityGroup.Agent =>
+          val hasValidAgentEnrolment = config.agentEnrolments.exists(enrolmentName =>
+            enrolments
+              .getEnrolment(enrolmentName)
+              .exists(_.isActivated)
+          )
 
+          if hasValidAgentEnrolment
+          then block(new IdentifierRequest(request, internalId.get, None))
+          else
+            logger.info("[AuthenticatedIdentifierAction] Insufficient Agent Enrolments")
+            throw InsufficientEnrolments("The agent has no valid enrolments")
     }
   } recover {
     case _: NoActiveSession => Redirect(config.loginUrl, Map("continue" -> Seq(getRequestURI)))
 
     case _: InsufficientConfidenceLevel =>
-      val loggedCompletionUrl = getRequestURI
-      val loggedFailureUrl    =
-        getHost + controllers.identityVerification.routes.IvController.handleIvFailure(None).url
-      val queryParams         = Map(
+      val successURL  = getRequestURI
+      val failureURL  = config.host + controllers.identityVerification.routes.IvController.handleIvFailure(None).url
+      val queryParams = Map(
         "origin"          -> Seq("shortform"),
         "confidenceLevel" -> Seq("250"),
-        "completionURL"   -> Seq(loggedCompletionUrl),
-        "failureURL"      -> Seq(loggedFailureUrl)
+        "completionURL"   -> Seq(successURL),
+        "failureURL"      -> Seq(failureURL)
       )
       logger.info(
-        "[AuthenticatedIdentifierAction][invokeBlock] Insufficient Confidence Level. " +
-          s"Redirecting to ivUplift service with successful URL: + $loggedCompletionUrl and failure ULR: $loggedFailureUrl"
+        s"[AuthenticatedIdentifierAction] Redirect to IV uplift with success URL: + $successURL; failure URL: $failureURL"
       )
 
       Redirect(config.identityVerificationFrontend, queryParams)
@@ -121,13 +101,6 @@ class AuthenticatedIdentifierAction @Inject() (
     case _ =>
       Redirect(routes.UnauthorisedController.onPageLoad())
   }
+
+  private def getRequestURI(using rh: RequestHeader): String = s"${config.host}${rh.uri}"
 }
-
-private def getHost(using rh: RequestHeader): String =
-  if rh.host startsWith "localhost" then
-    val protocol = if rh.secure then "https" else "http"
-    s"$protocol://${rh.host}"
-  else ""
-
-private def getRequestURI(using rh: RequestHeader): String =
-  s"$getHost${rh.uri}"
