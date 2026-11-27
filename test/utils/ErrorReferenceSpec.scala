@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-package controllers
+package utils
 
-import javax.inject.Inject
-import play.api.mvc.{Action, AnyContent}
-import views.html.SystemErrorView
+import base.SpecBase
 
-class SystemErrorController @Inject() (
-  val controllerComponents: AppControllerComponents,
-  view: SystemErrorView
-) extends AppController {
+class ErrorReferenceSpec extends SpecBase {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view(request.flash.get("submissionReference").filter(_.trim.nonEmpty)))
+  "ErrorReference.generate" - {
+    "return a 16 character upper case alphanumeric reference" in {
+      val reference = ErrorReference.generate()
+
+      reference must fullyMatch regex "[A-Z0-9]{16}"
+    }
+
+    "return a different reference each time" in {
+      val references = Seq.fill(20)(ErrorReference.generate()).toSet
+
+      references.size mustBe 20
+    }
   }
 }

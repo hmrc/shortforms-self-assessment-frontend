@@ -14,8 +14,6 @@ GET         /account/signed-out                          controllers.auth.Signed
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad()
 
-GET         /system-error                                controllers.SystemErrorController.onPageLoad()
-
 GET         /form-not-available                          controllers.FormNotAvailableAgentsController.onPageLoad()
 
 GET         /identity-verification/uplift-failure        controllers.identityVerification.IvController.handleIvFailure(journeyId: Option[String])
