@@ -191,6 +191,29 @@ class Cwf1NavigatorSpec extends SpecBase {
           }
         }
       }
+
+      "when do you have a business name page" - {
+        "must go to business name page when answer is 'yes'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, true).success.value
+
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
+              .onPageLoad(userAnswersId, NormalMode) // TODO change to enter business name
+        }
+
+        "must go to self employed work page when answer is 'no'" in {
+          val userAnswers = emptyUserAnswers.set(DoYouHaveABusinessNamePage, false).success.value
+
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, userAnswers) mustBe
+            controllers.cwf1.routes.DoYouHaveABusinessNameController
+              .onPageLoad(userAnswersId, NormalMode) // TODO change to self employee work
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(DoYouHaveABusinessNamePage, NormalMode, emptyUserAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
     }
 
     "in Check mode" - {
@@ -351,6 +374,50 @@ class Cwf1NavigatorSpec extends SpecBase {
           val userAnswers = emptyUserAnswers
 
           navigator.nextPage(MoveAddressPage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.StartController.onPageLoad()
+        }
+      }
+
+      "when have a business name" - {
+
+        "must go to enter business name when yes is selected and business name is missing" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveABusinessNamePage, true)
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.EnterUTRController
+              .onPageLoad(userAnswersId, CheckMode) // TODO change to enter business name page and controller
+        }
+
+        "must go to Check Your Answers when yes is selected and business name already exists" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveABusinessNamePage, true)
+            .success
+            .value
+            .set(EnterUTRPage, "1234567890") // TODO Change to enter business name
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Check Your Answers when no is selected" in {
+          val userAnswers = emptyUserAnswers
+            .set(DoYouHaveABusinessNamePage, false)
+            .success
+            .value
+
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, userAnswers) mustBe
+            controllers.cwf1.routes.AreYouAnAgentController
+              .onPageLoad(userAnswersId, CheckMode) // TODO make change controller to route CYA page
+        }
+
+        "must go to Index when answer is missing" in {
+          navigator.nextPage(DoYouHaveABusinessNamePage, CheckMode, emptyUserAnswers) mustBe
             controllers.cwf1.routes.StartController.onPageLoad()
         }
       }

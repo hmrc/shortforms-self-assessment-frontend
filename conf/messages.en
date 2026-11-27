@@ -590,18 +590,18 @@ cwf1.contactDetails.error.phoneNumber.invalid = The phone number must only inclu
 cwf1.contactDetails.emailAddress.change.hidden = What are your contact details?
 cwf1.contactDetails.phoneNumber.change.hidden = What are your contact details?
 
-cwf1.areYouEUResident.title = Have you come to the UK from a non-EU country within the last 12 months?
-cwf1.areYouEUResident.heading = Have you come to the UK from a non-EU country within the last 12 months?
-cwf1.areYouEUResident.checkYourAnswersLabel = Have you come to the UK from a non-EU country within the last 12 months?
-cwf1.areYouEUResident.error.required = Select yes if you came to the UK from a non-EU country within the last 12 months
-cwf1.areYouEUResident.change.hidden = Have you come to the UK from a non-EU country within the last 12 months?
-
 resubmissionError.title = You have already submitted this application
 resubmissionError.heading = You have already submitted this application
 resubmissionError.p1 = We have successfully received your recent application.
 resubmissionError.p2 = You can {0} or {1}.
 resubmissionError.p2.linkText1 = start a new application
 resubmissionError.p2.linkText2 = continue to your account
+
+cwf1.doYouHaveABusinessName.title = Does your business have a name?
+cwf1.doYouHaveABusinessName.heading = Does your business have a name?
+cwf1.doYouHaveABusinessName.checkYourAnswersLabel = Does your business have a name?
+cwf1.doYouHaveABusinessName.error.required = Select Yes if your business has a name
+cwf1.doYouHaveABusinessName.change.hidden = Does your business have a name?
 
 cwf1.selfEmploymentStartDate.title = When did your self-employment start?
 cwf1.selfEmploymentStartDate.heading = When did your self-employment start?
